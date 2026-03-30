@@ -1,0 +1,74 @@
+package com.example.admin.auth.service;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.example.admin.auth.model.dto.LoginRequest;
+import com.example.admin.auth.model.dto.LoginResponse;
+import com.example.admin.auth.model.dto.StudentLoginRequest;
+import com.example.admin.auth.model.entity.Admin;
+import com.example.admin.auth.repository.AdminRepository;
+import com.example.admin.auth.security.JwtUtil;
+import com.example.admin.student.entity.Student;
+import com.example.admin.student.repository.StudentRepository;
+
+@Service
+public class AuthService {
+
+    private final AdminRepository adminRepo;
+    private final StudentRepository studentRepo;
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthService(
+            AdminRepository adminRepo,
+            StudentRepository studentRepo,
+            JwtUtil jwtUtil,
+            PasswordEncoder passwordEncoder
+    ) {
+        this.adminRepo = adminRepo;
+        this.studentRepo = studentRepo;
+        this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public LoginResponse adminLogin(LoginRequest request) {
+        Admin admin = adminRepo.findByEmail(request.getEmail())
+            .orElseThrow(() -> new RuntimeException("Invalid email"));
+
+        if (!passwordEncoder.matches(request.getPassword(), admin.getPasswordHash())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        String token = jwtUtil.generateAdminToken(admin.getEmail(), "ADMIN");
+        System.out.println("AuthService: Admin login successful for " + admin.getEmail() + ". Token generated with role ADMIN.");
+
+        return new LoginResponse(token, admin.getName(), admin.getEmail(), "ADMIN");
+    }
+
+
+    public LoginResponse studentLogin(StudentLoginRequest request) {
+
+        java.util.List<Student> students = studentRepo.findAllByEmail(request.getEmail());
+        if (students.isEmpty()) {
+            System.out.println("DEBUG: Student not found for email: " + request.getEmail());
+            throw new org.springframework.security.authentication.BadCredentialsException("Student not found");
+        }
+        Student student = students.get(students.size() - 1);
+
+        // Student ID check removed as per user request
+
+        System.out.println("DEBUG: Student found: " + student.getName());
+        System.out.println("DEBUG: Stored Password Hash: " + student.getPassword());
+        System.out.println("DEBUG: Input Password: " + request.getPassword());
+        boolean matches = passwordEncoder.matches(request.getPassword(), student.getPassword());
+        System.out.println("DEBUG: Password Matches: " + matches);
+
+        if (student.getPassword() == null || !matches) {
+            throw new org.springframework.security.authentication.BadCredentialsException("Invalid credentials");
+        }
+
+        String token = jwtUtil.generateStudentToken(student.getEmail());
+        return new LoginResponse(token, student.getName(), student.getEmail(), "STUDENT", student.getId(), student.getStudentId());
+    }
+}

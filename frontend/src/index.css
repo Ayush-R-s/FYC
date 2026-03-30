@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  #root {
+    @apply min-h-[100dvh] overflow-x-hidden;
+  }
+
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #fff5e6;
+    --text-primary: #333333;
+    --text-secondary: #555555;
+    --accent: #ff7a33;
+    --accent-hover: #e66a2a;
+    --border-color: #dddddd;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --header-bg: #000000;
+    --header-text: #ffffff;
+  }
+
+  [data-theme='dark'] {
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --accent: #ff7a33;
+    --accent-hover: #ff9f66;
+    --border-color: #333333;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --header-bg: #000000;
+    --header-text: #ffffff;
+  }
+
+  body {
+    @apply bg-primary text-text-primary min-h-[100dvh] transition-colors duration-300;
+    font-family: 'Poppins', sans-serif;
+  }
+}
