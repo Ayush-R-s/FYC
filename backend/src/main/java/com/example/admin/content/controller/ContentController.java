@@ -44,8 +44,9 @@ public class ContentController {
             @RequestParam String subject,
             @RequestParam(required = false) String topic,
             @RequestParam(required = false) Integer pages,
-            @RequestParam String description) {
-        return contentService.uploadNotes(file, title, subject, topic, pages, description);
+            @RequestParam String description,
+            @RequestParam(required = false) String contentType) {
+        return contentService.uploadNotes(file, title, subject, topic, pages, description, contentType);
     }
 
     @PostMapping("/video")
@@ -65,8 +66,9 @@ public class ContentController {
             @RequestParam String subject,
             @RequestParam(required = false) String topic,
             @RequestParam(required = false) Integer pages,
-            @RequestParam(required = false) String description) {
-        return contentService.updateNotes(id, file, title, subject, topic, pages, description);
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String contentType) {
+        return contentService.updateNotes(id, file, title, subject, topic, pages, description, contentType);
     }
 
     @PutMapping("/video/{id}")

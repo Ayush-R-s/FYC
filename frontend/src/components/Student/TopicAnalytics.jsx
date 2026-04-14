@@ -176,27 +176,27 @@ const TopicAnalytics = ({ testHistory, darkMode }) => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className={`${darkMode ? 'bg-gray-800/50' : 'bg-gray-50'}`}>
-                                <th className="p-4 text-xs font-bold uppercase tracking-widest text-gray-400">Topic Area</th>
-                                <th className="p-4 text-xs font-bold uppercase tracking-widest text-gray-400 text-center">Score</th>
-                                <th className="p-4 text-xs font-bold uppercase tracking-widest text-gray-400 text-center">Correct/Total</th>
-                                <th className="p-4 text-xs font-bold uppercase tracking-widest text-gray-400">Performance Index</th>
+                                <th className="p-3 sm:p-4 text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-400">Topic Area</th>
+                                <th className="p-3 sm:p-4 text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-400 text-center">Score</th>
+                                <th className="p-3 sm:p-4 text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-400 text-center whitespace-nowrap">Correct / Total</th>
+                                <th className="p-3 sm:p-4 text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-400 hidden sm:table-cell">Performance Index</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                             {topicStats.map((stat, idx) => (
                                 <tr key={idx} className={`transition-colors ${darkMode ? 'hover:bg-gray-800/30' : 'hover:bg-orange-50/30'}`}>
-                                    <td className="p-4">
-                                        <span className={`text-sm font-bold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{stat.topic}</span>
+                                    <td className="p-3 sm:p-4">
+                                        <span className={`text-xs sm:text-sm font-bold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{stat.topic}</span>
                                     </td>
-                                    <td className="p-4 text-center">
-                                        <span className={`text-sm font-black ${stat.percentage < 50 ? 'text-red-500' : stat.percentage < 80 ? 'text-orange-500' : 'text-emerald-500'}`}>
+                                    <td className="p-3 sm:p-4 text-center">
+                                        <span className={`text-xs sm:text-sm font-black ${stat.percentage < 50 ? 'text-red-500' : stat.percentage < 80 ? 'text-orange-500' : 'text-emerald-500'}`}>
                                             {stat.percentage}%
                                         </span>
                                     </td>
-                                    <td className="p-4 text-center">
-                                        <span className="text-xs font-bold text-gray-400">{stat.correct} / {stat.total}</span>
+                                    <td className="p-3 sm:p-4 text-center">
+                                        <span className="text-[10px] sm:text-xs font-bold text-gray-400">{stat.correct} / {stat.total}</span>
                                     </td>
-                                    <td className="p-4">
+                                    <td className="p-3 sm:p-4 hidden sm:table-cell">
                                         <div className={`h-1.5 w-full rounded-full ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
                                             <div
                                                 className={`h-full rounded-full ${stat.percentage < 50 ? 'bg-red-500' : stat.percentage < 80 ? 'bg-orange-500' : 'bg-emerald-500'}`}

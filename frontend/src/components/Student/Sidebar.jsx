@@ -10,7 +10,9 @@ import {
   Flame,
   MessageSquare,
   Settings,
-  LogOut
+  LogOut,
+  X,
+  Target
 } from "lucide-react"
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen, t }) {
@@ -24,14 +26,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, t }) {
   const menuItems = [
     { id: "dashboard", label: translate("dashboard", "Dashboard"), icon: LayoutDashboard, path: "/student" },
     { id: "streaks", label: translate("streaks", "Streaks"), icon: Flame, path: "/student/streaks" },
+    { id: "resources", label: translate("study_materials", "Study Materials"), icon: BookOpen, path: "/student/resources" },
+    { id: "notes", label: translate("notes", "Notes"), icon: FileText, path: "/student/notes" },
+    { id: "tests", label: translate("tests", "Tests"), icon: Target, path: "/student/tests" },
+    { id: "videos", label: translate("videos", "Videos"), icon: PlayCircle, path: "/student/videos" },
     { id: "badges", label: translate("badges", "Badges"), icon: Award, path: "/student/badges" },
     { id: "leaderboard", label: translate("leaderboard", "Leaderboard"), icon: Trophy, path: "/student/leaderboard" },
-    { id: "notes", label: translate("notes", "Notes"), icon: BookOpen, path: "/student/notes" },
-    { id: "tests", label: translate("tests", "Tests"), icon: FileText, path: "/student/tests" },
-    { id: "videos", label: translate("videos", "Videos"), icon: PlayCircle, path: "/student/videos" },
     { id: "feedback", label: translate("feedback", "Feedback"), icon: MessageSquare, path: "/student/feedback" },
     { id: "settings", label: translate("settings", "Settings"), icon: Settings, path: "/student/settings" },
-  ]
+  ];
 
   const isActive = (path) => location.pathname === path
 
@@ -55,18 +58,30 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, t }) {
         bg-slate-900 border-r border-slate-800 flex flex-col`}
       >
         {/* Header */}
-        <div className="p-4 flex items-center gap-3 border-b border-slate-800">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="w-10 h-10 bg-orange-500 text-white rounded-lg font-bold"
-          >
-            A
-          </button>
+        <div className="p-4 flex items-center justify-between border-b border-slate-800">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/student")}
+              className="w-10 h-10 bg-orange-500 text-white rounded-lg font-bold flex items-center justify-center shrink-0"
+            >
+              A
+            </button>
+            {sidebarOpen && (
+              <div className="min-w-0">
+                <h3 className="text-white font-semibold truncate text-sm">Student Panel</h3>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Dash</p>
+              </div>
+            )}
+          </div>
+          
+          {/* Mobile Close Button */}
           {sidebarOpen && (
-            <div>
-              <h3 className="text-white font-semibold">Student Panel</h3>
-              <p className="text-xs text-slate-400">Dashboard</p>
-            </div>
+            <button 
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors"
+            >
+              <X size={20} />
+            </button>
           )}
         </div>
 

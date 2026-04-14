@@ -9,6 +9,7 @@ import com.example.admin.content.dto.TestRequest;
 import com.example.admin.content.model.Question;
 import com.example.admin.content.model.Test;
 import com.example.admin.content.model.TestCategory;
+import com.example.admin.content.repository.QuestionRepository;
 import com.example.admin.content.repository.TestRepository;
 import com.example.admin.student.entity.Notification;
 import com.example.admin.student.repository.NotificationRepository;
@@ -19,12 +20,14 @@ public class TestService {
     private final TestRepository repository;
     private final com.example.admin.content.repository.VideoRepository videoRepository;
     private final NotificationRepository notificationRepository;
+    private final QuestionRepository questionRepository;
 
     public TestService(TestRepository repository, com.example.admin.content.repository.VideoRepository videoRepository,
-                       NotificationRepository notificationRepository) {
+                       NotificationRepository notificationRepository, QuestionRepository questionRepository) {
         this.repository = repository;
         this.videoRepository = videoRepository;
         this.notificationRepository = notificationRepository;
+        this.questionRepository = questionRepository;
     }
 
     public Test createTest(TestRequest request) {
@@ -46,7 +49,30 @@ public class TestService {
             test.setVideos(videos);
         }
 
-        List<Question> questions = request.getQuestions();
+        List<Question> questions;
+        if (request.getIsRandom()) {
+            int count = request.getQuestionCount() != null ? request.getQuestionCount() : 10;
+            String randSubject = request.getRandomSubject();
+            if (randSubject == null || randSubject.equalsIgnoreCase("mixed") || randSubject.equalsIgnoreCase("all")) {
+                questions = questionRepository.findRandomQuestions(count);
+            } else {
+                questions = questionRepository.findRandomQuestionsBySubject(randSubject, count);
+            }
+            
+            // Create deep copies to avoid modifying pool questions and ensure they belong strictly to this test
+            questions = questions.stream().map(q -> {
+                Question newQ = new Question();
+                newQ.setText(q.getText());
+                newQ.setAnswers(new java.util.ArrayList<>(q.getAnswers()));
+                newQ.setCorrectAnswers(new java.util.ArrayList<>(q.getCorrectAnswers()));
+                newQ.setSubject(q.getSubject());
+                newQ.setTopic(q.getTopic());
+                return newQ;
+            }).toList();
+        } else {
+            questions = request.getQuestions();
+        }
+
         if (questions != null) {
             int marks = request.getMarksPerQuestion() != null ? request.getMarksPerQuestion() : 0;
             questions.forEach(q -> {

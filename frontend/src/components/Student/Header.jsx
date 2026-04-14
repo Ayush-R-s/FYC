@@ -140,7 +140,7 @@ const Header = ({
           </button>
 
           {showNotifications && (
-            <div className={`absolute top-14 right-0 w-[calc(100vw-32px)] sm:w-80 animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-200 ${darkMode ? "bg-slate-950 border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)]" : "bg-white border-orange-100 shadow-xl"} border rounded-2xl z-50 overflow-hidden`}>
+            <div className={`absolute top-14 -right-12 sm:right-0 w-[calc(100vw-32px)] sm:w-80 animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-200 ${darkMode ? "bg-slate-950 border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)]" : "bg-white border-orange-100 shadow-xl"} border rounded-2xl z-50 overflow-hidden`}>
               <div className={`p-4 border-b ${darkMode ? "border-slate-800 bg-slate-900/50" : "border-gray-100 bg-white"} flex items-center justify-between`}>
                 <h3 className={`font-black text-[10px] uppercase tracking-widest ${darkMode ? "text-slate-400" : "text-gray-500"}`}>{t("notifications")}</h3>
                 <button

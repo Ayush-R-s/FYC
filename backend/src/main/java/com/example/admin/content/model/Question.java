@@ -10,6 +10,7 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "TEXT")
     private String text;
 
     @ElementCollection
@@ -20,6 +21,7 @@ public class Question {
 
     private int points;
     private String subject;
+    private String chapter;
     private String topic;
 
     public Long getId() {
@@ -68,6 +70,14 @@ public class Question {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public String getChapter() {
+        return chapter;
+    }
+
+    public void setChapter(String chapter) {
+        this.chapter = chapter;
     }
 
     public String getTopic() {

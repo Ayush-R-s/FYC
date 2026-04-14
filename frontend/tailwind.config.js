@@ -12,6 +12,8 @@ export default {
         },
         accent: "var(--accent)",
         border: "var(--border-color)",
+        "header-bg": "var(--header-bg)",
+        "header-text": "var(--header-text)",
       },
       boxShadow: {
         card: "var(--card-shadow)",

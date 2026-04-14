@@ -1,0 +1,169 @@
+import React, { useState, useEffect } from "react";
+import { BookOpen, FileUp, Search, Download, FileText, ChevronRight } from "lucide-react";
+import { useAppContext } from "../../context/AppContext";
+import { API_BASE_URL } from "../../services/axiosInstance";
+import axios from "../../services/axiosInstance";
+
+const ResourcesPage = () => {
+    const { darkMode, t, addActivity } = useAppContext();
+    const [activeTab, setActiveTab] = useState("textbooks");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedSubject, setSelectedSubject] = useState("all");
+    const [resources, setResources] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const cardBg = darkMode ? "bg-slate-900/40 backdrop-blur-md" : "bg-white";
+    const borderColor = darkMode ? "border-slate-800/60" : "border-orange-200";
+
+    useEffect(() => {
+        fetchResources();
+    }, [activeTab]);
+
+    const fetchResources = async () => {
+        setLoading(true);
+        try {
+            const type = activeTab === "textbooks" ? "TEXTBOOK" : "PYQ";
+            const response = await axios.get(`/materials/${type}`);
+            setResources(response.data);
+        } catch (error) {
+            console.error("Error fetching resources:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filteredResources = resources.filter(res => {
+        const matchesSearch = res.title.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSubject = selectedSubject === "all" || res.subject.toLowerCase() === selectedSubject.toLowerCase();
+        return matchesSearch && matchesSubject;
+    });
+
+    const downloadFile = (resource) => {
+        if (!resource.fileUrl) return;
+        
+        const encodedKey = resource.fileUrl.split('/').map(segment => encodeURIComponent(segment)).join('/');
+        const fileUrl = `${API_BASE_URL}/admin/content/files/${encodedKey}`;
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.setAttribute('download', resource.fileName || 'document.pdf');
+        link.setAttribute('target', '_blank');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        
+        addActivity(`Downloaded ${activeTab === 'textbooks' ? 'Textbook' : 'PYQ'}`, resource.title);
+    };
+
+    const subjects = ["all", "Physics", "Chemistry", "Biology", "Botany", "Zoology"];
+
+    return (
+        <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className={`text-3xl font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>Study Materials</h1>
+                    <p className={`text-sm ${darkMode ? "text-slate-400" : "text-slate-500"}`}>Access Textbooks and Previous Year Questions</p>
+                </div>
+                
+                <div className="flex bg-slate-200/50 dark:bg-slate-800/50 p-1 rounded-xl w-fit">
+                    <button
+                        onClick={() => setActiveTab("textbooks")}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "textbooks" ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                    >
+                        <div className="flex items-center gap-2">
+                            <BookOpen size={16} />
+                            <span>Textbooks</span>
+                        </div>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("pyqs")}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "pyqs" ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                    >
+                        <div className="flex items-center gap-2">
+                            <FileUp size={16} />
+                            <span>PYQs</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div className={`${cardBg} border ${borderColor} rounded-2xl p-4 sm:p-6`}>
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search resources..."
+                            className={`w-full pl-10 pr-4 py-2.5 rounded-xl border outline-none focus:ring-2 focus:ring-orange-500 transition-all ${darkMode ? "bg-slate-800/50 border-slate-700 text-white" : "bg-slate-50 border-slate-200 text-slate-900"}`}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+                        {subjects.map(sub => (
+                            <button
+                                key={sub}
+                                onClick={() => setSelectedSubject(sub)}
+                                className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border ${selectedSubject === sub ? "bg-orange-500 border-orange-500 text-white shadow-md shadow-orange-500/20" : darkMode ? "bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600" : "bg-white border-slate-200 text-slate-600 hover:border-orange-200"}`}
+                            >
+                                {sub === "all" ? "All Subjects" : sub}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                        <div className="w-10 h-10 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
+                        <p className="text-slate-500 font-medium">Loading materials...</p>
+                    </div>
+                ) : filteredResources.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {filteredResources.map(res => (
+                            <div key={res.id} className={`group relative p-5 rounded-2xl border transition-all hover:shadow-xl ${darkMode ? "bg-slate-800/40 border-slate-700 hover:border-orange-500/30" : "bg-slate-50 border-slate-100 hover:border-orange-200"}`}>
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className={`p-3 rounded-xl ${darkMode ? "bg-slate-700 text-orange-400" : "bg-orange-100 text-orange-600"}`}>
+                                        {activeTab === "textbooks" ? <BookOpen size={24} /> : <FileText size={24} />}
+                                    </div>
+                                    <button
+                                        onClick={() => downloadFile(res)}
+                                        className={`p-2 rounded-lg bg-orange-500 text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-orange-600 shadow-lg shadow-orange-500/20`}
+                                    >
+                                        <Download size={18} />
+                                    </button>
+                                </div>
+                                
+                                <div>
+                                    <h3 className={`font-bold text-lg mb-1 truncate ${darkMode ? "text-white" : "text-slate-900"}`}>{res.title}</h3>
+                                    <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600"}`}>
+                                            {res.subject}
+                                        </span>
+                                        {res.pages && <span>{res.pages} pages</span>}
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-4 pt-4 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between">
+                                    <span className="text-xs text-slate-400 font-medium">Uploaded on {new Date(res.uploadedAt).toLocaleDateString()}</span>
+                                    <div className="flex items-center gap-1 text-orange-500 font-bold text-xs group-hover:gap-2 transition-all">
+                                        <span>View Details</span>
+                                        <ChevronRight size={14} />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-20 px-4">
+                        <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Search className="text-slate-400" size={32} />
+                        </div>
+                        <h3 className={`text-lg font-bold mb-1 ${darkMode ? "text-white" : "text-slate-900"}`}>No materials found</h3>
+                        <p className="text-slate-500">Try adjusting your search or subject filters</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default ResourcesPage;

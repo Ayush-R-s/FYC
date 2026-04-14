@@ -35,7 +35,7 @@ export const deleteContent = async (id) => {
 
 // --- NOTES ---
 
-export const uploadNotes = async (file, title, subject, topic, pages, description) => {
+export const uploadNotes = async (file, title, subject, topic, pages, description, contentType) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title);
@@ -43,6 +43,7 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
     if (topic) formData.append('topic', topic);
     if (pages) formData.append('pages', pages);
     if (description) formData.append('description', description);
+    if (contentType) formData.append('contentType', contentType);
 
     try {
         const response = await axios.post('/admin/content/notes', formData, {
@@ -55,7 +56,7 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
     }
 };
 
-export const updateNote = async (id, file, title, subject, topic, pages, content) => {
+export const updateNote = async (id, file, title, subject, topic, pages, content, contentType) => {
     const formData = new FormData();
     if (file) formData.append('file', file);
     formData.append('title', title);
@@ -63,6 +64,7 @@ export const updateNote = async (id, file, title, subject, topic, pages, content
     if (topic) formData.append('topic', topic);
     if (pages) formData.append('pages', pages);
     if (content) formData.append('description', content);
+    if (contentType) formData.append('contentType', contentType);
 
     try {
         const response = await axios.put(`/admin/content/notes/${id}`, formData, {
@@ -175,6 +177,48 @@ export const deleteTest = async (id) => {
     }
 };
 
+// ================= QUESTIONS (BANK) =================
+
+export const getAllPoolQuestions = async () => {
+    try {
+        const response = await axios.get('/admin/content/questions');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching pool questions:', error);
+        throw error;
+    }
+};
+
+export const addQuestionToPool = async (questionData) => {
+    try {
+        const response = await axios.post('/admin/content/questions', questionData);
+        return response.data;
+    } catch (error) {
+        console.error('Error adding question to pool:', error);
+        throw error;
+    }
+};
+
+export const updateQuestionInPool = async (id, questionData) => {
+    try {
+        const response = await axios.put(`/admin/content/questions/${id}`, questionData);
+        return response.data;
+    } catch (error) {
+        console.error(`Error updating pool question ${id}:`, error);
+        throw error;
+    }
+};
+
+export const deleteQuestionFromPool = async (id) => {
+    try {
+        const response = await axios.delete(`/admin/content/questions/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting pool question ${id}:`, error);
+        throw error;
+    }
+};
+
 export const generateAIQuestions = async (file, numQuestions, difficulty) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -188,6 +232,34 @@ export const generateAIQuestions = async (file, numQuestions, difficulty) => {
         return response.data;
     } catch (error) {
         console.error('Error generating AI questions:', error);
+        throw error;
+    }
+};
+
+export const importQuestionsFromPDF = async (file, subject, chapter, topic) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (subject) formData.append('subject', subject);
+    if (chapter) formData.append('chapter', chapter);
+    if (topic) formData.append('topic', topic);
+
+    try {
+        const response = await axios.post('/admin/content/questions/import', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error importing questions from PDF:', error);
+        throw error;
+    }
+};
+
+export const bulkAddQuestionsToPool = async (questions) => {
+    try {
+        const response = await axios.post('/admin/content/questions/bulk', questions);
+        return response.data;
+    } catch (error) {
+        console.error('Error in bulk saving questions:', error);
         throw error;
     }
 };

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import axios from '../services/axiosInstance';
 
 export const useDashboard = () => {
     const [viewMode, setViewMode] = useState('daily');
@@ -8,20 +9,10 @@ export const useDashboard = () => {
     const [data, setData] = useState({ students: [], tutorials: [], tests: [] });
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        const headers = {
-            'Content-Type': 'application/json'
-        };
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        fetch('/api/data', { headers })
+        axios.get('/data')
             .then(res => {
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                return res.json();
+                setData(res.data);
             })
-            .then(setData)
             .catch(err => console.error('Failed to fetch dashboard data:', err));
     }, []);
 

@@ -16,8 +16,8 @@
     --accent-hover: #e66a2a;
     --border-color: #dddddd;
     --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --header-bg: #000000;
-    --header-text: #ffffff;
+    --header-bg: #ffffff;
+    --header-text: #1a1a1a;
   }
 
   [data-theme='dark'] {
@@ -34,7 +34,54 @@
   }
 
   body {
-    @apply bg-primary text-text-primary min-h-[100dvh] transition-colors duration-300;
+    @apply bg-primary text-text-primary min-h-[100dvh] transition-colors duration-300 antialiased;
     font-family: 'Poppins', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Custom Scrollbar for Premium Feel */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-orange-500/20 rounded-full hover:bg-orange-500/40 transition-colors;
+  }
+
+  /* Premium Utilities */
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl;
+  }
+
+  [data-theme='dark'] .glass-card {
+    @apply bg-slate-900/40 backdrop-blur-lg border border-slate-800/40 shadow-2xl;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Smooth Progress Bar Animation */
+  @keyframes progress-grow {
+    from { width: 0; }
+  }
+
+  .animate-progress {
+    animation: progress-grow 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

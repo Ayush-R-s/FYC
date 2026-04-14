@@ -16,7 +16,7 @@ const AuthLayout = ({ darkMode, toggleTheme }) => {
             {/* Header */}
             <header className="fixed w-full top-0 z-50 bg-header-bg text-header-text flex justify-between items-center px-8 py-5 shadow-lg backdrop-blur-sm bg-opacity-95 h-24">
                 <div className="flex items-center text-2xl font-bold text-accent cursor-pointer" onClick={() => navigate('/')}>
-                    <img src="/images/fyc-logo.png" alt="FYC Logo" className="h-9 mr-3" />
+                    <img src="/images/fyc.jpeg" alt="FYC Logo" className="h-9 mr-3" />
                     <span>FYC</span>
                     <small className="text-base opacity-80 ml-2 font-normal text-text-secondary dark:text-gray-400">Learning Platform</small>
                 </div>

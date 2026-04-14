@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Video, FileUp, Plus, Search, Download, Edit, Trash2, X, Upload, Clock, Moon, Sun, Trash, Sparkles, LayoutGrid, Target } from 'lucide-react';
+import { FileText, Video, FileUp, Plus, Search, Download, Edit, Trash2, X, Upload, Clock, Moon, Sun, Trash, Sparkles, LayoutGrid, Target, BookOpen } from 'lucide-react';
 import AIQuestionGenerator from './modals/AIQuestionGenerator';
 import UploadNotesModal from './modals/UploadNotesModal';
 import UploadVideoModal from './modals/UploadVideoModal';
 import TestBuilder from './modals/TestBuilder';
 import FileViewerModal from './modals/FileViewerModal';
 import VideoPlayerModal from './modals/VideoPlayerModal';
+import QuestionPool from './modals/QuestionPool';
 import { getAllContent, getAllTests, deleteContent, deleteTest, updateNote, updateVideoApi } from '../../services/contentPortalApi';
 
 const ContentManagement = () => {
@@ -20,8 +21,11 @@ const ContentManagement = () => {
     const [viewingFile, setViewingFile] = useState(null);
     const [playingVideo, setPlayingVideo] = useState(null);
     const [editingTest, setEditingTest] = useState(null);
+    const [showQuestionPool, setShowQuestionPool] = useState(false);
 
     const [notes, setNotes] = useState([]);
+    const [textbooks, setTextbooks] = useState([]);
+    const [pyqs, setPyqs] = useState([]);
     const [videos, setVideos] = useState([]);
     const [tests, setTests] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -42,10 +46,14 @@ const ContentManagement = () => {
             ]);
 
             // Separate content into notes and videos based on type
-            const notesData = contentData.filter(item => item.type === 'NOTES' || item.contentType === 'NOTES');
+            const notesData = contentData.filter(item => item.contentType === 'NOTES');
+            const textbooksData = contentData.filter(item => item.contentType === 'TEXTBOOK');
+            const pyqsData = contentData.filter(item => item.contentType === 'PYQ');
             const videosData = contentData.filter(item => item.type === 'VIDEO' || item.contentType === 'VIDEO');
 
             setNotes(notesData);
+            setTextbooks(textbooksData);
+            setPyqs(pyqsData);
             setVideos(videosData);
             setTests(testsData);
         } catch (err) {
@@ -57,7 +65,13 @@ const ContentManagement = () => {
     };
 
     const getCurrentContent = () => {
-        const allContent = activeTab === 'notes' ? notes : activeTab === 'videos' ? videos : tests;
+        let allContent;
+        if (activeTab === 'notes') allContent = notes;
+        else if (activeTab === 'textbooks') allContent = textbooks;
+        else if (activeTab === 'pyqs') allContent = pyqs;
+        else if (activeTab === 'videos') allContent = videos;
+        else allContent = tests;
+        
         return allContent.filter(item => (item.title || "").toLowerCase().includes(searchQuery.toLowerCase()));
     };
 
@@ -76,9 +90,11 @@ const ContentManagement = () => {
     ];
 
     const tabs = [
-        { id: 'notes', label: 'Notes & Documents', icon: FileText },
+        { id: 'notes', label: 'Notes', icon: FileText },
+        { id: 'textbooks', label: 'Textbooks', icon: BookOpen },
+        { id: 'pyqs', label: 'PYQs', icon: FileUp },
         { id: 'videos', label: 'Tutorial Videos', icon: Video },
-        { id: 'tests', label: 'Tests & Assessments', icon: FileUp },
+        { id: 'tests', label: 'Tests', icon: Target },
     ];
 
     const getTopicColor = (topic) => {
@@ -110,9 +126,18 @@ const ContentManagement = () => {
                     <h1 className={`text-2xl sm:text-3xl font-bold mb-1 sm:mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Content Management</h1>
                     <p className={`text-sm sm:text-base ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Manage Learning Materials, Videos and Tests</p>
                 </div>
-                <button onClick={() => setDarkMode(!darkMode)} className={`p-2 sm:p-3 rounded-lg border flex items-center gap-2 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-                    {darkMode ? <Sun className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-500" /> : <Moon className="w-4 sm:w-5 h-4 sm:h-5 text-gray-600" />}
-                </button>
+                <div className="flex items-center gap-3">
+                    <button 
+                        onClick={() => setShowQuestionPool(true)}
+                        className={`px-4 py-2 sm:py-3 rounded-lg border flex items-center gap-2 font-bold transition-all ${darkMode ? 'bg-orange-950/30 border-orange-500/30 text-orange-500 hover:bg-orange-500/20' : 'bg-orange-50 border-orange-200 text-orange-600 hover:bg-orange-100'}`}
+                    >
+                        <Sparkles className="w-4 h-4 sm:w-5 h-5" />
+                        <span className="text-xs sm:text-sm">Question Bank</span>
+                    </button>
+                    <button onClick={() => setDarkMode(!darkMode)} className={`p-2 sm:p-3 rounded-lg border flex items-center gap-2 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+                        {darkMode ? <Sun className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-500" /> : <Moon className="w-4 sm:w-5 h-4 sm:h-5 text-gray-600" />}
+                    </button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
@@ -162,12 +187,17 @@ const ContentManagement = () => {
                             <input type="text" placeholder="Search content..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full pl-10 pr-4 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm sm:text-base ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`} />
                         </div>
                         <button onClick={() => {
-                            if (activeTab === 'notes') setShowUploadNotes(true);
+                            if (activeTab === 'notes' || activeTab === 'textbooks' || activeTab === 'pyqs') setShowUploadNotes(true);
                             else if (activeTab === 'videos') setShowUploadVideo(true);
                             else setShowTestBuilder(true);
                         }} className="flex items-center justify-center gap-2 px-4 py-2 sm:py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold text-sm sm:text-base whitespace-nowrap">
                             <Plus className="w-4 h-4" />
-                            <span className="hidden sm:inline">{activeTab === 'notes' ? 'Upload Notes' : activeTab === 'videos' ? 'Upload Video' : 'Create Test'}</span>
+                            <span className="hidden sm:inline">
+                                {activeTab === 'notes' ? 'Upload Notes' : 
+                                 activeTab === 'textbooks' ? 'Upload Textbook' : 
+                                 activeTab === 'pyqs' ? 'Upload PYQ' :
+                                 activeTab === 'videos' ? 'Upload Video' : 'Create Test'}
+                            </span>
                             <span className="sm:hidden">Add</span>
                         </button>
                     </div>
@@ -249,7 +279,7 @@ const ContentManagement = () => {
                                         </button>
                                         <button
                                             onClick={async () => {
-                                                if (confirm(`Delete this ${activeTab === 'notes' ? 'note' : activeTab === 'videos' ? 'video' : 'test'}?`)) {
+                                                if (confirm(`Delete this ${activeTab === 'notes' ? 'note' : activeTab === 'textbooks' ? 'textbook' : activeTab === 'pyqs' ? 'PYQ' : activeTab === 'videos' ? 'video' : 'test'}?`)) {
                                                     try {
                                                         if (activeTab === 'tests') {
                                                             await deleteTest(item.id);
@@ -257,6 +287,8 @@ const ContentManagement = () => {
                                                         } else {
                                                             await deleteContent(item.id);
                                                             if (activeTab === 'notes') setNotes(notes.filter(n => n.id !== item.id));
+                                                            else if (activeTab === 'textbooks') setTextbooks(textbooks.filter(n => n.id !== item.id));
+                                                            else if (activeTab === 'pyqs') setPyqs(pyqs.filter(n => n.id !== item.id));
                                                             else setVideos(videos.filter(v => v.id !== item.id));
                                                         }
                                                     } catch (err) {
@@ -299,7 +331,9 @@ const ContentManagement = () => {
                     onClose={() => setShowUploadNotes(false)}
                     darkMode={darkMode}
                     onUpload={(note) => {
-                        setNotes([...notes, note]);
+                        if (note.contentType === 'TEXTBOOK') setTextbooks([...textbooks, note]);
+                        else if (note.contentType === 'PYQ') setPyqs([...pyqs, note]);
+                        else setNotes([...notes, note]);
                         setShowUploadNotes(false);
                     }}
                 />
@@ -409,11 +443,14 @@ const ContentManagement = () => {
                                         editingNote.subject,
                                         editingNote.topic,
                                         editingNote.pages,
-                                        editingNote.content || ''
+                                        editingNote.content || '',
+                                        editingNote.contentType
                                     );
-                                    setNotes(notes.map(n => n.id === editingNote.id ? updated : n));
+                                    if (updated.contentType === 'TEXTBOOK') setTextbooks(textbooks.map(n => n.id === editingNote.id ? updated : n));
+                                    else if (updated.contentType === 'PYQ') setPyqs(pyqs.map(n => n.id === editingNote.id ? updated : n));
+                                    else setNotes(notes.map(n => n.id === editingNote.id ? updated : n));
                                     setEditingNote(null);
-                                    alert('Notes updated successfully!');
+                                    alert('Content updated successfully!');
                                 } catch (error) {
                                     console.error('Update failed:', error);
                                     alert('Failed to update notes.');
@@ -520,6 +557,12 @@ const ContentManagement = () => {
                         </div>
                     </div>
                 </div>
+            )}
+            {showQuestionPool && (
+                <QuestionPool 
+                    onClose={() => setShowQuestionPool(false)}
+                    darkMode={darkMode}
+                />
             )}
         </div>
     );

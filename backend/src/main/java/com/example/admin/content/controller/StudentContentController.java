@@ -94,6 +94,16 @@ public class StudentContentController {
         return contentService.getAllVideos();
     }
 
+    @GetMapping("/notes")
+    public List<com.example.admin.content.model.Note> getNotes() {
+        return contentService.getAllNotes();
+    }
+
+    @GetMapping("/materials/{type}")
+    public List<com.example.admin.content.model.Note> getMaterialsByType(@PathVariable String type) {
+        return contentService.getNotesByType(type.toUpperCase());
+    }
+
     @GetMapping("/tests")
     public List<Test> getTests() {
         return testService.getAll();

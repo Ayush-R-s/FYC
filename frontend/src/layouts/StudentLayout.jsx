@@ -18,7 +18,22 @@ export default function StudentLayout() {
     setNotificationsEnabled
   } = useAppContext();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Responsive sidebar default
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(true)
+      } else {
+        setSidebarOpen(false)
+      }
+    }
+
+    handleResize() // Initial check
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const [showLanguageMenu, setShowLanguageMenu] = useState(false)
   const [showProfileModal, setShowProfileModal] = useState(false)

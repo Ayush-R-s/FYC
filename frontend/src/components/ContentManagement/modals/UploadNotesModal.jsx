@@ -8,6 +8,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload }) => {
     const [topic, setTopic] = useState('');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
+    const [contentType, setContentType] = useState('NOTES');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -32,11 +33,11 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload }) => {
         try {
             const description = `${subject}${topic ? ' - ' + topic : ''}`;
             // Pages is now null as it is automated in the backend
-            const uploadedNote = await uploadNotes(file, title, subject, topic, null, description);
+            const uploadedNote = await uploadNotes(file, title, subject, topic, null, description, contentType);
             onUpload(uploadedNote);
             onClose();
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to upload notes. Please try again.');
+            setError(err.response?.data?.message || 'Failed to upload content. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -55,9 +56,19 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload }) => {
                             {error}
                         </div>
                     )}
-                    <div>
-                        <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Topic Name *</label>
-                        <input type="text" placeholder="Enter topic name" value={title} onChange={(e) => setTitle(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Content Type *</label>
+                            <select value={contentType} onChange={(e) => setContentType(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                <option value="NOTES">Note</option>
+                                <option value="TEXTBOOK">Textbook</option>
+                                <option value="PYQ">PYQ</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Title / Topic Name *</label>
+                            <input type="text" placeholder="Enter title" value={title} onChange={(e) => setTitle(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
+                        </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>

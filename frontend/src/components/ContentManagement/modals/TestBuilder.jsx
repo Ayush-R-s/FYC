@@ -9,6 +9,9 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
     const [topic, setTopicName] = useState(editingTestData?.topic || '');
     const [testCategory, setTestCategory] = useState(editingTestData?.category || 'MOCK');
     const [totalTime, setTotalTime] = useState(editingTestData?.duration ? parseInt(editingTestData.duration) : 60);
+    const [isRandomMode, setIsRandomMode] = useState(false);
+    const [randomSubject, setRandomSubject] = useState('mixed');
+    const [questionCount, setQuestionCount] = useState(10);
     const [marksPerQuestion, setMarksPerQuestionState] = useState(4);
     const [questions, setQuestions] = useState(() => {
         const initialQuestions = editingTestData?.questions || editingTestData?.questions_data || [{ id: 1, text: '', answers: ['', '', '', ''], correctAnswers: [], points: 4, subject: editingTestData?.subject || 'physics', topic: editingTestData?.topic || '' }];
@@ -119,7 +122,10 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
                 category: testCategory,
                 duration: `${totalTime} min`,
                 marksPerQuestion: marksPerQuestion,
-                questions: questions,
+                questions: isRandomMode ? null : questions,
+                isRandom: isRandomMode,
+                questionCount: isRandomMode ? questionCount : null,
+                randomSubject: isRandomMode ? randomSubject : null,
                 videoIds: selectedVideoIds
             };
 
@@ -155,7 +161,7 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
     };
 
 
-    const totalPoints = questions.length * marksPerQuestion;
+    const totalPoints = (isRandomMode ? questionCount : questions.length) * marksPerQuestion;
 
     return (
         <div className={`fixed inset-0 z-[100] flex flex-col ${darkMode ? 'bg-gray-950 text-white' : 'bg-gray-50 text-gray-900'}`}>
@@ -201,6 +207,24 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
                 <div className={`w-full lg:w-80 border-b lg:border-b-0 lg:border-r flex flex-col flex-none ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
                     <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 max-h-[40vh] lg:max-h-full">
                         <section>
+                            <h3 className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-4 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Build Mode</h3>
+                            <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl gap-1">
+                                <button 
+                                    onClick={() => setIsRandomMode(false)}
+                                    className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all ${!isRandomMode ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                                >
+                                    Manual
+                                </button>
+                                <button 
+                                    onClick={() => setIsRandomMode(true)}
+                                    className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all ${isRandomMode ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                                >
+                                    Random Pool
+                                </button>
+                            </div>
+                        </section>
+
+                        <section>
                             <h3 className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-4 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Test Configuration</h3>
                             <div className="space-y-4">
                                 <div>
@@ -245,6 +269,30 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
                                         className={`w-full px-3 py-2 border rounded-lg text-sm cursor-not-allowed opacity-75 ${darkMode ? 'border-gray-700 bg-gray-800 text-gray-400' : 'border-gray-300 bg-gray-200'}`}
                                     />
                                 </div>
+                                {isRandomMode && (
+                                    <>
+                                        <div>
+                                            <label className={`block text-[11px] sm:text-xs font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Random Pool Subject</label>
+                                            <select value={randomSubject} onChange={(e) => setRandomSubject(e.target.value)} className={`w-full px-3 py-2 border rounded-lg text-sm transition-all focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-gray-50'}`}>
+                                                <option value="mixed">Mixed Subjects</option>
+                                                <option value="physics">Physics</option>
+                                                <option value="chemistry">Chemistry</option>
+                                                <option value="biology">Biology</option>
+                                                <option value="botany">Botany</option>
+                                                <option value="zoology">Zoology</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className={`block text-[11px] sm:text-xs font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Number of Questions</label>
+                                            <input
+                                                type="number"
+                                                value={questionCount}
+                                                onChange={(e) => setQuestionCount(parseInt(e.target.value) || 0)}
+                                                className={`w-full px-3 py-2 border rounded-lg text-sm transition-all focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-gray-50'}`}
+                                            />
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </section>
 
@@ -341,7 +389,11 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
                     </div>
 
                     <div className={`p-4 sm:p-6 border-t ${darkMode ? 'border-gray-800' : 'border-gray-100'}`}>
-                        <button onClick={addQuestion} className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-sm sm:text-base font-bold shadow-lg shadow-orange-500/20 transition-all group active:scale-95">
+                        <button 
+                            onClick={addQuestion} 
+                            disabled={isRandomMode}
+                            className={`w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-sm sm:text-base font-bold shadow-lg shadow-orange-500/20 transition-all group active:scale-95 disabled:opacity-50 disabled:grayscale`}
+                        >
                             <Plus className="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-90 transition-transform" />
                             Add New Question
                         </button>
@@ -351,7 +403,27 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
                 {/* Main Content - Questions List */}
                 <div className={`flex-1 overflow-y-auto p-4 sm:p-8 relative ${darkMode ? 'bg-gray-950' : 'bg-gray-50'}`}>
                     <div className="max-w-4xl mx-auto space-y-4 sm:y-8 pb-12">
-                        {questions.length === 0 ? (
+                        {isRandomMode ? (
+                            <div className={`text-center py-24 border-2 border-dashed rounded-[40px] flex flex-col items-center justify-center space-y-6 ${darkMode ? 'border-gray-800 bg-gray-900/40 text-gray-500' : 'border-orange-100 bg-orange-50/20 text-orange-300'}`}>
+                                <Sparkles className="w-20 h-20 opacity-20 animate-pulse text-orange-500" />
+                                <div>
+                                    <p className="text-2xl font-black italic tracking-tight text-orange-500">Auto-Generation Mode</p>
+                                    <p className="max-w-md mx-auto text-sm font-medium mt-2 leading-relaxed">
+                                        Questions will be randomly picked from the <span className="text-orange-600 dark:text-orange-400 font-bold underline decoration-wavy">Question Bank</span> when this test is published.
+                                    </p>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="bg-orange-500/10 px-6 py-3 rounded-2xl border border-orange-500/20">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-orange-500 opacity-60">Subject</p>
+                                        <p className="text-lg font-bold text-orange-600 dark:text-orange-400 capitalize">{randomSubject}</p>
+                                    </div>
+                                    <div className="bg-orange-500/10 px-6 py-3 rounded-2xl border border-orange-500/20">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-orange-500 opacity-60">Count</p>
+                                        <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{questionCount}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : questions.length === 0 ? (
                             <div className={`text-center py-20 border-2 border-dashed rounded-3xl ${darkMode ? 'border-gray-800 text-gray-700' : 'border-orange-200 text-orange-300'}`}>
                                 <CheckSquare className="w-16 h-16 mx-auto mb-4 opacity-20" />
                                 <p className="text-lg font-medium">No questions added yet.</p>

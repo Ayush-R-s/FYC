@@ -50,17 +50,26 @@ public class ContentService {
         return allContent;
     }
 
+    public List<Note> getAllNotes() {
+        return repository.findAll();
+    }
+
+    public List<Note> getNotesByType(String contentType) {
+        return repository.findByContentType(contentType);
+    }
+
     public List<Video> getAllVideos() {
         return videoRepository.findAll();
     }
 
-    public Note uploadNotes(MultipartFile file, String title, String subject, String topic, Integer pages, String description) {
+    public Note uploadNotes(MultipartFile file, String title, String subject, String topic, Integer pages, String description, String contentType) {
         String path = storageService.save(file, "notes/");
 
         Note note = new Note();
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
+        note.setContentType(contentType != null ? contentType : "NOTES");
         
         // Automate page count if not provided or to ensure accuracy
         if (pages == null || pages <= 0) {
@@ -77,7 +86,7 @@ public class ContentService {
         
         // Create notification
         Notification notification = new Notification(
-            "New " + subject + " note: " + title,
+            "New " + subject + " " + note.getContentType().toLowerCase() + ": " + title,
             null // global notification
         );
         notificationRepository.save(notification);
@@ -135,12 +144,15 @@ public class ContentService {
     }
 
     public Note updateNotes(Long id, MultipartFile file, String title, String subject, String topic,
-            Integer pages, String description) {
+            Integer pages, String description, String contentType) {
         Note note = repository.findById(id).orElseThrow(() -> new RuntimeException("Note not found"));
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
         note.setContent(description);
+        if (contentType != null) {
+            note.setContentType(contentType);
+        }
         if (file != null && !file.isEmpty()) {
             String path = storageService.save(file, "notes/");
             note.setFileName(file.getOriginalFilename());

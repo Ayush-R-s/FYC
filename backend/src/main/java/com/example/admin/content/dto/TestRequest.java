@@ -6,7 +6,6 @@ import com.example.admin.content.model.Question;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 
 public class TestRequest {
 
@@ -20,9 +19,36 @@ public class TestRequest {
     private Integer marksPerQuestion;
     private List<Long> videoIds;
 
-    @NotEmpty(message = "Questions list cannot be empty")
+    private Boolean isRandom;
+    private Integer questionCount;
+    private String randomSubject;
+
     @Valid
     private List<Question> questions;
+
+    public Boolean getIsRandom() {
+        return isRandom != null && isRandom;
+    }
+
+    public void setIsRandom(Boolean isRandom) {
+        this.isRandom = isRandom;
+    }
+
+    public Integer getQuestionCount() {
+        return questionCount;
+    }
+
+    public void setQuestionCount(Integer questionCount) {
+        this.questionCount = questionCount;
+    }
+
+    public String getRandomSubject() {
+        return randomSubject;
+    }
+
+    public void setRandomSubject(String randomSubject) {
+        this.randomSubject = randomSubject;
+    }
 
     public String getTitle() {
         return title;

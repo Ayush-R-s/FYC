@@ -35,6 +35,7 @@ const ProgressPage = lazy(() => import("./pages/student/ProgressPage"))
 const StreaksPage = lazy(() => import("./pages/student/StreaksPage"))
 const BadgesPage = lazy(() => import("./pages/student/BadgesPage"))
 const LeaderboardPage = lazy(() => import("./pages/student/LeaderboardPage"))
+const ResourcesPage = lazy(() => import("./pages/student/ResourcesPage"))
 const SchoolReportPage = lazy(() => import("./pages/admin/SchoolReportPage"))
 
 export default function App() {
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="/student/streaks" element={<StreaksPage />} /> {/* New student route */}
           <Route path="/student/badges" element={<BadgesPage />} /> {/* New student route */}
           <Route path="/student/leaderboard" element={<LeaderboardPage />} /> {/* New student route */}
+          <Route path="/student/resources" element={<ResourcesPage />} />
         </Route>
 
         {/* FALLBACK */}

@@ -114,7 +114,7 @@ const Dashboard = ({
       </div>
 
       {/* Triple Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Student Performance Card */}
         <div className={`${cardBg} p-6 rounded-2xl border ${borderColor} shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden group`}>
           <div className={`w-20 h-20 ${darkMode ? "bg-orange-500/10" : "bg-orange-50"} rounded-xl flex items-center justify-center mb-4 relative`}>
@@ -189,7 +189,7 @@ const Dashboard = ({
         </div>
 
         {/* Tutorial Card */}
-        <div className={`${cardBg} p-6 rounded-2xl border ${borderColor} shadow-sm hover:shadow-md transition-all duration-300 relative group`}>
+        <div className={`${cardBg} p-6 rounded-2xl border ${borderColor} shadow-sm hover:shadow-md transition-all duration-300 relative group md:max-lg:col-span-2`}>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <PlayCircle size={18} className="text-orange-500" />

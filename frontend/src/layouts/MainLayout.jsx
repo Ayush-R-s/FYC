@@ -23,7 +23,7 @@ const MainLayout = ({ darkMode, toggleTheme }) => {
             {/* Header */}
             <header className="fixed w-full top-0 z-50 bg-header-bg text-header-text flex justify-between items-center px-6 sm:px-8 py-5 shadow-lg backdrop-blur-sm bg-opacity-95">
                 <div className="flex items-center text-xl sm:text-2xl font-bold text-accent cursor-pointer" onClick={() => navigate('/')}>
-                    <img src="/images/fyc-logo.png" alt="FYC Logo" className="h-8 sm:h-9 mr-2 sm:mr-3" />
+                    <img src="/images/fyc.jpeg" alt="FYC Logo" className="h-8 sm:h-9 mr-2 sm:mr-3" />
                     <span>FYC</span>
                     <small className="hidden xs:inline-block text-xs sm:base opacity-80 ml-2 font-normal text-text-secondary dark:text-gray-400">NEET Preparation</small>
                 </div>
@@ -52,29 +52,42 @@ const MainLayout = ({ darkMode, toggleTheme }) => {
             {isMenuOpen && (
                 <div className="fixed inset-0 z-40 lg:hidden">
                     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
-                    <nav className="fixed top-0 right-0 bottom-0 w-3/4 max-w-sm bg-header-bg text-header-text p-8 shadow-2xl flex flex-col gap-6 animate-in slide-in-from-right duration-300">
-                        <div className="flex justify-end mb-4">
-                            <button onClick={() => setIsMenuOpen(false)} className="p-2 text-header-text hover:text-accent">
-                                <X size={28} />
+                    <nav className="fixed top-0 right-0 bottom-0 w-[280px] sm:w-[320px] bg-header-bg text-header-text p-0 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+                        {/* Sidebar Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-white">
+                            <div className="flex items-center text-xl font-bold text-accent cursor-pointer" onClick={() => { setIsMenuOpen(false); navigate('/'); }}>
+                                <img src="/images/fyc.jpeg" alt="FYC Logo" className="h-8 mr-2" />
+                                <span>FYC</span>
+                            </div>
+                            <button onClick={() => setIsMenuOpen(false)} className="p-2 text-accent hover:bg-orange-50 rounded-lg transition-colors">
+                                <X size={24} />
                             </button>
                         </div>
-                        {navLinks.map((link) => (
+
+                        {/* Navigation Links */}
+                        <div className="flex flex-col p-6 gap-2 flex-1 overflow-y-auto bg-header-bg">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.name}
+                                    to={link.path}
+                                    className="text-lg font-medium px-4 py-3 rounded-xl hover:bg-accent/5 hover:text-accent transition-all duration-200"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    {link.name}
+                                </Link>
+                            ))}
+                        </div>
+
+                        {/* Bottom Action */}
+                        <div className="p-6 border-t border-gray-100 bg-gray-50/50">
                             <Link
-                                key={link.name}
-                                to={link.path}
-                                className="text-xl font-semibold border-b border-white/10 pb-4 hover:text-accent transition-colors"
+                                to="/admin-login"
+                                className="flex items-center justify-center w-full px-6 py-4 bg-accent text-white rounded-2xl font-bold hover:bg-accent-hover transition-all shadow-lg active:scale-[0.98]"
                                 onClick={() => setIsMenuOpen(false)}
                             >
-                                {link.name}
+                                Admin Login
                             </Link>
-                        ))}
-                        <Link
-                            to="/admin-login"
-                            className="mt-4 px-6 py-3 bg-accent text-white rounded-xl font-bold text-center hover:bg-accent-hover transition-colors shadow-lg"
-                            onClick={() => setIsMenuOpen(false)}
-                        >
-                            Admin Login
-                        </Link>
+                        </div>
                     </nav>
                 </div>
             )}
