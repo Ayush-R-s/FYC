@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -94,14 +95,25 @@ public class ContentService {
         return savedNote;
     }
 
-    public Video uploadVideo(MultipartFile file, String title, String subject, String duration) {
-        String path = storageService.save(file, "videos/");
+    public Map<String, String> generatePresignedVideoUploadUrl(String fileName, String contentType) {
+        return storageService.generatePresignedUploadUrl(fileName, contentType, "videos/");
+    }
+
+    public Video uploadVideo(MultipartFile file, String filePath, String fileName, String title, String subject, String duration) {
+        String path = filePath;
+        String finalFileName = fileName;
+        
+        if (file != null && !file.isEmpty()) {
+            path = storageService.save(file, "videos/");
+            finalFileName = file.getOriginalFilename();
+        }
 
         Video video = new Video();
         video.setTitle(title);
         video.setSubject(subject);
-        video.setFileName(file.getOriginalFilename());
+        video.setFileName(finalFileName);
         video.setFilePath(path);
+
         video.setDuration(duration);
         // createdAt is already set in Video constructor
 
@@ -154,6 +166,12 @@ public class ContentService {
             note.setContentType(contentType);
         }
         if (file != null && !file.isEmpty()) {
+            // Delete old file from S3 before uploading replacement
+            if (note.getFileUrl() != null) {
+                try { storageService.delete(note.getFileUrl()); } catch (Exception e) {
+                    System.err.println("Warning: Failed to delete old note file from S3: " + e.getMessage());
+                }
+            }
             String path = storageService.save(file, "notes/");
             note.setFileName(file.getOriginalFilename());
             note.setFileUrl(path);
@@ -170,6 +188,12 @@ public class ContentService {
         video.setSubject(subject);
         video.setDuration(duration);
         if (file != null && !file.isEmpty()) {
+            // Delete old file from S3 before uploading replacement
+            if (video.getFilePath() != null) {
+                try { storageService.delete(video.getFilePath()); } catch (Exception e) {
+                    System.err.println("Warning: Failed to delete old video file from S3: " + e.getMessage());
+                }
+            }
             String path = storageService.save(file, "videos/");
             video.setFileName(file.getOriginalFilename());
             video.setFilePath(path);

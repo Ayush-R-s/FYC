@@ -2,6 +2,7 @@ package com.example.admin.content.controller;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,13 +50,23 @@ public class ContentController {
         return contentService.uploadNotes(file, title, subject, topic, pages, description, contentType);
     }
 
+    @PostMapping("/video/presigned-url")
+    public Map<String, String> getPresignedVideoUrl(
+            @RequestParam String fileName,
+            @RequestParam String contentType) {
+        return contentService.generatePresignedVideoUploadUrl(fileName, contentType);
+    }
+
     @PostMapping("/video")
     public Video uploadVideo(
-            @RequestParam MultipartFile file,
+            @RequestParam(required = false) MultipartFile file,
+            @RequestParam(required = false) String filePath,
+            @RequestParam(required = false) String fileName,
             @RequestParam String title,
             @RequestParam String subject,
             @RequestParam(required = false) String duration) {
-        return contentService.uploadVideo(file, title, subject, duration);
+        System.out.println("DEBUG: Video upload started for: " + title + " (file present: " + (file != null) + ", filePath: " + filePath + ")");
+        return contentService.uploadVideo(file, filePath, fileName, title, subject, duration);
     }
 
     @PutMapping("/notes/{id}")

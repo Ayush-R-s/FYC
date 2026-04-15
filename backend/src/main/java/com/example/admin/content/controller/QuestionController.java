@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/content/questions")
-@CrossOrigin(origins = "*")
 public class QuestionController {
 
     private final QuestionRepository repository;
@@ -55,9 +54,10 @@ public class QuestionController {
         List<Question> extracted = aiService.extractStructuredQuestions(file);
         if (extracted != null) {
             extracted.forEach(q -> {
-                if (subject != null && !subject.isEmpty()) q.setSubject(subject);
-                if (chapter != null && !chapter.isEmpty()) q.setChapter(chapter);
-                if (topic != null && !topic.isEmpty()) q.setTopic(topic);
+                // If the PDF had it, keep it. Otherwise use the modal fallback.
+                if ((q.getSubject() == null || q.getSubject().isEmpty()) && subject != null && !subject.isEmpty()) q.setSubject(subject);
+                if ((q.getChapter() == null || q.getChapter().isEmpty()) && chapter != null && !chapter.isEmpty()) q.setChapter(chapter);
+                if ((q.getTopic() == null || q.getTopic().isEmpty()) && topic != null && !topic.isEmpty()) q.setTopic(topic);
             });
         }
         return extracted;

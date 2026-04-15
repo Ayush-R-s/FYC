@@ -13,18 +13,24 @@ import {
     Clock,
     CheckCircle2,
     Search,
-    History
+    History,
+    Trash2,
+    AlertTriangle
 } from 'lucide-react';
+import { deleteStudent } from "../../services/studentService"
 
 export default function PerformanceDetailsModal({
     student,
     isOpen,
     onClose,
-    studentsData
+    studentsData,
+    onDeleteSuccess
 }) {
     const [detailedStudent, setDetailedStudent] = useState(null);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const activeStudent = detailedStudent ? { ...student, ...detailedStudent } : student;
 
@@ -71,6 +77,21 @@ export default function PerformanceDetailsModal({
     const sortedStudents = [...classStudents].sort((a, b) => (b.passRate || 0) - (a.passRate || 0))
     const rank = sortedStudents.findIndex(s => s.id === activeStudent.id) + 1
     const percentile = Math.round(((classStudents.length - rank) / classStudents.length) * 100) || 0;
+
+    const handleDelete = async () => {
+        setDeleting(true);
+        try {
+            await deleteStudent(activeStudent.id);
+            if (onDeleteSuccess) onDeleteSuccess(activeStudent.id);
+            onClose();
+        } catch (err) {
+            console.error("Failed to delete student", err);
+            alert("Failed to delete student. Please try again.");
+        } finally {
+            setDeleting(false);
+            setShowDeleteConfirm(false);
+        }
+    }
 
     const tabs = [
         { id: 'overview', name: 'Overview', icon: <User className="w-4 h-4" /> },
@@ -584,9 +605,60 @@ export default function PerformanceDetailsModal({
                     )}
                 </div>
 
-                {/* Footer Section - Empty for clean aesthetics */}
-                <div className="px-8 py-3 border-t border-slate-100 bg-white/60 flex justify-end items-center h-[60px]">
+                {/* Footer Section - Action Buttons */}
+                <div className="px-8 py-4 border-t border-slate-100 bg-white/60 flex justify-between items-center h-[70px]">
+                    <button
+                        onClick={() => setShowDeleteConfirm(true)}
+                        className="flex items-center gap-2 px-4 py-2 text-rose-600 hover:bg-rose-50 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        Delete Student
+                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={onClose}
+                            className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
+                        >
+                            Close
+                        </button>
+                    </div>
                 </div>
+
+                {/* DELETE CONFIRMATION OVERLAY */}
+                {showDeleteConfirm && (
+                    <div className="absolute inset-0 z-[70] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-rose-100 animate-in zoom-in-95 duration-200">
+                            <div className="w-16 h-16 rounded-2xl bg-rose-100 flex items-center justify-center mx-auto mb-6">
+                                <AlertTriangle className="w-8 h-8 text-rose-600" />
+                            </div>
+                            <h3 className="text-2xl font-black text-slate-900 text-center mb-2">Delete Student?</h3>
+                            <p className="text-slate-500 text-center mb-8 leading-relaxed">
+                                Are you sure you want to delete <span className="font-bold text-slate-900">{activeStudent.name}</span>? This action is <span className="text-rose-600 font-bold">permanent</span> and will erase all progress and records.
+                            </p>
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={() => setShowDeleteConfirm(false)}
+                                    disabled={deleting}
+                                    className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold transition-all disabled:opacity-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    disabled={deleting}
+                                    className="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-bold shadow-lg shadow-rose-500/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                >
+                                    {deleting ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                            Deleting...
+                                        </>
+                                    ) : "Yes, Delete"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )

@@ -133,6 +133,11 @@ public class AIQuestionService {
                 currentQuestion.setPoints(4);
                 currentOptions = new ArrayList<>();
                 
+                // Inherit extracted metadata
+                if (extractedTopic != null) currentQuestion.setTopic(extractedTopic);
+                if (extractedChapter != null) currentQuestion.setChapter(extractedChapter);
+                if (extractedSubject != null) currentQuestion.setSubject(extractedSubject);
+                
                 String remaining = line.substring(qM.end()).trim();
                 processMixedLine(remaining, currentQuestion, currentOptions, optMarker, ansMarker);
             } else if (currentQuestion != null) {

@@ -22,6 +22,8 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
 /**
  * Service for managing file storage in AWS S3.
@@ -75,8 +77,15 @@ public class FileStorageService {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             
             return fullKey;
-        } catch (IOException | S3Exception e) {
-            throw new RuntimeException("File upload to S3 failed: " + e.getMessage(), e);
+        } catch (IOException e) {
+            System.err.println("IO ERROR during file upload: " + e.getMessage());
+            throw new RuntimeException("File read failed: " + e.getMessage(), e);
+        } catch (S3Exception e) {
+            System.err.println("S3 ERROR: Status=" + e.statusCode() + ", Code=" + e.awsErrorDetails().errorCode() + ", Message=" + e.awsErrorDetails().errorMessage());
+            throw new RuntimeException("S3 Storage failed: " + e.awsErrorDetails().errorMessage(), e);
+        } catch (Exception e) {
+            System.err.println("GENERIC ERROR during upload: " + e.getClass().getName() + " - " + e.getMessage());
+            throw new RuntimeException("Upload failed: " + e.getMessage(), e);
         }
     }
 
@@ -99,6 +108,43 @@ public class FileStorageService {
 
         PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(presignRequest);
         return presignedRequest.url().toString();
+    }
+
+    /**
+     * Generates a temporary presigned URL for secure direct file upload to S3.
+     * 
+     * @param fileName The original file name
+     * @param contentType The MIME type of the file
+     * @param prefix The folder prefix (e.g., "videos/")
+     * @return A map containing the presigned 'url' and the generated S3 'key'.
+     */
+    public Map<String, String> generatePresignedUploadUrl(String fileName, String contentType, String prefix) {
+        String sanitizedName = sanitizeFilename(fileName != null ? fileName : "file");
+        String uniqueName = System.currentTimeMillis() + "_" + sanitizedName;
+        
+        // Ensure prefix ends with / if provided
+        String fullKey = (prefix != null && !prefix.isEmpty()) 
+                ? (prefix.endsWith("/") ? prefix : prefix + "/") + uniqueName 
+                : uniqueName;
+
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fullKey)
+                .contentType(contentType)
+                .build();
+
+        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(60))
+                .putObjectRequest(putObjectRequest)
+                .build();
+
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+        
+        Map<String, String> result = new HashMap<>();
+        result.put("url", presignedRequest.url().toString());
+        result.put("key", fullKey);
+        
+        return result;
     }
 
     /**

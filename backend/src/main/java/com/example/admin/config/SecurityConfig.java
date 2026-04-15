@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/data").permitAll()
                         .requestMatchers("/debug/**").permitAll()
                         .requestMatchers("/api/debug/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e.authenticationEntryPoint(
@@ -79,6 +80,8 @@ public class SecurityConfig {
         config.setAllowedOriginPatterns(List.of(
             "http://www.fycneet.com",
             "https://www.fycneet.com",
+            "http://fycneet.com",
+            "https://fycneet.com",
             "http://fyc-frontend.s3-website.ap-south-1.amazonaws.com",
             "http://localhost:5173",
             "http://localhost:3000",

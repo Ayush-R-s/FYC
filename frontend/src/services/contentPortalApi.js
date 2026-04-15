@@ -97,6 +97,57 @@ export const uploadVideo = async (file, title, subject, duration) => {
     }
 };
 
+export const getPresignedVideoUrl = async (fileName, contentType) => {
+    try {
+        const response = await axios.post('/admin/content/video/presigned-url', null, {
+            params: { fileName, contentType }
+        });
+        return response.data; // { url, key }
+    } catch (error) {
+        console.error('Error getting presigned URL:', error);
+        throw error;
+    }
+};
+
+// Vanilla fetch is often better for simple PUT to S3 to avoid Axios interceptors doing weird things
+export const uploadVideoDirect = async (url, file) => {
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            body: file,
+            headers: {
+                'Content-Type': file.type
+            }
+        });
+        if (!response.ok) {
+           throw new Error(`S3 upload failed: ${response.statusText}`);
+        }
+        return true;
+    } catch (error) {
+        console.error('Error uploading video directly to S3:', error);
+        throw error;
+    }
+};
+
+export const uploadVideoMetadata = async (filePath, fileName, title, subject, duration) => {
+    const formData = new FormData();
+    formData.append('filePath', filePath);
+    formData.append('fileName', fileName);
+    formData.append('title', title);
+    formData.append('subject', subject);
+    if (duration) formData.append('duration', duration);
+
+    try {
+        const response = await axios.post('/admin/content/video', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error saving video metadata:', error);
+        throw error;
+    }
+};
+
 export const updateVideoApi = async (id, file, title, subject, duration) => {
     const formData = new FormData();
     if (file) formData.append('file', file);

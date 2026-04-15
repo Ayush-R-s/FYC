@@ -185,6 +185,7 @@ export default function StudentDetails() {
         student={selectedStudent}
         studentsData={students}
         onClose={() => setShowPerformance(false)}
+        onDeleteSuccess={fetchStudents}
       />
 
       {/* ADD STUDENT MODAL */}
