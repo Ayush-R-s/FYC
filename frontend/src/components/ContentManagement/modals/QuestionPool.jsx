@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, Trash, Save, Search, Filter, ArrowLeft, CheckSquare, Square, Upload, Sparkles } from 'lucide-react';
-import { getAllPoolQuestions, addQuestionToPool, updateQuestionInPool, deleteQuestionFromPool, importQuestionsFromPDF } from '../../../services/contentPortalApi';
+import { getAllPoolQuestions, addQuestionToPool, updateQuestionInPool, deleteQuestionFromPool, importQuestionsFromPDF, bulkAddQuestionsToPool } from '../../../services/contentPortalApi';
 
 const QuestionPool = ({ onClose, darkMode }) => {
     const [questions, setQuestions] = useState([]);
