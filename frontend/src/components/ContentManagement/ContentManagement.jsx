@@ -397,7 +397,7 @@ const ContentManagement = () => {
                             </div>
                         ))}
                     </div>
-                    )
+                )}
                 </div>
             </div>
 
