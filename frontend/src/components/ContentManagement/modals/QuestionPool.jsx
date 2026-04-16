@@ -177,7 +177,7 @@ const QuestionPool = ({ onClose, darkMode }) => {
                                     setIsSaving(false);
                                 }
                             }}
-                            className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold shadow-lg shadow-purple-500/20 flex items-center gap-2"
+                            className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-bold shadow-lg shadow-orange-500/20 flex items-center gap-2"
                         >
                             <Save size={18} /> Finish & Add to Bank
                         </button>
@@ -191,20 +191,20 @@ const QuestionPool = ({ onClose, darkMode }) => {
                     <div className="max-w-5xl mx-auto space-y-6">
                         <div className="flex items-center justify-between mb-4">
                             <div>
-                                <h3 className="text-2xl font-black italic tracking-tight text-purple-600 dark:text-purple-400">Review Extraction</h3>
+                                <h3 className="text-2xl font-black italic tracking-tight text-orange-600 dark:text-orange-400">Review Extraction</h3>
                                 <p className="text-sm font-medium opacity-60">Please verify and edit the extracted questions below before adding them to the bank.</p>
                             </div>
-                            <div className="bg-purple-600 text-white px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-lg shadow-purple-500/30">
+                            <div className="bg-orange-600 text-white px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-500/30">
                                 {reviewQuestions.length} Questions Found
                             </div>
                         </div>
                         
                         {reviewQuestions.map((q, qIdx) => (
-                            <div key={qIdx} className={`rounded-[30px] p-8 border-2 transition-all ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-purple-100 shadow-xl shadow-purple-500/5'}`}>
+                            <div key={qIdx} className={`rounded-[30px] p-8 border-2 transition-all ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-orange-100 shadow-xl shadow-orange-500/5'}`}>
                                 <div className="space-y-6">
                                     <div className="flex justify-between items-start gap-4">
                                         <div className="flex-1">
-                                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-purple-500/60">Question Text</label>
+                                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-orange-500/60">Question Text</label>
                                             <textarea 
                                                 value={q.text}
                                                 onChange={(e) => {
@@ -212,7 +212,7 @@ const QuestionPool = ({ onClose, darkMode }) => {
                                                     newReview[qIdx].text = e.target.value;
                                                     setReviewQuestions(newReview);
                                                 }}
-                                                className={`w-full p-4 rounded-2xl border-2 transition-all outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 resize-none ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-100'}`}
+                                                className={`w-full p-4 rounded-2xl border-2 transition-all outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 resize-none ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-100'}`}
                                                 rows={3}
                                             />
                                         </div>
@@ -226,14 +226,14 @@ const QuestionPool = ({ onClose, darkMode }) => {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {q.answers.map((ans, aIdx) => (
-                                            <div key={aIdx} className={`group flex items-center gap-3 p-3 rounded-2xl border-2 transition-all ${q.correctAnswers.includes(aIdx) ? 'border-purple-500 bg-purple-500/5' : (darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-100')}`}>
+                                            <div key={aIdx} className={`group flex items-center gap-3 p-3 rounded-2xl border-2 transition-all ${q.correctAnswers.includes(aIdx) ? 'border-orange-500 bg-orange-500/5' : (darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-100')}`}>
                                                 <button 
                                                     onClick={() => {
                                                         const newReview = [...reviewQuestions];
                                                         newReview[qIdx].correctAnswers = [aIdx]; // Single choice for extraction usually
                                                         setReviewQuestions(newReview);
                                                     }}
-                                                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all ${q.correctAnswers.includes(aIdx) ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-400'}`}
+                                                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all ${q.correctAnswers.includes(aIdx) ? 'bg-orange-600 text-white' : 'bg-gray-200 text-gray-400'}`}
                                                 >
                                                     {String.fromCharCode(65 + aIdx)}
                                                 </button>
