@@ -82,11 +82,12 @@ jobs:
             
             if [ -n "$PID" ]; then
                 echo "Stopping existing process(es): $PID"
-                kill $PID || kill -9 $PID
+                kill $PID 2>/dev/null || kill -9 $PID 2>/dev/null || true
                 sleep 5
             else
                 echo "No existing process found."
             fi
+
 
             # 6. Start new app
             echo "Starting new instance..."
