@@ -59,7 +59,8 @@ const QuestionPool = ({ onClose, darkMode }) => {
             setEditingQuestion(null);
         } catch (error) {
             console.error('Error saving question:', error);
-            alert('Failed to save question.');
+            const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+            alert(`Failed to save question: ${errorMsg}`);
         } finally {
             setIsSaving(false);
         }
@@ -170,7 +171,8 @@ const QuestionPool = ({ onClose, darkMode }) => {
                                     setReviewQuestions([]);
                                     fetchQuestions();
                                 } catch (err) {
-                                    alert('Failed to bulk save questions.');
+                                    const errorMsg = err.response?.data?.message || err.message || 'Unknown error';
+                                    alert(`Failed to bulk save questions: ${errorMsg}`);
                                 } finally {
                                     setIsSaving(false);
                                 }
