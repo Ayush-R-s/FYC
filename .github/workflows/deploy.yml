@@ -76,13 +76,21 @@ jobs:
             ./mvnw clean package -DskipTests
 
             # 5. Stop existing app
-            echo "Stopping existing instance (if any)..."
-            # The [j] in [j]ar prevents pkill from matching its own command string
-            pkill -f 'admin-0.0.1-SNAPSHOT.[j]ar' || echo "No existing process to stop."
-            sleep 3
+            echo "Searching for existing process..."
+            # Find PID of the running jar, excluding this script's own PID ($$)
+            PID=$(pgrep -f "admin-0.0.1-SNAPSHOT.jar" | grep -v $$ || true)
+            
+            if [ -n "$PID" ]; then
+                echo "Stopping existing process(es): $PID"
+                kill $PID || kill -9 $PID
+                sleep 5
+            else
+                echo "No existing process found."
+            fi
 
             # 6. Start new app
             echo "Starting new instance..."
+
 
             export SPRING_DATASOURCE_URL=${{ secrets.DB_URL }}
             export SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
