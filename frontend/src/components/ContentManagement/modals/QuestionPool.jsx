@@ -453,11 +453,11 @@ const QuestionPool = ({ onClose, darkMode }) => {
         {/* Import Modal - Root Level Rendering for high visibility */}
         {isImportModalOpen && (
             <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[500] p-4 animate-in fade-in duration-300">
-                <div className={`${darkMode ? 'bg-gray-900 border border-gray-800 shadow-purple-500/10' : 'bg-white shadow-2xl'} rounded-[40px] w-full max-w-xl overflow-hidden shadow-2xl scale-in-center animate-in zoom-in-95 duration-300`}>
+                <div className={`${darkMode ? 'bg-gray-900 border border-gray-800 shadow-orange-500/10' : 'bg-white shadow-2xl'} rounded-[40px] w-full max-w-xl max-h-[95vh] flex flex-col overflow-hidden shadow-2xl scale-in-center animate-in zoom-in-95 duration-300`}>
                     <div className={`p-8 border-b flex items-center justify-between ${darkMode ? 'border-gray-800' : 'border-gray-50'}`}>
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center">
-                                <Sparkles className="text-purple-500 w-6 h-6" />
+                            <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center">
+                                <Sparkles className="text-orange-500 w-6 h-6" />
                             </div>
                             <div>
                                 <h3 className="text-2xl font-black italic tracking-tight uppercase">Smart Import</h3>
@@ -471,10 +471,10 @@ const QuestionPool = ({ onClose, darkMode }) => {
                             <X size={24} />
                         </button>
                     </div>
-                    <div className="p-10 space-y-8 text-left">
-                        <div className={`p-4 rounded-2xl border-2 border-dashed ${darkMode ? 'bg-purple-500/5 border-purple-500/20' : 'bg-purple-50 border-purple-200 text-purple-600'}`}>
+                    <div className="p-6 sm:p-8 space-y-6 text-left overflow-y-auto flex-1">
+                        <div className={`p-4 rounded-2xl border-2 border-dashed ${darkMode ? 'bg-orange-500/5 border-orange-500/20' : 'bg-orange-50 border-orange-200 text-orange-600'}`}>
                             <p className="text-sm font-bold leading-relaxed text-center">
-                                PDF Extraction Optimized for: <code className="bg-purple-500/10 px-1.5 py-0.5 rounded text-purple-600">Q1.</code>, <code className="bg-purple-500/10 px-1.5 py-0.5 rounded text-purple-600">* (a)</code>, and <code className="bg-purple-500/10 px-1.5 py-0.5 rounded text-purple-600">Answer: (c)</code> formats.
+                                PDF Extraction Optimized for: <code className="bg-orange-500/10 px-1.5 py-0.5 rounded text-orange-600">Q1.</code>, <code className="bg-orange-500/10 px-1.5 py-0.5 rounded text-orange-600">* (a)</code>, and <code className="bg-orange-500/10 px-1.5 py-0.5 rounded text-orange-600">Answer: (c)</code> formats.
                             </p>
                         </div>
                         
@@ -487,7 +487,7 @@ const QuestionPool = ({ onClose, darkMode }) => {
                                     <button
                                         key={sub}
                                         onClick={() => setImportSubject(sub)}
-                                        className={`px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2 ${importSubject === sub ? 'border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-500/20' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-gray-50 border-gray-100 text-gray-400 hover:border-purple-200')}`}
+                                        className={`px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2 ${importSubject === sub ? 'border-orange-600 bg-orange-600 text-white shadow-lg shadow-orange-500/20' : (darkMode ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-gray-50 border-gray-100 text-gray-400 hover:border-orange-200')}`}
                                     >
                                         {sub}
                                     </button>
@@ -520,9 +520,9 @@ const QuestionPool = ({ onClose, darkMode }) => {
 
                         <div className="space-y-3">
                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Document Upload</label>
-                            <label className={`border-4 border-dashed rounded-[30px] p-12 text-center cursor-pointer block transition-all group ${importFile ? 'border-purple-500 bg-purple-500/5' : (darkMode ? 'border-gray-800 hover:border-purple-500' : 'border-gray-100 hover:border-purple-600 hover:bg-purple-50/30')}`}>
-                                <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-all ${importFile ? 'bg-purple-500 text-white shadow-xl shadow-purple-500/30' : 'bg-gray-100 text-gray-400 group-hover:bg-purple-600 group-hover:text-white'}`}>
-                                    <Upload className="w-8 h-8" />
+                            <label className={`border-4 border-dashed rounded-[30px] p-8 text-center cursor-pointer block transition-all group ${importFile ? 'border-orange-500 bg-orange-500/5' : (darkMode ? 'border-gray-800 hover:border-orange-500' : 'border-gray-100 hover:border-orange-600 hover:bg-orange-50/30')}`}>
+                                <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center transition-all ${importFile ? 'bg-orange-500 text-white shadow-xl shadow-orange-500/30' : 'bg-gray-100 text-gray-400 group-hover:bg-orange-600 group-hover:text-white'}`}>
+                                    <Upload className="w-6 h-6" />
                                 </div>
                                 <p className="font-black italic text-lg">{importFile ? importFile.name : 'Drop PDF Here'}</p>
                                 <p className="text-[10px] font-bold opacity-40 mt-1 uppercase tracking-widest">Supports documents up to 10MB</p>
@@ -568,7 +568,7 @@ const QuestionPool = ({ onClose, darkMode }) => {
                                 }
                             }}
                             disabled={!importFile || isImporting}
-                            className={`w-full py-5 rounded-2xl font-black italic uppercase tracking-widest text-lg text-white shadow-2xl transition-all ${!importFile || isImporting ? 'bg-gray-400 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:scale-[1.02] hover:shadow-purple-500/30 active:scale-95'}`}
+                            className={`w-full py-5 rounded-2xl font-black italic uppercase tracking-widest text-lg text-white shadow-2xl transition-all ${!importFile || isImporting ? 'bg-gray-400 cursor-not-allowed opacity-50' : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:scale-[1.02] hover:shadow-orange-500/30 active:scale-95'}`}
                         >
                             {isImporting ? 'Parsing...' : 'Analyze Document'}
                         </button>
