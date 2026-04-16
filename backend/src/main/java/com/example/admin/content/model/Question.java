@@ -10,10 +10,12 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String text;
 
     @ElementCollection
+    @Column(columnDefinition = "TEXT")
     private List<String> answers = new java.util.ArrayList<>();
 
     @ElementCollection
