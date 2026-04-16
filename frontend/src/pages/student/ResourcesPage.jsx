@@ -11,6 +11,7 @@ const ResourcesPage = () => {
     const [selectedSubject, setSelectedSubject] = useState("all");
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedClass, setSelectedClass] = useState('11');
 
     const cardBg = darkMode ? "bg-slate-900/40 backdrop-blur-md" : "bg-white";
     const borderColor = darkMode ? "border-slate-800/60" : "border-orange-200";
@@ -86,6 +87,23 @@ const ResourcesPage = () => {
                 </div>
             </div>
 
+            {activeTab === 'textbooks' && (
+                <div className="flex bg-slate-200/50 dark:bg-slate-800/50 p-1 rounded-xl w-fit">
+                    <button
+                        onClick={() => setSelectedClass("11")}
+                        className={`px-8 py-2 rounded-lg text-sm font-bold transition-all ${selectedClass === "11" ? "bg-white dark:bg-slate-700 text-orange-500 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                    >
+                        Class 11th
+                    </button>
+                    <button
+                        onClick={() => setSelectedClass("12")}
+                        className={`px-8 py-2 rounded-lg text-sm font-bold transition-all ${selectedClass === "12" ? "bg-white dark:bg-slate-700 text-orange-500 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                    >
+                        Class 12th
+                    </button>
+                </div>
+            )}
+
             <div className={`${cardBg} border ${borderColor} rounded-2xl p-4 sm:p-6`}>
                 <div className="flex flex-col sm:flex-row gap-4 mb-6">
                     <div className="relative flex-1">
@@ -116,7 +134,74 @@ const ResourcesPage = () => {
                         <div className="w-10 h-10 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
                         <p className="text-slate-500 font-medium">Loading materials...</p>
                     </div>
-                ) : filteredResources.length > 0 ? (
+                ) : activeTab === "textbooks" ? (
+                    <div className="space-y-12">
+                        {["Physics", "Chemistry", "Biology"].map(subject => {
+                            const subjectResources = filteredResources.filter(res => 
+                                res.subject === subject && (res.classLevel === selectedClass || (!res.classLevel && selectedClass === '11'))
+                            );
+                            
+                            return (
+                                <div key={subject} className="space-y-6">
+                                    <div className="flex items-center gap-4 border-l-4 border-orange-500 pl-4">
+                                        <div className={`p-2 rounded-lg ${darkMode ? "bg-orange-500/10 text-orange-400" : "bg-orange-50 text-orange-600"}`}>
+                                            <BookOpen size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className={`text-xl font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>{subject}</h3>
+                                            <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Class {selectedClass} • {subjectResources.length} Materials</p>
+                                        </div>
+                                    </div>
+                                    
+                                    {subjectResources.length > 0 ? (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            {subjectResources.map(res => (
+                                                <div key={res.id} className={`group relative p-5 rounded-2xl border transition-all hover:shadow-xl ${darkMode ? "bg-slate-800/40 border-slate-700 hover:border-orange-500/30" : "bg-slate-50 border-slate-100 hover:border-orange-200"}`}>
+                                                    <div className="flex items-start justify-between mb-4">
+                                                        <div className={`p-3 rounded-xl ${darkMode ? "bg-slate-700 text-orange-400" : "bg-orange-100 text-orange-600"}`}>
+                                                            <BookOpen size={24} />
+                                                        </div>
+                                                        <button
+                                                            onClick={() => downloadFile(res)}
+                                                            className={`p-2 rounded-lg bg-orange-500 text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-orange-600 shadow-lg shadow-orange-500/20`}
+                                                        >
+                                                            <Download size={18} />
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    <div>
+                                                        <h3 className={`font-bold text-lg mb-1 truncate ${darkMode ? "text-white" : "text-slate-900"}`}>{res.title}</h3>
+                                                        <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+                                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600"}`}>
+                                                                {res.subject}
+                                                            </span>
+                                                            {res.pages && <span>{res.pages} pages</span>}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className="mt-4 pt-4 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between">
+                                                        <span className="text-xs text-slate-400 font-medium">Uploaded on {new Date(res.uploadedAt).toLocaleDateString()}</span>
+                                                        <button 
+                                                            onClick={() => downloadFile(res)}
+                                                            className="flex items-center gap-1 text-orange-500 font-bold text-xs group-hover:gap-2 transition-all"
+                                                        >
+                                                            <span>Download</span>
+                                                            <ChevronRight size={14} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className={`p-10 rounded-2xl border-2 border-dashed text-center ${darkMode ? "border-slate-800 text-slate-600" : "border-slate-100 text-slate-400"}`}>
+                                            <p className="font-bold text-sm italic">No {subject} textbooks found for Class {selectedClass}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filteredResources.map(res => (
                             <div key={res.id} className={`group relative p-5 rounded-2xl border transition-all hover:shadow-xl ${darkMode ? "bg-slate-800/40 border-slate-700 hover:border-orange-500/30" : "bg-slate-50 border-slate-100 hover:border-orange-200"}`}>
@@ -139,6 +224,7 @@ const ResourcesPage = () => {
                                             {res.subject}
                                         </span>
                                         {res.pages && <span>{res.pages} pages</span>}
+                                        {res.classLevel && <span className="text-[10px] font-black opacity-40 uppercase tracking-widest leading-none">Class {res.classLevel}</span>}
                                     </div>
                                 </div>
                                 

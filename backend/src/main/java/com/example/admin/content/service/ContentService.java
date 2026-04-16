@@ -63,13 +63,14 @@ public class ContentService {
         return videoRepository.findAll();
     }
 
-    public Note uploadNotes(MultipartFile file, String title, String subject, String topic, Integer pages, String description, String contentType) {
+    public Note uploadNotes(MultipartFile file, String title, String subject, String topic, Integer pages, String description, String contentType, String classLevel) {
         String path = storageService.save(file, "notes/");
 
         Note note = new Note();
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
+        note.setClassLevel(classLevel);
         note.setContentType(contentType != null ? contentType : "NOTES");
         
         // Automate page count if not provided or to ensure accuracy
@@ -156,11 +157,12 @@ public class ContentService {
     }
 
     public Note updateNotes(Long id, MultipartFile file, String title, String subject, String topic,
-            Integer pages, String description, String contentType) {
+            Integer pages, String description, String contentType, String classLevel) {
         Note note = repository.findById(id).orElseThrow(() -> new RuntimeException("Note not found"));
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
+        note.setClassLevel(classLevel);
         note.setContent(description);
         if (contentType != null) {
             note.setContentType(contentType);

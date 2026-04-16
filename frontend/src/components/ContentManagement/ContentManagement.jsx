@@ -30,6 +30,7 @@ const ContentManagement = () => {
     const [tests, setTests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [selectedClass, setSelectedClass] = useState('11'); // For Textbooks folder system
 
     // Fetch data from backend on component mount
     useEffect(() => {
@@ -71,7 +72,7 @@ const ContentManagement = () => {
         else if (activeTab === 'pyqs') allContent = pyqs;
         else if (activeTab === 'videos') allContent = videos;
         else allContent = tests;
-        
+
         return allContent.filter(item => (item.title || "").toLowerCase().includes(searchQuery.toLowerCase()));
     };
 
@@ -127,7 +128,7 @@ const ContentManagement = () => {
                     <p className={`text-sm sm:text-base ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Manage Learning Materials, Videos and Tests</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button 
+                    <button
                         onClick={() => setShowQuestionPool(true)}
                         className={`px-4 py-2 sm:py-3 rounded-lg border flex items-center gap-2 font-bold transition-all ${darkMode ? 'bg-orange-950/30 border-orange-500/30 text-orange-500 hover:bg-orange-500/20' : 'bg-orange-50 border-orange-200 text-orange-600 hover:bg-orange-100'}`}
                     >
@@ -181,11 +182,31 @@ const ContentManagement = () => {
                 </div>
 
                 <div className={`p-4 sm:p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                    <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
-                            <input type="text" placeholder="Search content..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full pl-10 pr-4 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm sm:text-base ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`} />
+                    <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+                        <div className="flex-1 flex flex-col sm:flex-row gap-4">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
+                                <input type="text" placeholder="Search content..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full pl-10 pr-4 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm sm:text-base ${darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300'}`} />
+                            </div>
+
+                            {activeTab === 'textbooks' && (
+                                <div className="flex bg-slate-100 dark:bg-gray-700 p-1 rounded-xl w-fit self-center sm:self-auto">
+                                    <button
+                                        onClick={() => setSelectedClass('11')}
+                                        className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all ${selectedClass === '11' ? 'bg-white dark:bg-gray-600 shadow-sm text-orange-600' : 'text-gray-500'}`}
+                                    >
+                                        11th
+                                    </button>
+                                    <button
+                                        onClick={() => setSelectedClass('12')}
+                                        className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all ${selectedClass === '12' ? 'bg-white dark:bg-gray-600 shadow-sm text-orange-600' : 'text-gray-500'}`}
+                                    >
+                                        12th
+                                    </button>
+                                </div>
+                            )}
                         </div>
+
                         <button onClick={() => {
                             if (activeTab === 'notes' || activeTab === 'textbooks' || activeTab === 'pyqs') setShowUploadNotes(true);
                             else if (activeTab === 'videos') setShowUploadVideo(true);
@@ -193,10 +214,10 @@ const ContentManagement = () => {
                         }} className="flex items-center justify-center gap-2 px-4 py-2 sm:py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold text-sm sm:text-base whitespace-nowrap">
                             <Plus className="w-4 h-4" />
                             <span className="hidden sm:inline">
-                                {activeTab === 'notes' ? 'Upload Notes' : 
-                                 activeTab === 'textbooks' ? 'Upload Textbook' : 
-                                 activeTab === 'pyqs' ? 'Upload PYQ' :
-                                 activeTab === 'videos' ? 'Upload Video' : 'Create Test'}
+                                {activeTab === 'notes' ? 'Upload Notes' :
+                                    activeTab === 'textbooks' ? 'Upload Textbook' :
+                                        activeTab === 'pyqs' ? 'Upload PYQ' :
+                                            activeTab === 'videos' ? 'Upload Video' : 'Create Test'}
                             </span>
                             <span className="sm:hidden">Add</span>
                         </button>
@@ -204,108 +225,167 @@ const ContentManagement = () => {
                 </div>
 
                 <div className="p-4 sm:p-6">
-                    {loading ? (
-                        <div className={`text-center py-12 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            <div className="animate-pulse">Loading...</div>
-                        </div>
-                    ) : error ? (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                            {error}
-                        </div>
-                    ) : getCurrentContent().length === 0 ? (
-                        <div className={`text-center py-12 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            <p>No {activeTab} found. Start by uploading some content!</p>
-                        </div>
-                    ) : (
-                        <div className="space-y-2 sm:space-y-3">
-                            {getCurrentContent().map((item) => (
-                                <div key={item.id} className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-5 rounded-2xl border transition-all group gap-4 ${darkMode ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-800' : 'bg-white border-slate-100 hover:shadow-lg hover:shadow-slate-200/50'}`}>
-                                    <div className="flex items-start sm:items-center gap-4 flex-1 min-w-0 w-full">
-                                        <div className={`w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center ${activeTab === 'notes' ? (darkMode ? 'bg-blue-900/30' : 'bg-blue-50') : activeTab === 'videos' ? (darkMode ? 'bg-purple-900/30' : 'bg-purple-50') : (darkMode ? 'bg-orange-900/30' : 'bg-orange-50')}`}>
-                                            {activeTab === 'notes' && <FileText className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} />}
-                                            {activeTab === 'videos' && <Video className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-500'}`} />}
-                                            {activeTab === 'tests' && <FileUp className={`w-6 h-6 ${darkMode ? 'text-orange-400' : 'text-orange-500'}`} />}
+                    ) : activeTab === 'textbooks' ? (
+                    <div className="space-y-8">
+                        {['Physics', 'Chemistry', 'Biology'].map(subject => {
+                            const subjectTextbooks = getCurrentContent().filter(item =>
+                                item.subject === subject && (item.classLevel === selectedClass || (!item.classLevel && selectedClass === '11'))
+                            );
+
+                            return (
+                                <div key={subject} className="space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${darkMode ? 'bg-orange-950/30 text-orange-500' : 'bg-orange-50 text-orange-600'}`}>
+                                            <BookOpen className="w-5 h-5" />
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center flex-wrap gap-2 mb-1">
-                                                <h3 className={`font-bold text-sm sm:text-lg truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h3>
-                                                {item.topic && (
-                                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${getTopicColor(item.topic)}`}>
-                                                        {item.topic}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="flex items-center gap-x-3 gap-y-1 mt-1 flex-wrap">
-                                                <span className={`text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 ${darkMode ? 'bg-gray-700 text-gray-400' : 'text-slate-500'}`}>
-                                                    {item.subject === 'all' ? 'All Subjects' : item.subject}
-                                                </span>
-                                                {activeTab === 'tests' && item.testType && (
-                                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${darkMode ? 'bg-blue-900/40 text-blue-300 border border-blue-800' : 'bg-blue-50 text-blue-600 border border-blue-100'}`}>
-                                                        {item.testType}
-                                                    </span>
-                                                )}
-                                                <div className="flex items-center gap-3 text-xs text-slate-400">
-                                                    {activeTab === 'notes' && (<span className="flex items-center gap-1"><Download className="w-3" />{item.downloads || 0}</span>)}
-                                                    {activeTab === 'videos' && (<span className="flex items-center gap-1"><Clock className="w-3" />{item.duration}</span>)}
-                                                    {activeTab === 'tests' && (
-                                                        <>
-                                                            <span className="flex items-center gap-1">
-                                                                <LayoutGrid className="w-3 h-3 text-blue-500" />
-                                                                {Array.isArray(item.questions) ? item.questions.length : (item.questions || 0)} Questions
-                                                            </span>
-                                                            <span className="flex items-center gap-1">
-                                                                <Target className="w-3 h-3 text-orange-500" />
-                                                                {item.duration || '0 min'}
-                                                            </span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
+                                        <div>
+                                            <h3 className="font-black uppercase tracking-widest text-sm">{subject}</h3>
+                                            <p className="text-[10px] font-bold opacity-40 uppercase">Class {selectedClass} • {subjectTextbooks.length} Books</p>
                                         </div>
                                     </div>
 
-                                    {/* Actions - Always visible list on mobile, hover on desktop */}
-                                    <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-slate-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 justify-end">
-                                        <button
-                                            onClick={() => {
-                                                if (activeTab === 'notes') setEditingNote(item);
-                                                else if (activeTab === 'videos') setEditingVideo(item);
-                                                else if (activeTab === 'tests') { setEditingTest(item); setShowTestBuilder(true); }
-                                            }}
-                                            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 sm:p-2.5 rounded-xl ${darkMode ? 'bg-gray-800 hover:bg-gray-700 text-blue-400' : 'bg-slate-50 hover:bg-blue-50 text-blue-600'} transition-colors border border-transparent hover:border-blue-100`}
-                                        >
-                                            <Edit className="w-4 h-4" />
-                                            <span className="sm:hidden text-xs font-bold">Edit</span>
-                                        </button>
-                                        <button
-                                            onClick={async () => {
-                                                if (confirm(`Delete this ${activeTab === 'notes' ? 'note' : activeTab === 'textbooks' ? 'textbook' : activeTab === 'pyqs' ? 'PYQ' : activeTab === 'videos' ? 'video' : 'test'}?`)) {
-                                                    try {
-                                                        if (activeTab === 'tests') {
-                                                            await deleteTest(item.id);
-                                                            setTests(tests.filter(t => t.id !== item.id));
-                                                        } else {
-                                                            await deleteContent(item.id);
-                                                            if (activeTab === 'notes') setNotes(notes.filter(n => n.id !== item.id));
-                                                            else if (activeTab === 'textbooks') setTextbooks(textbooks.filter(n => n.id !== item.id));
-                                                            else if (activeTab === 'pyqs') setPyqs(pyqs.filter(n => n.id !== item.id));
-                                                            else setVideos(videos.filter(v => v.id !== item.id));
-                                                        }
-                                                    } catch (err) {
-                                                        alert('Failed to delete item. Please try again.');
-                                                    }
-                                                }
-                                            }}
-                                            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 sm:p-2.5 rounded-xl ${darkMode ? 'bg-red-900/20 hover:bg-red-900/30 text-red-400' : 'bg-red-50 hover:bg-red-100 text-red-600'} transition-colors border border-transparent hover:border-red-200`}
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                            <span className="sm:hidden text-xs font-bold">Delete</span>
-                                        </button>
+                                    {subjectTextbooks.length === 0 ? (
+                                        <div className={`p-8 rounded-2xl border-2 border-dashed text-center text-xs font-bold opacity-40 ${darkMode ? 'border-gray-800' : 'border-gray-100'}`}>
+                                            No textbooks uploaded for {subject} (Class {selectedClass})
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {subjectTextbooks.map((item) => (
+                                                <div key={item.id} className={`flex items-center justify-between p-4 rounded-2xl border transition-all group gap-4 ${darkMode ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-800' : 'bg-white border-slate-100 hover:shadow-lg'}`}>
+                                                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                                                        <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${darkMode ? 'bg-orange-900/30 text-orange-400' : 'bg-orange-50 text-orange-500'}`}>
+                                                            <FileText className="w-5 h-5" />
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <h4 className={`font-bold text-sm truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h4>
+                                                            <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
+                                                                <span>{item.fileName}</span>
+                                                                {item.pages && <span>• {item.pages} Pages</span>}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <button
+                                                            onClick={() => setEditingNote(item)}
+                                                            className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-blue-400' : 'hover:bg-blue-50 text-blue-600'}`}
+                                                        >
+                                                            <Edit className="w-4 h-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={async () => {
+                                                                if (confirm(`Delete this textbook?`)) {
+                                                                    await deleteContent(item.id);
+                                                                    setTextbooks(textbooks.filter(n => n.id !== item.id));
+                                                                }
+                                                            }}
+                                                            className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-red-400' : 'hover:bg-red-50 text-red-600'}`}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                    ) : (
+                    <div className="space-y-2 sm:space-y-3">
+                        {getCurrentContent().map((item) => (
+                            <div key={item.id} className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-5 rounded-2xl border transition-all group gap-4 ${darkMode ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-800' : 'bg-white border-slate-100 hover:shadow-lg hover:shadow-slate-200/50'}`}>
+                                <div className="flex items-start sm:items-center gap-4 flex-1 min-w-0 w-full">
+                                    <div className={`w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center ${activeTab === 'notes' ? (darkMode ? 'bg-blue-900/30' : 'bg-blue-50') : activeTab === 'videos' ? (darkMode ? 'bg-purple-900/30' : 'bg-purple-50') : (darkMode ? 'bg-orange-900/30' : 'bg-orange-50')}`}>
+                                        {activeTab === 'notes' && <FileText className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} />}
+                                        {activeTab === 'videos' && <Video className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-500'}`} />}
+                                        {activeTab === 'tests' && <FileUp className={`w-6 h-6 ${darkMode ? 'text-orange-400' : 'text-orange-500'}`} />}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center flex-wrap gap-2 mb-1">
+                                            <h3 className={`font-bold text-sm sm:text-lg truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h3>
+                                            {item.topic && (
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${getTopicColor(item.topic)}`}>
+                                                    {item.topic}
+                                                </span>
+                                            )}
+                                            {item.classLevel && (
+                                                <span className="text-[10px] px-2 py-0.5 rounded-full font-black bg-gray-100 text-gray-500 uppercase tracking-widest">
+                                                    Class {item.classLevel}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-x-3 gap-y-1 mt-1 flex-wrap">
+                                            <span className={`text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 ${darkMode ? 'bg-gray-700 text-gray-400' : 'text-slate-500'}`}>
+                                                {item.subject === 'all' ? 'All Subjects' : item.subject}
+                                            </span>
+                                            {activeTab === 'tests' && item.testType && (
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${darkMode ? 'bg-blue-900/40 text-blue-300 border border-blue-800' : 'bg-blue-50 text-blue-600 border border-blue-100'}`}>
+                                                    {item.testType}
+                                                </span>
+                                            )}
+                                            <div className="flex items-center gap-3 text-xs text-slate-400">
+                                                {activeTab === 'notes' && (<span className="flex items-center gap-1"><Download className="w-3" />{item.downloads || 0}</span>)}
+                                                {activeTab === 'videos' && (<span className="flex items-center gap-1"><Clock className="w-3" />{item.duration}</span>)}
+                                                {activeTab === 'tests' && (
+                                                    <>
+                                                        <span className="flex items-center gap-1">
+                                                            <LayoutGrid className="w-3 h-3 text-blue-500" />
+                                                            {Array.isArray(item.questions) ? item.questions.length : (item.questions || 0)} Questions
+                                                        </span>
+                                                        <span className="flex items-center gap-1">
+                                                            <Target className="w-3 h-3 text-orange-500" />
+                                                            {item.duration || '0 min'}
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
+
+                                {/* Actions - Always visible list on mobile, hover on desktop */}
+                                <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-slate-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 justify-end">
+                                    <button
+                                        onClick={() => {
+                                            if (activeTab === 'notes') setEditingNote(item);
+                                            else if (activeTab === 'videos') setEditingVideo(item);
+                                            else if (activeTab === 'tests') { setEditingTest(item); setShowTestBuilder(true); }
+                                        }}
+                                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 sm:p-2.5 rounded-xl ${darkMode ? 'bg-gray-800 hover:bg-gray-700 text-blue-400' : 'bg-slate-50 hover:bg-blue-50 text-blue-600'} transition-colors border border-transparent hover:border-blue-100`}
+                                    >
+                                        <Edit className="w-4 h-4" />
+                                        <span className="sm:hidden text-xs font-bold">Edit</span>
+                                    </button>
+                                    <button
+                                        onClick={async () => {
+                                            if (confirm(`Delete this ${activeTab === 'notes' ? 'note' : activeTab === 'textbooks' ? 'textbook' : activeTab === 'pyqs' ? 'PYQ' : activeTab === 'videos' ? 'video' : 'test'}?`)) {
+                                                try {
+                                                    if (activeTab === 'tests') {
+                                                        await deleteTest(item.id);
+                                                        setTests(tests.filter(t => t.id !== item.id));
+                                                    } else {
+                                                        await deleteContent(item.id);
+                                                        if (activeTab === 'notes') setNotes(notes.filter(n => n.id !== item.id));
+                                                        else if (activeTab === 'textbooks') setTextbooks(textbooks.filter(n => n.id !== item.id));
+                                                        else if (activeTab === 'pyqs') setPyqs(pyqs.filter(n => n.id !== item.id));
+                                                        else setVideos(videos.filter(v => v.id !== item.id));
+                                                    }
+                                                } catch (err) {
+                                                    alert('Failed to delete item. Please try again.');
+                                                }
+                                            }
+                                        }}
+                                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 sm:p-2.5 rounded-xl ${darkMode ? 'bg-red-900/20 hover:bg-red-900/30 text-red-400' : 'bg-red-50 hover:bg-red-100 text-red-600'} transition-colors border border-transparent hover:border-red-200`}
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        <span className="sm:hidden text-xs font-bold">Delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    )
                 </div>
             </div>
 
@@ -330,6 +410,7 @@ const ContentManagement = () => {
                 <UploadNotesModal
                     onClose={() => setShowUploadNotes(false)}
                     darkMode={darkMode}
+                    intendedType={activeTab}
                     onUpload={(note) => {
                         if (note.contentType === 'TEXTBOOK') setTextbooks([...textbooks, note]);
                         else if (note.contentType === 'PYQ') setPyqs([...pyqs, note]);
@@ -559,7 +640,7 @@ const ContentManagement = () => {
                 </div>
             )}
             {showQuestionPool && (
-                <QuestionPool 
+                <QuestionPool
                     onClose={() => setShowQuestionPool(false)}
                     darkMode={darkMode}
                 />

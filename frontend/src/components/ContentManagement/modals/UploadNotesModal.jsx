@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { X, Upload } from 'lucide-react';
 import { uploadNotes } from '../../../services/contentPortalApi';
 
-const UploadNotesModal = ({ onClose, darkMode, onUpload }) => {
+const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType }) => {
+    // Map intendedType (from sidebar/tabs) to internal contentType
+    const initialContentType = intendedType === 'textbooks' ? 'TEXTBOOK' : (intendedType === 'pyqs' ? 'PYQ' : 'NOTES');
+
     const [title, setTitle] = useState('');
     const [subject, setSubject] = useState('Physics');
     const [topic, setTopic] = useState('');
+    const [classLevel, setClassLevel] = useState('11');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
-    const [contentType, setContentType] = useState('NOTES');
+    const [contentType, setContentType] = useState(initialContentType);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -33,7 +37,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload }) => {
         try {
             const description = `${subject}${topic ? ' - ' + topic : ''}`;
             // Pages is now null as it is automated in the backend
-            const uploadedNote = await uploadNotes(file, title, subject, topic, null, description, contentType);
+            const uploadedNote = await uploadNotes(file, title, subject, topic, null, description, contentType, classLevel);
             onUpload(uploadedNote);
             onClose();
         } catch (err) {
@@ -47,7 +51,9 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload }) => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className={`${darkMode ? 'bg-gray-900' : 'bg-white'} rounded-2xl shadow-xl w-full max-w-2xl`}>
                 <div className={`p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between`}>
-                    <h2 className={`font-bold text-xl ${darkMode ? 'text-white' : 'text-gray-900'}`}>Upload Notes</h2>
+                    <h2 className={`font-bold text-xl ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        Upload {contentType === 'TEXTBOOK' ? 'Textbook' : (contentType === 'PYQ' ? 'PYQ' : 'Notes')}
+                    </h2>
                     <button onClick={onClose} className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}><X className="w-5 h-5" /></button>
                 </div>
                 <div className="p-6 space-y-4">
@@ -56,35 +62,38 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload }) => {
                             {error}
                         </div>
                     )}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                         <div>
-                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Content Type *</label>
-                            <select value={contentType} onChange={(e) => setContentType(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
-                                <option value="NOTES">Note</option>
-                                <option value="TEXTBOOK">Textbook</option>
-                                <option value="PYQ">PYQ</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Title / Topic Name *</label>
-                            <input type="text" placeholder="Enter title" value={title} onChange={(e) => setTitle(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
+                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Title / {contentType === 'TEXTBOOK' ? 'Book Name' : 'Topic Name'} *</label>
+                            <input type="text" placeholder={contentType === 'TEXTBOOK' ? 'Enter book title' : 'Enter title'} value={title} onChange={(e) => setTitle(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className={`grid ${contentType === 'TEXTBOOK' ? 'grid-cols-2' : 'grid-cols-2'} gap-4`}>
+                        <div>
+                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class *</label>
+                            <select value={classLevel} onChange={(e) => setClassLevel(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                <option value="11">11th</option>
+                                <option value="12">12th</option>
+                                <option value="Both">Both</option>
+                            </select>
+                        </div>
                         <div>
                             <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject *</label>
                             <select value={subject} onChange={(e) => setSubject(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
                                 <option>Physics</option>
                                 <option>Chemistry</option>
                                 <option>Biology</option>
-                                <option>Botany</option>
-                                <option>Zoology</option>
+                                {contentType !== 'TEXTBOOK' && <option>Botany</option>}
+                                {contentType !== 'TEXTBOOK' && <option>Zoology</option>}
                             </select>
                         </div>
-                        <div>
-                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Topic (optional)</label>
-                            <input type="text" placeholder="Enter topic" value={topic} onChange={(e) => setTopic(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
-                        </div>
+                    </div>
+                        {contentType !== 'TEXTBOOK' && (
+                            <div>
+                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Topic (optional)</label>
+                                <input type="text" placeholder="Enter topic" value={topic} onChange={(e) => setTopic(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
+                            </div>
+                        )}
                     </div>
                     <div>
                         <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>File Upload *</label>
