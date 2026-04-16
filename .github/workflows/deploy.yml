@@ -55,20 +55,23 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-              cd ~/app/FYC/backend
-              git pull origin main
+              script: |
+                set +e
 
-              export SPRING_DATASOURCE_URL=${{ secrets.DB_URL }}
-              export SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
-              export SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }}
+                cd ~/app/FYC/backend
+                git pull origin main
 
-              chmod +x mvnw
-              ./mvnw clean package -DskipTests
+                export SPRING_DATASOURCE_URL=${{ secrets.DB_URL }}
+                export SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
+                export SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }}
 
-              ls target
+                chmod +x mvnw
+                ./mvnw clean package -DskipTests
 
-              pkill -f 'admin-0.0.1-SNAPSHOT.jar' || true
-              sleep 2
+                pkill -f 'admin-0.0.1-SNAPSHOT.jar' || true
+                sleep 2
 
-              nohup java -jar target/*.jar > app.log 2>&1 < /dev/null &
-              disown  
+                nohup java -jar target/*.jar > app.log 2>&1 < /dev/null &
+                disown
+
+                exit 0
