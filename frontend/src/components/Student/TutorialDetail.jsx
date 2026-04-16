@@ -13,7 +13,7 @@ const TutorialDetail = ({
   addActivity
 }) => {
   const [statusFilter, setStatusFilter] = React.useState("all")
-  const subjects = ["all", "physics", "chemistry", "zoology", "botany"]
+  const subjects = ["all", "physics", "chemistry"]
 
   const filteredTutorials = (tutorialData || []).filter((item) => {
     const matchesSubject = selectedSubjectFilter === "all" || item.subject?.toLowerCase() === selectedSubjectFilter

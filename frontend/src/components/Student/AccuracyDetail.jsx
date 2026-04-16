@@ -23,7 +23,7 @@ const AccuracyDetail = ({
 }) => {
   const [activeView, setActiveView] = useState("subject")
 
-  const subjects = ["all", "physics", "chemistry", "zoology", "botany"]
+  const subjects = ["all", "physics", "chemistry"]
 
   const getFilteredData = () => {
     if (!accuracySpeedDrilldown) return []
