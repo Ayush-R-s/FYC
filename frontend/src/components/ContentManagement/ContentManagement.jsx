@@ -225,6 +225,18 @@ const ContentManagement = () => {
                 </div>
 
                 <div className="p-4 sm:p-6">
+                    {loading ? (
+                        <div className={`text-center py-12 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <div className="animate-pulse">Loading...</div>
+                        </div>
+                    ) : error ? (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                            {error}
+                        </div>
+                    ) : getCurrentContent().length === 0 ? (
+                        <div className={`text-center py-12 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <p>No {activeTab} found. Start by uploading some content!</p>
+                        </div>
                     ) : activeTab === 'textbooks' ? (
                     <div className="space-y-8">
                         {['Physics', 'Chemistry', 'Biology'].map(subject => {
