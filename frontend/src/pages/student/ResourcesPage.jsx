@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BookOpen, FileUp, Search, Download, FileText, ChevronRight } from "lucide-react";
+import { BookOpen, FileUp, Search, Download, FileText, ChevronRight, ChevronDown } from "lucide-react";
 import { useAppContext } from "../../context/AppContext";
 import { API_BASE_URL } from "../../services/axiosInstance";
 import axios from "../../services/axiosInstance";
@@ -12,6 +12,7 @@ const ResourcesPage = () => {
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedClass, setSelectedClass] = useState('11');
+    const [expandedSubjects, setExpandedSubjects] = useState(['Physics']);
 
     const cardBg = darkMode ? "bg-slate-900/40 backdrop-blur-md" : "bg-white";
     const borderColor = darkMode ? "border-slate-800/60" : "border-orange-200";
@@ -143,15 +144,29 @@ const ResourcesPage = () => {
 
                             return (
                                 <div key={subject} className="space-y-6">
-                                    <div className="flex items-center gap-4 border-l-4 border-orange-500 pl-4">
-                                        <div className={`p-2 rounded-lg ${darkMode ? "bg-orange-500/10 text-orange-400" : "bg-orange-50 text-orange-600"}`}>
-                                            <BookOpen size={20} />
+                                    <div 
+                                        className="flex items-center justify-between cursor-pointer group/header"
+                                        onClick={() => {
+                                            if (expandedSubjects.includes(subject)) setExpandedSubjects(expandedSubjects.filter(s => s !== subject));
+                                            else setExpandedSubjects([...expandedSubjects, subject]);
+                                        }}
+                                    >
+                                        <div className="flex items-center gap-4 border-l-4 border-orange-500 pl-4">
+                                            <div className={`p-2 rounded-lg transition-all ${expandedSubjects.includes(subject) ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" : darkMode ? "bg-orange-500/10 text-orange-400" : "bg-orange-50 text-orange-600"}`}>
+                                                <BookOpen size={20} />
+                                            </div>
+                                            <div>
+                                                <h3 className={`text-xl font-bold transition-colors ${expandedSubjects.includes(subject) ? (darkMode ? "text-orange-400" : "text-orange-600") : (darkMode ? "text-white" : "text-slate-900")}`}>{subject}</h3>
+                                                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Class {selectedClass} • {subjectResources.length} Materials</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className={`text-xl font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>{subject}</h3>
-                                            <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Class {selectedClass} • {subjectResources.length} Materials</p>
+                                        <div className={`transition-transform duration-300 ${expandedSubjects.includes(subject) ? 'rotate-180' : ''}`}>
+                                            <ChevronDown size={20} className={darkMode ? 'text-slate-600' : 'text-slate-300'} />
                                         </div>
                                     </div>
+                                    
+                                    {expandedSubjects.includes(subject) && (
+                                        <div className="animate-in fade-in slide-in-from-top-4 duration-500">
 
                                     {subjectResources.length > 0 ? (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -200,7 +215,6 @@ const ResourcesPage = () => {
                                 </div>
                             );
                         })}
-                    </div>
                     </div>
                 ) : filteredResources.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

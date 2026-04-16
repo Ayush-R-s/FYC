@@ -94,8 +94,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType }) => {
                                 <input type="text" placeholder="Enter topic" value={topic} onChange={(e) => setTopic(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
                             </div>
                         )}
-                    </div>
-                    <div>
+                        <div>
                         <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>File Upload *</label>
                         <label className={`border-2 border-dashed rounded-lg p-8 text-center hover:border-orange-500 cursor-pointer block ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
                             <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />

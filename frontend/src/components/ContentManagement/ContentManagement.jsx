@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Video, FileUp, Plus, Search, Download, Edit, Trash2, X, Upload, Clock, Moon, Sun, Trash, Sparkles, LayoutGrid, Target, BookOpen } from 'lucide-react';
+import { FileText, Video, FileUp, Plus, Search, Download, Edit, Trash2, X, Upload, Clock, Moon, Sun, Trash, Sparkles, LayoutGrid, Target, BookOpen, ChevronDown } from 'lucide-react';
 import AIQuestionGenerator from './modals/AIQuestionGenerator';
 import UploadNotesModal from './modals/UploadNotesModal';
 import UploadVideoModal from './modals/UploadVideoModal';
@@ -31,6 +31,7 @@ const ContentManagement = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [selectedClass, setSelectedClass] = useState('11'); // For Textbooks folder system
+    const [expandedSubjects, setExpandedSubjects] = useState(['Physics']); // Default open folder
 
     // Fetch data from backend on component mount
     useEffect(() => {
@@ -243,67 +244,84 @@ const ContentManagement = () => {
                             const subjectTextbooks = getCurrentContent().filter(item =>
                                 item.subject === subject && (item.classLevel === selectedClass || (!item.classLevel && selectedClass === '11'))
                             );
+                            const isExpanded = expandedSubjects.includes(subject);
 
                             return (
                                 <div key={subject} className="space-y-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${darkMode ? 'bg-orange-950/30 text-orange-500' : 'bg-orange-50 text-orange-600'}`}>
-                                            <BookOpen className="w-5 h-5" />
+                                    <div 
+                                        className="flex items-center justify-between cursor-pointer group/header"
+                                        onClick={() => {
+                                            if (isExpanded) setExpandedSubjects(expandedSubjects.filter(s => s !== subject));
+                                            else setExpandedSubjects([...expandedSubjects, subject]);
+                                        }}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isExpanded ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : (darkMode ? 'bg-orange-950/30 text-orange-500' : 'bg-orange-50 text-orange-600')}`}>
+                                                <BookOpen className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <h3 className={`font-black uppercase tracking-widest text-sm transition-colors ${isExpanded ? (darkMode ? 'text-orange-400' : 'text-orange-600') : (darkMode ? 'text-gray-400' : 'text-slate-500')}`}>{subject}</h3>
+                                                <p className="text-[10px] font-bold opacity-40 uppercase">Class {selectedClass} • {subjectTextbooks.length} Books</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="font-black uppercase tracking-widest text-sm">{subject}</h3>
-                                            <p className="text-[10px] font-bold opacity-40 uppercase">Class {selectedClass} • {subjectTextbooks.length} Books</p>
+                                        <div className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+                                            <ChevronDown className={`w-5 h-5 ${darkMode ? 'text-gray-600' : 'text-slate-300'}`} />
                                         </div>
                                     </div>
-
-                                    {subjectTextbooks.length === 0 ? (
-                                        <div className={`p-8 rounded-2xl border-2 border-dashed text-center text-xs font-bold opacity-40 ${darkMode ? 'border-gray-800' : 'border-gray-100'}`}>
-                                            No textbooks uploaded for {subject} (Class {selectedClass})
-                                        </div>
-                                    ) : (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            {subjectTextbooks.map((item) => (
-                                                <div key={item.id} className={`flex items-center justify-between p-4 rounded-2xl border transition-all group gap-4 ${darkMode ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-800' : 'bg-white border-slate-100 hover:shadow-lg'}`}>
-                                                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                                                        <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${darkMode ? 'bg-orange-900/30 text-orange-400' : 'bg-orange-50 text-orange-500'}`}>
-                                                            <FileText className="w-5 h-5" />
-                                                        </div>
-                                                        <div className="flex-1 min-w-0">
-                                                            <h4 className={`font-bold text-sm truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h4>
-                                                            <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
-                                                                <span>{item.fileName}</span>
-                                                                {item.pages && <span>• {item.pages} Pages</span>}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <button
-                                                            onClick={() => setEditingNote(item)}
-                                                            className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-blue-400' : 'hover:bg-blue-50 text-blue-600'}`}
-                                                        >
-                                                            <Edit className="w-4 h-4" />
-                                                        </button>
-                                                        <button
-                                                            onClick={async () => {
-                                                                if (confirm(`Delete this textbook?`)) {
-                                                                    await deleteContent(item.id);
-                                                                    setTextbooks(textbooks.filter(n => n.id !== item.id));
-                                                                }
-                                                            }}
-                                                            className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-red-400' : 'hover:bg-red-50 text-red-600'}`}
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
-                                                    </div>
+                                    
+                                    {isExpanded && (
+                                        <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                                            {subjectTextbooks.length === 0 ? (
+                                                <div className={`p-8 rounded-2xl border-2 border-dashed text-center text-xs font-bold opacity-40 ${darkMode ? 'border-gray-800' : 'border-gray-100'}`}>
+                                                    No textbooks uploaded for {subject} (Class {selectedClass})
                                                 </div>
-                                            ))}
+                                            ) : (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    {subjectTextbooks.map((item) => (
+                                                        <div key={item.id} className={`flex items-center justify-between p-4 rounded-2xl border transition-all group gap-4 ${darkMode ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-800' : 'bg-white border-slate-100 hover:shadow-lg'}`}>
+                                                            <div className="flex items-center gap-4 flex-1 min-w-0">
+                                                                <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${darkMode ? 'bg-orange-900/30 text-orange-400' : 'bg-orange-50 text-orange-500'}`}>
+                                                                    <FileText className="w-5 h-5" />
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <h4 className={`font-bold text-sm truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h4>
+                                                                    <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
+                                                                        <span>{item.fileName}</span>
+                                                                        {item.pages && <span>• {item.pages} Pages</span>}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <button 
+                                                                    onClick={(e) => { e.stopPropagation(); setEditingNote(item); }}
+                                                                    className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-blue-400' : 'hover:bg-blue-50 text-blue-600'}`}
+                                                                >
+                                                                    <Edit className="w-4 h-4" />
+                                                                </button>
+                                                                <button 
+                                                                    onClick={async (e) => {
+                                                                        e.stopPropagation();
+                                                                        if (confirm(`Delete this textbook?`)) {
+                                                                            await deleteContent(item.id);
+                                                                            setTextbooks(textbooks.filter(n => n.id !== item.id));
+                                                                        }
+                                                                    }}
+                                                                    className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-red-400' : 'hover:bg-red-50 text-red-600'}`}
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
                             );
                         })}
                     </div>
-                    ) : (
+                ) : (
                     <div className="space-y-2 sm:space-y-3">
                         {getCurrentContent().map((item) => (
                             <div key={item.id} className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-5 rounded-2xl border transition-all group gap-4 ${darkMode ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-800' : 'bg-white border-slate-100 hover:shadow-lg hover:shadow-slate-200/50'}`}>
