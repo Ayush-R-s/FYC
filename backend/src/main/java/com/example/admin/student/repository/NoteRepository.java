@@ -9,5 +9,6 @@ import com.example.admin.content.model.Note;
 
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
+    List<Note> findByContentType(String contentType);
     List<Note> findTop5ByOrderByUploadedAtDesc();
 }
