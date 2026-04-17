@@ -28,9 +28,6 @@ public class Note {
 
     private String subject;
     private String topic;
-    
-    @Column(name = "class_level")
-    @JsonProperty("classLevel")
     private String classLevel;
     private String year;
     private Integer pages;
@@ -98,6 +95,8 @@ public class Note {
         this.topic = topic;
     }
 
+    @Column(name = "class_level", nullable = false)
+    @JsonProperty("classLevel")
     public String getClassLevel() {
         return classLevel;
     }

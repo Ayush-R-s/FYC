@@ -294,7 +294,7 @@ const ContentManagement = () => {
                                                                                 ? (darkMode ? 'bg-gray-700 text-gray-400 border-gray-600' : 'bg-gray-100 text-gray-500 border-gray-200')
                                                                                 : (darkMode ? 'bg-red-900/40 text-red-300 border-red-800' : 'bg-red-50 text-red-500 border-red-100')
                                                                             }`}>
-                                                                                {item.classLevel ? `Class ${item.classLevel}` : 'CLASS MISSING'}
+                                                                                {item.classLevel ? `Class ${item.classLevel}` : (item.classLevel === null ? 'CLASS: NULL' : 'CLASS: UNDEF')}
                                                                             </span>
                                                                         </div>
                                                                         <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
@@ -368,7 +368,7 @@ const ContentManagement = () => {
                                                 ? 'bg-gray-100 text-gray-500' 
                                                 : 'bg-red-50 text-red-500 border-red-100'
                                             }`}>
-                                                {item.classLevel ? `Class ${item.classLevel}` : 'CLASS MISSING'}
+                                                {item.classLevel ? `Class ${item.classLevel}` : (item.classLevel === null ? 'CLASS: NULL' : 'CLASS: UNDEF')}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-x-3 gap-y-1 mt-1 flex-wrap">

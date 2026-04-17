@@ -89,6 +89,7 @@ public class ContentService {
         note.setUploadedAt(LocalDateTime.now());
 
         Note savedNote = repository.save(note);
+        System.out.println("DEBUG: [upload] AFTER SAVE - ID: " + savedNote.getId() + ", classLevel in entity: [" + savedNote.getClassLevel() + "]");
         
         // Create notification
         Notification notification = new Notification(
@@ -189,7 +190,9 @@ public class ContentService {
         } else if (pages != null) {
             note.setPages(pages);
         }
-        return repository.save(note);
+        Note savedNote = repository.save(note);
+        System.out.println("DEBUG: [update] AFTER SAVE - ID: " + savedNote.getId() + ", classLevel in entity: [" + savedNote.getClassLevel() + "]");
+        return savedNote;
     }
 
     public Video updateVideo(Long id, MultipartFile file, String title, String subject, String duration) {
