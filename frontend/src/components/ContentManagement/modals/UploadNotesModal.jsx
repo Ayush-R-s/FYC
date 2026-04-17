@@ -35,10 +35,11 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCl
         setLoading(true);
         setError('');
 
+        console.log(`DEBUG: Handing upload for ${contentType}. initialClass was ${initialClass}, current classLevel is ${classLevel}`);
         try {
             const finalSubject = contentType === 'PYQ' ? 'PYQ' : subject;
             const description = contentType === 'PYQ' ? `Previous Year Question - ${year}` : `${subject}${topic ? ' - ' + topic : ''}`;
-            console.log(`DEBUG: Uploading ${contentType} with title: "${title}", classLevel: "${classLevel}", subject: "${finalSubject}"`);
+            console.log(`DEBUG: Final API payload - contentType: ${contentType}, classLevel: ${classLevel}, title: ${title}, subject: ${finalSubject}`);
             // Pages is now null as it is automated in the backend
             const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, classLevel, year);
             onUpload(uploadedNote);

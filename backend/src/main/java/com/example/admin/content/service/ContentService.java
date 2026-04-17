@@ -70,8 +70,10 @@ public class ContentService {
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
-        System.out.println("DEBUG: Uploading note with title: " + title + ", classLevel: " + classLevel + ", contentType: " + contentType);
-        note.setClassLevel((classLevel == null || classLevel.isEmpty()) ? "11" : classLevel);
+        System.out.println("DEBUG: [upload] Received classLevel: [" + classLevel + "], contentType: [" + contentType + "]");
+        String finalClass = (classLevel == null || classLevel.trim().isEmpty()) ? "11" : classLevel.trim();
+        note.setClassLevel(finalClass);
+        System.out.println("DEBUG: [upload] Final assigned classLevel: [" + finalClass + "]");
         note.setYear(year);
         note.setContentType(contentType != null ? contentType : "NOTES");
         
@@ -164,8 +166,10 @@ public class ContentService {
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
-        System.out.println("DEBUG: Updating note ID: " + id + ", title: " + title + ", classLevel: " + classLevel + ", contentType: " + contentType);
-        note.setClassLevel((classLevel == null || classLevel.isEmpty()) ? "11" : classLevel);
+        System.out.println("DEBUG: [update] Received classLevel: [" + classLevel + "], contentType: [" + contentType + "]");
+        String finalClass = (classLevel == null || classLevel.trim().isEmpty()) ? "11" : classLevel.trim();
+        note.setClassLevel(finalClass);
+        System.out.println("DEBUG: [update] Final assigned classLevel: [" + finalClass + "]");
         note.setYear(year);
         note.setContent(description);
         if (contentType != null) {

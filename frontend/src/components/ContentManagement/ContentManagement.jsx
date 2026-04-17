@@ -303,7 +303,14 @@ const ContentManagement = () => {
                                                             </div>
                                                             <div className="flex items-center gap-2">
                                                                 <button 
-                                                                    onClick={(e) => { e.stopPropagation(); setEditingNote(item); }}
+                                                                    onClick={(e) => { 
+                                                                        e.stopPropagation(); 
+                                                                        // Ensure classLevel is initialized to avoid null-save issues
+                                                                        setEditingNote({
+                                                                            ...item,
+                                                                            classLevel: item.classLevel || selectedClass
+                                                                        }); 
+                                                                    }}
                                                                     className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-blue-400' : 'hover:bg-blue-50 text-blue-600'}`}
                                                                 >
                                                                     <Edit className="w-4 h-4" />
@@ -393,7 +400,10 @@ const ContentManagement = () => {
                                 <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-slate-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 justify-end">
                                     <button
                                         onClick={() => {
-                                            if (activeTab === 'notes') setEditingNote(item);
+                                            if (activeTab === 'notes') setEditingNote({
+                                                ...item,
+                                                classLevel: item.classLevel || '11'
+                                            });
                                             else if (activeTab === 'videos') setEditingVideo(item);
                                             else if (activeTab === 'tests') { setEditingTest(item); setShowTestBuilder(true); }
                                         }}
@@ -610,7 +620,12 @@ const ContentManagement = () => {
                                     alert('Content updated successfully!');
                                 } catch (error) {
                                     console.error('Update failed:', error);
-                                    alert('Failed to update notes.');
+                                    if (error.response) {
+                                        console.error('Server response:', error.response.data);
+                                    }
+                                    alert(`Failed to update: ${error.response?.data?.message || error.message}`);
+                                } finally {
+                                    setLoading(false);
                                 }
                             }} className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold">Save Changes</button>
                         </div>
