@@ -127,7 +127,6 @@ const ResourcesPage = () => {
                             const subjectResources = filteredResources.filter(res => 
                                 res.subject === subject && (
                                     res.classLevel === selectedClass || 
-                                    res.classLevel === 'Both' || 
                                     (!res.classLevel && selectedClass === '11')
                                 )
                             );

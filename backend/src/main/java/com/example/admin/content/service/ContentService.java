@@ -71,7 +71,7 @@ public class ContentService {
         note.setSubject(subject);
         note.setTopic(topic);
         System.out.println("DEBUG: Uploading note with title: " + title + ", classLevel: " + classLevel + ", contentType: " + contentType);
-        note.setClassLevel(classLevel);
+        note.setClassLevel((classLevel == null || classLevel.isEmpty()) ? "11" : classLevel);
         note.setYear(year);
         note.setContentType(contentType != null ? contentType : "NOTES");
         
@@ -165,7 +165,7 @@ public class ContentService {
         note.setSubject(subject);
         note.setTopic(topic);
         System.out.println("DEBUG: Updating note ID: " + id + ", title: " + title + ", classLevel: " + classLevel + ", contentType: " + contentType);
-        note.setClassLevel(classLevel);
+        note.setClassLevel((classLevel == null || classLevel.isEmpty()) ? "11" : classLevel);
         note.setYear(year);
         note.setContent(description);
         if (contentType != null) {

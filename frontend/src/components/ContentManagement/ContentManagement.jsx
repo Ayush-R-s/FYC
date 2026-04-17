@@ -244,7 +244,6 @@ const ContentManagement = () => {
                             const subjectTextbooks = getCurrentContent().filter(item =>
                                 item.subject === subject && (
                                     item.classLevel === selectedClass || 
-                                    item.classLevel === 'Both' || 
                                     (!item.classLevel && selectedClass === '11')
                                 )
                             );
@@ -513,7 +512,6 @@ const ContentManagement = () => {
                                         <select value={editingNote.classLevel || '11'} onChange={(e) => setEditingNote({ ...editingNote, classLevel: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
                                             <option value="11">11th</option>
                                             <option value="12">12th</option>
-                                            <option value="Both">Both</option>
                                         </select>
                                     </div>
                                     <div>
@@ -534,7 +532,6 @@ const ContentManagement = () => {
                                         <select value={editingNote.classLevel || '11'} onChange={(e) => setEditingNote({ ...editingNote, classLevel: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
                                             <option value="11">11th</option>
                                             <option value="12">12th</option>
-                                            <option value="Both">Both</option>
                                         </select>
                                     </div>
                                     <div>

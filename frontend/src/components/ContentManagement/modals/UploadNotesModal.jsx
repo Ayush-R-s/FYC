@@ -77,7 +77,6 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCl
                             <select value={classLevel} onChange={(e) => setClassLevel(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
                                 <option value="11">11th</option>
                                 <option value="12">12th</option>
-                                <option value="Both">Both</option>
                             </select>
                         </div>
                         {contentType === 'PYQ' ? (
