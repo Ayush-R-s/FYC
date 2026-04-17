@@ -404,7 +404,7 @@ const ContentManagement = () => {
                                 <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-slate-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 justify-end">
                                     <button
                                         onClick={() => {
-                                            if (activeTab === 'notes') setEditingNote({
+                                            if (activeTab === 'notes' || activeTab === 'textbooks' || activeTab === 'pyqs') setEditingNote({
                                                 ...item,
                                                 category: item.category || '11'
                                             });
@@ -546,7 +546,7 @@ const ContentManagement = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                      <div>
                                         <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class</label>
-                                        <select value={editingNote.classLevel || '11'} onChange={(e) => setEditingNote({ ...editingNote, classLevel: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                        <select value={editingNote.category || '11'} onChange={(e) => setEditingNote({ ...editingNote, category: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-800 text-white' : 'border-gray-300'}`}>
                                             <option value="11">11th</option>
                                             <option value="12">12th</option>
                                         </select>
@@ -607,7 +607,7 @@ const ContentManagement = () => {
                             <button onClick={() => setEditingNote(null)} className={`px-6 py-2 border rounded-lg ${darkMode ? 'border-gray-600 hover:bg-gray-800 text-white' : 'border-gray-300'}`}>Cancel</button>
                             <button onClick={async () => {
                                 try {
-                                    console.log(`DEBUG: Updating note ${editingNote.id} with title: "${editingNote.title}", classLevel: "${editingNote.classLevel}", subject: "${editingNote.subject}"`);
+                                    console.log(`DEBUG: Updating note ${editingNote.id} with title: "${editingNote.title}", category: "${editingNote.category}", subject: "${editingNote.subject}"`);
                                     const updated = await updateNote(
                                         editingNote.id,
                                         editingNote.newFile,
