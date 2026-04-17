@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { X, Upload } from 'lucide-react';
 import { uploadNotes } from '../../../services/contentPortalApi';
 
-const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType }) => {
+const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialClass }) => {
     // Map intendedType (from sidebar/tabs) to internal contentType
     const initialContentType = intendedType === 'textbooks' ? 'TEXTBOOK' : (intendedType === 'pyqs' ? 'PYQ' : 'NOTES');
 
     const [title, setTitle] = useState('');
     const [subject, setSubject] = useState('Physics');
     const [topic, setTopic] = useState('');
-    const [classLevel, setClassLevel] = useState('11');
+    const [classLevel, setClassLevel] = useState(initialClass || '11');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [year, setYear] = useState('');
@@ -38,6 +38,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType }) => {
         try {
             const finalSubject = contentType === 'PYQ' ? 'PYQ' : subject;
             const description = contentType === 'PYQ' ? `Previous Year Question - ${year}` : `${subject}${topic ? ' - ' + topic : ''}`;
+            console.log(`DEBUG: Uploading ${contentType} with title: "${title}", classLevel: "${classLevel}", subject: "${finalSubject}"`);
             // Pages is now null as it is automated in the backend
             const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, classLevel, year);
             onUpload(uploadedNote);

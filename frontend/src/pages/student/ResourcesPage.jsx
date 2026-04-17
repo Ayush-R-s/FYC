@@ -125,7 +125,11 @@ const ResourcesPage = () => {
                     <div className="space-y-12">
                         {["Physics", "Chemistry", "Biology"].map(subject => {
                             const subjectResources = filteredResources.filter(res => 
-                                res.subject === subject && (res.classLevel === selectedClass || (!res.classLevel && selectedClass === '11'))
+                                res.subject === subject && (
+                                    res.classLevel === selectedClass || 
+                                    res.classLevel === 'Both' || 
+                                    (!res.classLevel && selectedClass === '11')
+                                )
                             );
                             
                             const isExpanded = expandedSubjects.includes(subject);
@@ -177,6 +181,11 @@ const ResourcesPage = () => {
                                                                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600"}`}>
                                                                         {res.subject}
                                                                     </span>
+                                                                    {res.classLevel && (
+                                                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-blue-900/30 text-blue-400" : "bg-blue-100 text-blue-600"}`}>
+                                                                            Class {res.classLevel}
+                                                                        </span>
+                                                                    )}
                                                                     {res.pages && <span>{res.pages} pages</span>}
                                                                 </div>
                                                             </div>

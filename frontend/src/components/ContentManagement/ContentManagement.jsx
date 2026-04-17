@@ -242,7 +242,11 @@ const ContentManagement = () => {
                     <div className="space-y-8">
                         {['Physics', 'Chemistry', 'Biology'].map(subject => {
                             const subjectTextbooks = getCurrentContent().filter(item =>
-                                item.subject === subject && (item.classLevel === selectedClass || (!item.classLevel && selectedClass === '11'))
+                                item.subject === subject && (
+                                    item.classLevel === selectedClass || 
+                                    item.classLevel === 'Both' || 
+                                    (!item.classLevel && selectedClass === '11')
+                                )
                             );
                             const isExpanded = expandedSubjects.includes(subject);
 
@@ -283,13 +287,20 @@ const ContentManagement = () => {
                                                                 <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${darkMode ? 'bg-orange-900/30 text-orange-400' : 'bg-orange-50 text-orange-500'}`}>
                                                                     <FileText className="w-5 h-5" />
                                                                 </div>
-                                                                <div className="flex-1 min-w-0">
-                                                                    <h4 className={`font-bold text-sm truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h4>
-                                                                    <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
-                                                                        <span>{item.fileName}</span>
-                                                                        {item.pages && <span>• {item.pages} Pages</span>}
-                                                                    </p>
-                                                                </div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <div className="flex items-center gap-2">
+                                                                            <h4 className={`font-bold text-sm truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h4>
+                                                                            {item.classLevel && (
+                                                                                <span className="text-[9px] px-1.5 py-0.5 rounded-full font-black bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 uppercase tracking-widest border border-gray-200 dark:border-gray-600">
+                                                                                    Class {item.classLevel}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                        <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
+                                                                            <span>{item.fileName}</span>
+                                                                            {item.pages && <span>• {item.pages} Pages</span>}
+                                                                        </p>
+                                                                    </div>
                                                             </div>
                                                             <div className="flex items-center gap-2">
                                                                 <button 
@@ -446,6 +457,7 @@ const ContentManagement = () => {
                     onClose={() => setShowUploadNotes(false)}
                     darkMode={darkMode}
                     intendedType={activeTab}
+                    initialClass={selectedClass}
                     onUpload={(note) => {
                         if (note.contentType === 'TEXTBOOK') setTextbooks([...textbooks, note]);
                         else if (note.contentType === 'PYQ') setPyqs([...pyqs, note]);
@@ -494,21 +506,41 @@ const ContentManagement = () => {
                                 <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Title</label>
                                 <input type="text" value={editingNote.title} onChange={(e) => setEditingNote({ ...editingNote, title: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
                             </div>
-                            {editingNote.contentType !== 'PYQ' ? (
-                                <div>
-                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject</label>
-                                    <select value={editingNote.subject} onChange={(e) => setEditingNote({ ...editingNote, subject: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
-                                        <option>Physics</option>
-                                        <option>Chemistry</option>
-                                        <option>Biology</option>
-                                        <option>Botany</option>
-                                        <option>Zoology</option>
-                                    </select>
+                             {editingNote.contentType !== 'PYQ' ? (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class</label>
+                                        <select value={editingNote.classLevel || '11'} onChange={(e) => setEditingNote({ ...editingNote, classLevel: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                            <option value="11">11th</option>
+                                            <option value="12">12th</option>
+                                            <option value="Both">Both</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject</label>
+                                        <select value={editingNote.subject} onChange={(e) => setEditingNote({ ...editingNote, subject: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                            <option>Physics</option>
+                                            <option>Chemistry</option>
+                                            <option>Biology</option>
+                                            <option>Botany</option>
+                                            <option>Zoology</option>
+                                        </select>
+                                    </div>
                                 </div>
                             ) : (
-                                <div>
-                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Exam Year</label>
-                                    <input type="text" value={editingNote.year || ''} onChange={(e) => setEditingNote({ ...editingNote, year: e.target.value })} placeholder="e.g. 2023" className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
+                                <div className="grid grid-cols-2 gap-4">
+                                     <div>
+                                        <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class</label>
+                                        <select value={editingNote.classLevel || '11'} onChange={(e) => setEditingNote({ ...editingNote, classLevel: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                            <option value="11">11th</option>
+                                            <option value="12">12th</option>
+                                            <option value="Both">Both</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Exam Year</label>
+                                        <input type="text" value={editingNote.year || ''} onChange={(e) => setEditingNote({ ...editingNote, year: e.target.value })} placeholder="e.g. 2023" className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
+                                    </div>
                                 </div>
                             )}
                             {editingNote.contentType !== 'PYQ' && (
@@ -561,6 +593,7 @@ const ContentManagement = () => {
                             <button onClick={() => setEditingNote(null)} className={`px-6 py-2 border rounded-lg ${darkMode ? 'border-gray-600 hover:bg-gray-800 text-white' : 'border-gray-300'}`}>Cancel</button>
                             <button onClick={async () => {
                                 try {
+                                    console.log(`DEBUG: Updating note ${editingNote.id} with title: "${editingNote.title}", classLevel: "${editingNote.classLevel}", subject: "${editingNote.subject}"`);
                                     const updated = await updateNote(
                                         editingNote.id,
                                         editingNote.newFile,
