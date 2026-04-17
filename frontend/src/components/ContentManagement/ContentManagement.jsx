@@ -468,7 +468,10 @@ const ContentManagement = () => {
                     intendedType={activeTab}
                     initialClass={selectedClass}
                     onUpload={(note) => {
-                        if (note.contentType === 'TEXTBOOK') setTextbooks([...textbooks, note]);
+                        if (note.contentType === 'TEXTBOOK') {
+                            console.log('>>> TEXTBOOK SAVED SUCCESSFULLY (UPLOAD):', note);
+                            setTextbooks([...textbooks, note]);
+                        }
                         else if (note.contentType === 'PYQ') setPyqs([...pyqs, note]);
                         else setNotes([...notes, note]);
                         setShowUploadNotes(false);
@@ -613,7 +616,10 @@ const ContentManagement = () => {
                                         editingNote.classLevel,
                                         editingNote.year
                                     );
-                                    if (updated.contentType === 'TEXTBOOK') setTextbooks(textbooks.map(n => n.id === editingNote.id ? updated : n));
+                                    if (updated.contentType === 'TEXTBOOK') {
+                                        console.log('>>> TEXTBOOK SAVED SUCCESSFULLY (UPDATE):', updated);
+                                        setTextbooks(textbooks.map(n => n.id === editingNote.id ? updated : n));
+                                    }
                                     else if (updated.contentType === 'PYQ') setPyqs(pyqs.map(n => n.id === editingNote.id ? updated : n));
                                     else setNotes(notes.map(n => n.id === editingNote.id ? updated : n));
                                     setEditingNote(null);
