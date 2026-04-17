@@ -28,7 +28,7 @@ public class Note {
 
     private String subject;
     private String topic;
-    private String classLevel;
+    private String category;
     private String year;
     private Integer pages;
     @jakarta.persistence.Column(columnDefinition = "TEXT")
@@ -95,14 +95,13 @@ public class Note {
         this.topic = topic;
     }
 
-    @Column(name = "class_level", nullable = false)
-    @JsonProperty("classLevel")
-    public String getClassLevel() {
-        return classLevel;
+    @Column(name = "category")
+    public String getCategory() {
+        return category;
     }
 
-    public void setClassLevel(String classLevel) {
-        this.classLevel = classLevel;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getYear() {

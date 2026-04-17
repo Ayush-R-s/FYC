@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { X, Upload } from 'lucide-react';
 import { uploadNotes } from '../../../services/contentPortalApi';
 
-const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialClass }) => {
+const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCategory }) => {
     // Map intendedType (from sidebar/tabs) to internal contentType
     const initialContentType = intendedType === 'textbooks' ? 'TEXTBOOK' : (intendedType === 'pyqs' ? 'PYQ' : 'NOTES');
 
     const [title, setTitle] = useState('');
     const [subject, setSubject] = useState('Physics');
     const [topic, setTopic] = useState('');
-    const [classLevel, setClassLevel] = useState(initialClass || '11');
+    const [category, setCategory] = useState(initialCategory || '11');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [year, setYear] = useState('');
@@ -35,13 +35,13 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCl
         setLoading(true);
         setError('');
 
-        console.log(`DEBUG: Handing upload for ${contentType}. initialClass was ${initialClass}, current classLevel is ${classLevel}`);
+        console.log(`DEBUG: Handing upload for ${contentType}. initialCategory was ${initialCategory}, current category is ${category}`);
         try {
             const finalSubject = contentType === 'PYQ' ? 'PYQ' : subject;
             const description = contentType === 'PYQ' ? `Previous Year Question - ${year}` : `${subject}${topic ? ' - ' + topic : ''}`;
-            console.log(`DEBUG: Final API payload - contentType: ${contentType}, classLevel: ${classLevel}, title: ${title}, subject: ${finalSubject}`);
+            console.log(`DEBUG: Final API payload - contentType: ${contentType}, category: ${category}, title: ${title}, subject: ${finalSubject}`);
             // Pages is now null as it is automated in the backend
-            const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, classLevel, year);
+            const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, category, year);
             onUpload(uploadedNote);
             onClose();
         } catch (err) {
@@ -75,7 +75,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCl
                     <div className={`grid ${contentType === 'PYQ' ? 'grid-cols-2' : 'grid-cols-2'} gap-4`}>
                         <div>
                             <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class *</label>
-                            <select value={classLevel} onChange={(e) => setClassLevel(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                            <select value={category} onChange={(e) => setCategory(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
                                 <option value="11">11th</option>
                                 <option value="12">12th</option>
                             </select>

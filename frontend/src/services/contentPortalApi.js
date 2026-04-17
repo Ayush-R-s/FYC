@@ -35,7 +35,7 @@ export const deleteContent = async (id) => {
 
 // --- NOTES ---
 
-export const uploadNotes = async (file, title, subject, topic, pages, description, contentType, classLevel, year) => {
+export const uploadNotes = async (file, title, subject, topic, pages, description, contentType, category, year) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title);
@@ -44,7 +44,7 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
     if (pages) formData.append('pages', pages);
     if (description) formData.append('description', description);
     if (contentType) formData.append('contentType', contentType);
-    if (classLevel) formData.append('classLevel', String(classLevel));
+    if (category) formData.append('category', String(category));
     if (year) formData.append('year', year);
 
     try {
@@ -58,7 +58,7 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
     }
 };
 
-export const updateNote = async (id, file, title, subject, topic, pages, content, contentType, classLevel, year) => {
+export const updateNote = async (id, file, title, subject, topic, pages, content, contentType, category, year) => {
     const formData = new FormData();
     if (file) formData.append('file', file);
     formData.append('title', title);
@@ -67,7 +67,7 @@ export const updateNote = async (id, file, title, subject, topic, pages, content
     if (pages) formData.append('pages', pages);
     if (content) formData.append('description', content);
     if (contentType) formData.append('contentType', contentType);
-    if (classLevel) formData.append('classLevel', String(classLevel));
+    if (category) formData.append('category', String(category));
     if (year) formData.append('year', year);
 
     try {

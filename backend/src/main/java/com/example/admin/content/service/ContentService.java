@@ -63,17 +63,17 @@ public class ContentService {
         return videoRepository.findAll();
     }
 
-    public Note uploadNotes(MultipartFile file, String title, String subject, String topic, Integer pages, String description, String contentType, String classLevel, String year) {
+    public Note uploadNotes(MultipartFile file, String title, String subject, String topic, Integer pages, String description, String contentType, String category, String year) {
         String path = storageService.save(file, "notes/");
 
         Note note = new Note();
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
-        System.out.println("DEBUG: [upload] Received classLevel: [" + classLevel + "], contentType: [" + contentType + "]");
-        String finalClass = (classLevel == null || classLevel.trim().isEmpty()) ? "11" : classLevel.trim();
-        note.setClassLevel(finalClass);
-        System.out.println("DEBUG: [upload] Final assigned classLevel: [" + finalClass + "]");
+        System.out.println("DEBUG: [upload] Received category: [" + category + "], contentType: [" + contentType + "]");
+        String finalCategory = (category == null || category.trim().isEmpty()) ? "11" : category.trim();
+        note.setCategory(finalCategory);
+        System.out.println("DEBUG: [upload] Final assigned category: [" + finalCategory + "]");
         note.setYear(year);
         note.setContentType(contentType != null ? contentType : "NOTES");
         
@@ -89,7 +89,7 @@ public class ContentService {
         note.setUploadedAt(LocalDateTime.now());
 
         Note savedNote = repository.save(note);
-        System.out.println("DEBUG: [upload] AFTER SAVE - ID: " + savedNote.getId() + ", classLevel in entity: [" + savedNote.getClassLevel() + "]");
+        System.out.println("DEBUG: [upload] AFTER SAVE - ID: " + savedNote.getId() + ", category in entity: [" + savedNote.getCategory() + "]");
         
         // Create notification
         Notification notification = new Notification(
@@ -162,15 +162,15 @@ public class ContentService {
     }
 
     public Note updateNotes(Long id, MultipartFile file, String title, String subject, String topic,
-            Integer pages, String description, String contentType, String classLevel, String year) {
+            Integer pages, String description, String contentType, String category, String year) {
         Note note = repository.findById(id).orElseThrow(() -> new RuntimeException("Note not found"));
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
-        System.out.println("DEBUG: [update] Received classLevel: [" + classLevel + "], contentType: [" + contentType + "]");
-        String finalClass = (classLevel == null || classLevel.trim().isEmpty()) ? "11" : classLevel.trim();
-        note.setClassLevel(finalClass);
-        System.out.println("DEBUG: [update] Final assigned classLevel: [" + finalClass + "]");
+        System.out.println("DEBUG: [update] Received category: [" + category + "], contentType: [" + contentType + "]");
+        String finalCategory = (category == null || category.trim().isEmpty()) ? "11" : category.trim();
+        note.setCategory(finalCategory);
+        System.out.println("DEBUG: [update] Final assigned category: [" + finalCategory + "]");
         note.setYear(year);
         note.setContent(description);
         if (contentType != null) {
@@ -191,7 +191,7 @@ public class ContentService {
             note.setPages(pages);
         }
         Note savedNote = repository.save(note);
-        System.out.println("DEBUG: [update] AFTER SAVE - ID: " + savedNote.getId() + ", classLevel in entity: [" + savedNote.getClassLevel() + "]");
+        System.out.println("DEBUG: [update] AFTER SAVE - ID: " + savedNote.getId() + ", category in entity: [" + savedNote.getCategory() + "]");
         return savedNote;
     }
 

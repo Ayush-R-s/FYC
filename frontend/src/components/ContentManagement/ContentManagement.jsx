@@ -30,7 +30,7 @@ const ContentManagement = () => {
     const [tests, setTests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [selectedClass, setSelectedClass] = useState('11'); // For Textbooks folder system
+    const [selectedCategory, setSelectedCategory] = useState('11'); // For Textbooks folder system
     const [expandedSubjects, setExpandedSubjects] = useState(['Physics']); // Default open folder
 
     // Fetch data from backend on component mount
@@ -193,14 +193,14 @@ const ContentManagement = () => {
                             {activeTab === 'textbooks' && (
                                 <div className="flex bg-slate-100 dark:bg-gray-700 p-1 rounded-xl w-fit self-center sm:self-auto">
                                     <button
-                                        onClick={() => setSelectedClass('11')}
-                                        className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all ${selectedClass === '11' ? 'bg-white dark:bg-gray-600 shadow-sm text-orange-600' : 'text-gray-500'}`}
+                                        onClick={() => setSelectedCategory('11')}
+                                        className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all ${selectedCategory === '11' ? 'bg-white dark:bg-gray-600 shadow-sm text-orange-600' : 'text-gray-500'}`}
                                     >
                                         11th
                                     </button>
                                     <button
-                                        onClick={() => setSelectedClass('12')}
-                                        className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all ${selectedClass === '12' ? 'bg-white dark:bg-gray-600 shadow-sm text-orange-600' : 'text-gray-500'}`}
+                                        onClick={() => setSelectedCategory('12')}
+                                        className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all ${selectedCategory === '12' ? 'bg-white dark:bg-gray-600 shadow-sm text-orange-600' : 'text-gray-500'}`}
                                     >
                                         12th
                                     </button>
@@ -243,8 +243,8 @@ const ContentManagement = () => {
                         {['Physics', 'Chemistry', 'Biology'].map(subject => {
                             const subjectTextbooks = getCurrentContent().filter(item =>
                                 item.subject === subject && (
-                                    item.classLevel === selectedClass || 
-                                    (!item.classLevel && selectedClass === '11')
+                                    item.category === selectedCategory || 
+                                    (!item.category && selectedCategory === '11')
                                 )
                             );
                             const isExpanded = expandedSubjects.includes(subject);
@@ -290,11 +290,11 @@ const ContentManagement = () => {
                                                                         <div className="flex items-center gap-2">
                                                                             <h4 className={`font-bold text-sm truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h4>
                                                                             <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-black uppercase tracking-widest border ${
-                                                                                item.classLevel 
+                                                                                item.category 
                                                                                 ? (darkMode ? 'bg-gray-700 text-gray-400 border-gray-600' : 'bg-gray-100 text-gray-500 border-gray-200')
                                                                                 : (darkMode ? 'bg-red-900/40 text-red-300 border-red-800' : 'bg-red-50 text-red-500 border-red-100')
                                                                             }`}>
-                                                                                {item.classLevel ? `Class ${item.classLevel}` : (item.classLevel === null ? 'CLASS: NULL' : 'CLASS: UNDEF')}
+                                                                                {item.category ? `Class ${item.category}` : (item.category === null ? 'CLASS: NULL' : 'CLASS: UNDEF')}
                                                                             </span>
                                                                         </div>
                                                                         <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
@@ -364,11 +364,11 @@ const ContentManagement = () => {
                                                 </span>
                                             )}
                                             <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest border ${
-                                                item.classLevel 
+                                                item.category 
                                                 ? 'bg-gray-100 text-gray-500' 
                                                 : 'bg-red-50 text-red-500 border-red-100'
                                             }`}>
-                                                {item.classLevel ? `Class ${item.classLevel}` : (item.classLevel === null ? 'CLASS: NULL' : 'CLASS: UNDEF')}
+                                                {item.category ? `Class ${item.category}` : (item.category === null ? 'CLASS: NULL' : 'CLASS: UNDEF')}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-x-3 gap-y-1 mt-1 flex-wrap">
@@ -406,7 +406,7 @@ const ContentManagement = () => {
                                         onClick={() => {
                                             if (activeTab === 'notes') setEditingNote({
                                                 ...item,
-                                                classLevel: item.classLevel || '11'
+                                                category: item.category || '11'
                                             });
                                             else if (activeTab === 'videos') setEditingVideo(item);
                                             else if (activeTab === 'tests') { setEditingTest(item); setShowTestBuilder(true); }
@@ -470,7 +470,7 @@ const ContentManagement = () => {
                     onClose={() => setShowUploadNotes(false)}
                     darkMode={darkMode}
                     intendedType={activeTab}
-                    initialClass={selectedClass}
+                    initialCategory={selectedCategory}
                     onUpload={(note) => {
                         if (note.contentType === 'TEXTBOOK') {
                             console.log('>>> TEXTBOOK SAVED SUCCESSFULLY (UPLOAD):', note);
@@ -617,7 +617,7 @@ const ContentManagement = () => {
                                         editingNote.pages,
                                         editingNote.content || '',
                                         editingNote.contentType,
-                                        editingNote.classLevel,
+                                        editingNote.category,
                                         editingNote.year
                                     );
                                     if (updated.contentType === 'TEXTBOOK') {

@@ -10,7 +10,7 @@ const ResourcesPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedClass, setSelectedClass] = useState('11');
+    const [selectedCategory, setSelectedCategory] = useState('11');
     const [expandedSubjects, setExpandedSubjects] = useState(['Physics']);
 
     const cardBg = darkMode ? "bg-slate-900/40 backdrop-blur-md" : "bg-white";
@@ -88,14 +88,14 @@ const ResourcesPage = () => {
             {activeTab === 'textbooks' && (
                 <div className="flex bg-slate-200/50 dark:bg-slate-800/50 p-1 rounded-xl w-fit">
                     <button
-                        onClick={() => setSelectedClass("11")}
-                        className={`px-8 py-2 rounded-lg text-sm font-bold transition-all ${selectedClass === "11" ? "bg-white dark:bg-slate-700 text-orange-500 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                        onClick={() => setSelectedCategory("11")}
+                        className={`px-8 py-2 rounded-lg text-sm font-bold transition-all ${selectedCategory === "11" ? "bg-white dark:bg-slate-700 text-orange-500 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
                     >
                         Class 11th
                     </button>
                     <button
-                        onClick={() => setSelectedClass("12")}
-                        className={`px-8 py-2 rounded-lg text-sm font-bold transition-all ${selectedClass === "12" ? "bg-white dark:bg-slate-700 text-orange-500 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                        onClick={() => setSelectedCategory("12")}
+                        className={`px-8 py-2 rounded-lg text-sm font-bold transition-all ${selectedCategory === "12" ? "bg-white dark:bg-slate-700 text-orange-500 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
                     >
                         Class 12th
                     </button>
@@ -126,8 +126,8 @@ const ResourcesPage = () => {
                         {["Physics", "Chemistry", "Biology"].map(subject => {
                             const subjectResources = filteredResources.filter(res => 
                                 res.subject === subject && (
-                                    res.classLevel === selectedClass || 
-                                    (!res.classLevel && selectedClass === '11')
+                                    res.category === selectedCategory || 
+                                    (!res.category && selectedCategory === '11')
                                 )
                             );
                             
@@ -148,7 +148,7 @@ const ResourcesPage = () => {
                                             </div>
                                             <div>
                                                 <h3 className={`text-xl font-bold transition-colors ${isExpanded ? (darkMode ? "text-orange-400" : "text-orange-600") : (darkMode ? "text-white" : "text-slate-900")}`}>{subject}</h3>
-                                                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Class {selectedClass} • {subjectResources.length} Materials</p>
+                                                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Class {selectedCategory} • {subjectResources.length} Materials</p>
                                             </div>
                                         </div>
                                         <div className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
@@ -180,9 +180,9 @@ const ResourcesPage = () => {
                                                                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600"}`}>
                                                                         {res.subject}
                                                                     </span>
-                                                                    {res.classLevel && (
+                                                                    {res.category && (
                                                                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-blue-900/30 text-blue-400" : "bg-blue-100 text-blue-600"}`}>
-                                                                            Class {res.classLevel}
+                                                                            Class {res.category}
                                                                         </span>
                                                                     )}
                                                                     {res.pages && <span>{res.pages} pages</span>}
@@ -204,7 +204,7 @@ const ResourcesPage = () => {
                                                 </div>
                                             ) : (
                                                 <div className={`p-10 rounded-2xl border-2 border-dashed text-center ${darkMode ? "border-slate-800 text-slate-600" : "border-slate-100 text-slate-400"}`}>
-                                                    <p className="font-bold text-sm italic">No {subject} textbooks found for Class {selectedClass}</p>
+                                                    <p className="font-bold text-sm italic">No {subject} textbooks found for Class {selectedCategory}</p>
                                                 </div>
                                             )}
                                         </div>
@@ -236,7 +236,7 @@ const ResourcesPage = () => {
                                             Year: {res.year || 'N/A'}
                                         </span>
                                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600"}`}>
-                                            Class {res.classLevel}
+                                            Class {res.category}
                                         </span>
                                         {res.pages && <span>{res.pages} pages</span>}
                                     </div>
