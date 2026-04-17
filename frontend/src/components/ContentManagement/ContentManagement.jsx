@@ -264,7 +264,7 @@ const ContentManagement = () => {
                                             </div>
                                             <div>
                                                 <h3 className={`font-black uppercase tracking-widest text-sm transition-colors ${isExpanded ? (darkMode ? 'text-orange-400' : 'text-orange-600') : (darkMode ? 'text-gray-400' : 'text-slate-500')}`}>{subject}</h3>
-                                                <p className="text-[10px] font-bold opacity-40 uppercase">Class {selectedClass} • {subjectTextbooks.length} Books</p>
+                                                <p className="text-[10px] font-bold opacity-40 uppercase">Class {selectedCategory} • {subjectTextbooks.length} Books</p>
                                             </div>
                                         </div>
                                         <div className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
@@ -276,7 +276,7 @@ const ContentManagement = () => {
                                         <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                                             {subjectTextbooks.length === 0 ? (
                                                 <div className={`p-8 rounded-2xl border-2 border-dashed text-center text-xs font-bold opacity-40 ${darkMode ? 'border-gray-800' : 'border-gray-100'}`}>
-                                                    No textbooks uploaded for {subject} (Class {selectedClass})
+                                                    No textbooks uploaded for {subject} (Class {selectedCategory})
                                                 </div>
                                             ) : (
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -310,7 +310,7 @@ const ContentManagement = () => {
                                                                         // Ensure classLevel is initialized to avoid null-save issues
                                                                         setEditingNote({
                                                                             ...item,
-                                                                            classLevel: item.classLevel || selectedClass
+                                                                            category: item.category || selectedCategory
                                                                         }); 
                                                                     }}
                                                                     className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700 text-blue-400' : 'hover:bg-blue-50 text-blue-600'}`}
