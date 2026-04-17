@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 
 import com.example.admin.auth.model.entity.Admin;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,7 +14,6 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "notes")
-@JsonInclude(JsonInclude.Include.ALWAYS)
 public class Note {
 
     @Id
@@ -30,8 +27,7 @@ public class Note {
 
     private String subject;
     private String topic;
-    @JsonProperty("category")
-    private String category;
+    private String classLevel;
     private String year;
     private Integer pages;
     @jakarta.persistence.Column(columnDefinition = "TEXT")
@@ -98,14 +94,14 @@ public class Note {
         this.topic = topic;
     }
 
-    @Column(name = "category")
     @JsonProperty("category")
-    public String getCategory() {
-        return category;
+    public String getClassLevel() {
+        return classLevel;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    @JsonProperty("category")
+    public void setClassLevel(String classLevel) {
+        this.classLevel = classLevel;
     }
 
     public String getYear() {
@@ -147,6 +143,5 @@ public class Note {
     public void setContent(String content) {
         this.content = content;
     }
-
 
 }
