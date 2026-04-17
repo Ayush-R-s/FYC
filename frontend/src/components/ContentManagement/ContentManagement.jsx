@@ -289,11 +289,13 @@ const ContentManagement = () => {
                                                                     <div className="flex-1 min-w-0">
                                                                         <div className="flex items-center gap-2">
                                                                             <h4 className={`font-bold text-sm truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h4>
-                                                                            {item.classLevel && (
-                                                                                <span className="text-[9px] px-1.5 py-0.5 rounded-full font-black bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 uppercase tracking-widest border border-gray-200 dark:border-gray-600">
-                                                                                    Class {item.classLevel}
-                                                                                </span>
-                                                                            )}
+                                                                            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-black uppercase tracking-widest border ${
+                                                                                item.classLevel 
+                                                                                ? (darkMode ? 'bg-gray-700 text-gray-400 border-gray-600' : 'bg-gray-100 text-gray-500 border-gray-200')
+                                                                                : (darkMode ? 'bg-red-900/40 text-red-300 border-red-800' : 'bg-red-50 text-red-500 border-red-100')
+                                                                            }`}>
+                                                                                {item.classLevel ? `Class ${item.classLevel}` : 'CLASS MISSING'}
+                                                                            </span>
                                                                         </div>
                                                                         <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
                                                                             <span>{item.fileName}</span>
@@ -361,11 +363,13 @@ const ContentManagement = () => {
                                                     Year: {item.year}
                                                 </span>
                                             )}
-                                            {item.classLevel && (
-                                                <span className="text-[10px] px-2 py-0.5 rounded-full font-black bg-gray-100 text-gray-500 uppercase tracking-widest">
-                                                    Class {item.classLevel}
-                                                </span>
-                                            )}
+                                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest border ${
+                                                item.classLevel 
+                                                ? 'bg-gray-100 text-gray-500' 
+                                                : 'bg-red-50 text-red-500 border-red-100'
+                                            }`}>
+                                                {item.classLevel ? `Class ${item.classLevel}` : 'CLASS MISSING'}
+                                            </span>
                                         </div>
                                         <div className="flex items-center gap-x-3 gap-y-1 mt-1 flex-wrap">
                                             <span className={`text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 ${darkMode ? 'bg-gray-700 text-gray-400' : 'text-slate-500'}`}>

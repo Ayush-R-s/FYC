@@ -3,7 +3,9 @@ package com.example.admin.content.model;
 import java.time.LocalDateTime;
 
 import com.example.admin.auth.model.entity.Admin;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +28,9 @@ public class Note {
 
     private String subject;
     private String topic;
+    
+    @Column(name = "class_level")
+    @JsonProperty("classLevel")
     private String classLevel;
     private String year;
     private Integer pages;

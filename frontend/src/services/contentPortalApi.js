@@ -44,7 +44,7 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
     if (pages) formData.append('pages', pages);
     if (description) formData.append('description', description);
     if (contentType) formData.append('contentType', contentType);
-    if (classLevel) formData.append('classLevel', classLevel);
+    if (classLevel) formData.append('classLevel', String(classLevel));
     if (year) formData.append('year', year);
 
     try {
@@ -67,7 +67,7 @@ export const updateNote = async (id, file, title, subject, topic, pages, content
     if (pages) formData.append('pages', pages);
     if (content) formData.append('description', content);
     if (contentType) formData.append('contentType', contentType);
-    if (classLevel) formData.append('classLevel', classLevel);
+    if (classLevel) formData.append('classLevel', String(classLevel));
     if (year) formData.append('year', year);
 
     try {
