@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/data").permitAll()
                         .requestMatchers("/debug/**").permitAll()
                         .requestMatchers("/api/debug/**").permitAll()
+                        .requestMatchers("/", "/api/health").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
