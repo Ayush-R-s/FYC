@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.example.admin.auth.model.entity.Admin;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "notes")
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class Note {
 
     @Id
@@ -28,6 +30,7 @@ public class Note {
 
     private String subject;
     private String topic;
+    @JsonProperty("category")
     private String category;
     private String year;
     private Integer pages;
@@ -96,6 +99,7 @@ public class Note {
     }
 
     @Column(name = "category")
+    @JsonProperty("category")
     public String getCategory() {
         return category;
     }
