@@ -83,9 +83,9 @@ public class SecurityConfig {
             "http://fycneet.com",
             "https://fycneet.com",
             "http://fyc-frontend.s3-website.ap-south-1.amazonaws.com",
+            "https://api.fycneet.com",
             "http://localhost:5173",
-            "http://localhost:3000",
-            "*"
+            "http://localhost:3000"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
