@@ -3,8 +3,8 @@ package com.example.admin.content.model;
 import java.time.LocalDateTime;
 
 import com.example.admin.auth.model.entity.Admin;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,10 +27,13 @@ public class Note {
 
     private String subject;
     private String topic;
-    private String classLevel;
+
+    @Column(name = "class_level")
+    private String category;
+
     private String year;
     private Integer pages;
-    @jakarta.persistence.Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne
@@ -94,14 +97,12 @@ public class Note {
         this.topic = topic;
     }
 
-    @JsonProperty("category")
-    public String getClassLevel() {
-        return classLevel;
+    public String getCategory() {
+        return category;
     }
 
-    @JsonProperty("category")
-    public void setClassLevel(String classLevel) {
-        this.classLevel = classLevel;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getYear() {
