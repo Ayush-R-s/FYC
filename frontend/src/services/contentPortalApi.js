@@ -35,7 +35,7 @@ export const deleteContent = async (id) => {
 
 // --- NOTES ---
 
-export const uploadNotes = async (file, title, subject, topic, pages, description, contentType, classLevel) => {
+export const uploadNotes = async (file, title, subject, topic, pages, description, contentType, classLevel, year) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title);
@@ -45,6 +45,7 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
     if (description) formData.append('description', description);
     if (contentType) formData.append('contentType', contentType);
     if (classLevel) formData.append('classLevel', classLevel);
+    if (year) formData.append('year', year);
 
     try {
         const response = await axios.post('/admin/content/notes', formData, {
@@ -57,7 +58,7 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
     }
 };
 
-export const updateNote = async (id, file, title, subject, topic, pages, content, contentType, classLevel) => {
+export const updateNote = async (id, file, title, subject, topic, pages, content, contentType, classLevel, year) => {
     const formData = new FormData();
     if (file) formData.append('file', file);
     formData.append('title', title);
@@ -67,6 +68,7 @@ export const updateNote = async (id, file, title, subject, topic, pages, content
     if (content) formData.append('description', content);
     if (contentType) formData.append('contentType', contentType);
     if (classLevel) formData.append('classLevel', classLevel);
+    if (year) formData.append('year', year);
 
     try {
         const response = await axios.put(`/admin/content/notes/${id}`, formData, {

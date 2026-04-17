@@ -334,9 +334,14 @@ const ContentManagement = () => {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center flex-wrap gap-2 mb-1">
                                             <h3 className={`font-bold text-sm sm:text-lg truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{item.title}</h3>
-                                            {item.topic && (
+                                            {item.topic && activeTab !== 'pyqs' && (
                                                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${getTopicColor(item.topic)}`}>
                                                     {item.topic}
+                                                </span>
+                                            )}
+                                            {item.year && activeTab === 'pyqs' && (
+                                                <span className="text-[10px] px-2 py-0.5 rounded-full font-black bg-orange-100 text-orange-600 uppercase tracking-widest">
+                                                    Year: {item.year}
                                                 </span>
                                             )}
                                             {item.classLevel && (
@@ -347,7 +352,7 @@ const ContentManagement = () => {
                                         </div>
                                         <div className="flex items-center gap-x-3 gap-y-1 mt-1 flex-wrap">
                                             <span className={`text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 ${darkMode ? 'bg-gray-700 text-gray-400' : 'text-slate-500'}`}>
-                                                {item.subject === 'all' ? 'All Subjects' : item.subject}
+                                                {activeTab === 'pyqs' ? 'Previous Year Questions' : (item.subject === 'all' ? 'All Subjects' : item.subject)}
                                             </span>
                                             {activeTab === 'tests' && item.testType && (
                                                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${darkMode ? 'bg-blue-900/40 text-blue-300 border border-blue-800' : 'bg-blue-50 text-blue-600 border border-blue-100'}`}>
@@ -489,20 +494,29 @@ const ContentManagement = () => {
                                 <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Title</label>
                                 <input type="text" value={editingNote.title} onChange={(e) => setEditingNote({ ...editingNote, title: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
                             </div>
-                            <div>
-                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject</label>
-                                <select value={editingNote.subject} onChange={(e) => setEditingNote({ ...editingNote, subject: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
-                                    <option>Physics</option>
-                                    <option>Chemistry</option>
-                                    <option>Biology</option>
-                                    <option>Botany</option>
-                                    <option>Zoology</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Topic</label>
-                                <input type="text" value={editingNote.topic || ''} onChange={(e) => setEditingNote({ ...editingNote, topic: e.target.value })} placeholder="Enter topic" className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
-                            </div>
+                            {editingNote.contentType !== 'PYQ' ? (
+                                <div>
+                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject</label>
+                                    <select value={editingNote.subject} onChange={(e) => setEditingNote({ ...editingNote, subject: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                        <option>Physics</option>
+                                        <option>Chemistry</option>
+                                        <option>Biology</option>
+                                        <option>Botany</option>
+                                        <option>Zoology</option>
+                                    </select>
+                                </div>
+                            ) : (
+                                <div>
+                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Exam Year</label>
+                                    <input type="text" value={editingNote.year || ''} onChange={(e) => setEditingNote({ ...editingNote, year: e.target.value })} placeholder="e.g. 2023" className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
+                                </div>
+                            )}
+                            {editingNote.contentType !== 'PYQ' && (
+                                <div>
+                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Topic</label>
+                                    <input type="text" value={editingNote.topic || ''} onChange={(e) => setEditingNote({ ...editingNote, topic: e.target.value })} placeholder="Enter topic" className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
+                                </div>
+                            )}
                             <div>
                                 <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Current File</label>
                                 <div className={`border-2 rounded-lg p-4 ${darkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-gray-50'}`}>
@@ -555,7 +569,9 @@ const ContentManagement = () => {
                                         editingNote.topic,
                                         editingNote.pages,
                                         editingNote.content || '',
-                                        editingNote.contentType
+                                        editingNote.contentType,
+                                        editingNote.classLevel,
+                                        editingNote.year
                                     );
                                     if (updated.contentType === 'TEXTBOOK') setTextbooks(textbooks.map(n => n.id === editingNote.id ? updated : n));
                                     else if (updated.contentType === 'PYQ') setPyqs(pyqs.map(n => n.id === editingNote.id ? updated : n));

@@ -15,7 +15,7 @@ public class Question {
     private String text;
 
     @ElementCollection
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private List<String> answers = new java.util.ArrayList<>();
 
     @ElementCollection

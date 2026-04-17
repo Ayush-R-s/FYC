@@ -8,7 +8,6 @@ const ResourcesPage = () => {
     const { darkMode, t, addActivity } = useAppContext();
     const [activeTab, setActiveTab] = useState("textbooks");
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedSubject, setSelectedSubject] = useState("all");
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedClass, setSelectedClass] = useState('11');
@@ -36,8 +35,7 @@ const ResourcesPage = () => {
 
     const filteredResources = resources.filter(res => {
         const matchesSearch = res.title.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesSubject = selectedSubject === "all" || res.subject.toLowerCase() === selectedSubject.toLowerCase();
-        return matchesSearch && matchesSubject;
+        return matchesSearch;
     });
 
     const downloadFile = (resource) => {
@@ -56,7 +54,6 @@ const ResourcesPage = () => {
         addActivity(`Downloaded ${activeTab === 'textbooks' ? 'Textbook' : 'PYQ'}`, resource.title);
     };
 
-    const subjects = ["all", "Physics", "Chemistry", "Biology"];
 
     return (
         <div className="space-y-6">
@@ -116,17 +113,6 @@ const ResourcesPage = () => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                    </div>
-                    <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
-                        {subjects.map(sub => (
-                            <button
-                                key={sub}
-                                onClick={() => setSelectedSubject(sub)}
-                                className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border ${selectedSubject === sub ? "bg-orange-500 border-orange-500 text-white shadow-md shadow-orange-500/20" : darkMode ? "bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600" : "bg-white border-slate-200 text-slate-600 hover:border-orange-200"}`}
-                            >
-                                {sub === "all" ? "All Subjects" : sub}
-                            </button>
-                        ))}
                     </div>
                 </div>
 
@@ -238,8 +224,11 @@ const ResourcesPage = () => {
                                 <div>
                                     <h3 className={`font-bold text-lg mb-1 truncate ${darkMode ? "text-white" : "text-slate-900"}`}>{res.title}</h3>
                                     <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-orange-500/20 text-orange-400" : "bg-orange-100 text-orange-600"}`}>
+                                            Year: {res.year || 'N/A'}
+                                        </span>
                                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600"}`}>
-                                            {res.subject}
+                                            Class {res.classLevel}
                                         </span>
                                         {res.pages && <span>{res.pages} pages</span>}
                                     </div>

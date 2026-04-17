@@ -47,8 +47,9 @@ public class ContentController {
             @RequestParam(required = false) Integer pages,
             @RequestParam String description,
             @RequestParam(required = false) String contentType,
-            @RequestParam(required = false) String classLevel) {
-        return contentService.uploadNotes(file, title, subject, topic, pages, description, contentType, classLevel);
+            @RequestParam(required = false) String classLevel,
+            @RequestParam(required = false) String year) {
+        return contentService.uploadNotes(file, title, subject, topic, pages, description, contentType, classLevel, year);
     }
 
     @PostMapping("/video/presigned-url")
@@ -80,8 +81,9 @@ public class ContentController {
             @RequestParam(required = false) Integer pages,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String contentType,
-            @RequestParam(required = false) String classLevel) {
-        return contentService.updateNotes(id, file, title, subject, topic, pages, description, contentType, classLevel);
+            @RequestParam(required = false) String classLevel,
+            @RequestParam(required = false) String year) {
+        return contentService.updateNotes(id, file, title, subject, topic, pages, description, contentType, classLevel, year);
     }
 
     @PutMapping("/video/{id}")

@@ -12,6 +12,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType }) => {
     const [classLevel, setClassLevel] = useState('11');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
+    const [year, setYear] = useState('');
     const [contentType, setContentType] = useState(initialContentType);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -35,9 +36,10 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType }) => {
         setError('');
 
         try {
-            const description = `${subject}${topic ? ' - ' + topic : ''}`;
+            const finalSubject = contentType === 'PYQ' ? 'PYQ' : subject;
+            const description = contentType === 'PYQ' ? `Previous Year Question - ${year}` : `${subject}${topic ? ' - ' + topic : ''}`;
             // Pages is now null as it is automated in the backend
-            const uploadedNote = await uploadNotes(file, title, subject, topic, null, description, contentType, classLevel);
+            const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, classLevel, year);
             onUpload(uploadedNote);
             onClose();
         } catch (err) {
@@ -68,7 +70,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType }) => {
                             <input type="text" placeholder={contentType === 'TEXTBOOK' ? 'Enter book title' : 'Enter title'} value={title} onChange={(e) => setTitle(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
                         </div>
                     </div>
-                    <div className={`grid ${contentType === 'TEXTBOOK' ? 'grid-cols-2' : 'grid-cols-2'} gap-4`}>
+                    <div className={`grid ${contentType === 'PYQ' ? 'grid-cols-2' : 'grid-cols-2'} gap-4`}>
                         <div>
                             <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class *</label>
                             <select value={classLevel} onChange={(e) => setClassLevel(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
@@ -77,18 +79,31 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType }) => {
                                 <option value="Both">Both</option>
                             </select>
                         </div>
-                        <div>
-                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject *</label>
-                            <select value={subject} onChange={(e) => setSubject(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
-                                <option>Physics</option>
-                                <option>Chemistry</option>
-                                <option>Biology</option>
-                                {contentType !== 'TEXTBOOK' && <option>Botany</option>}
-                                {contentType !== 'TEXTBOOK' && <option>Zoology</option>}
-                            </select>
-                        </div>
+                        {contentType === 'PYQ' ? (
+                            <div>
+                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Exam Year *</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="e.g. 2023" 
+                                    value={year} 
+                                    onChange={(e) => setYear(e.target.value)} 
+                                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} 
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject *</label>
+                                <select value={subject} onChange={(e) => setSubject(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                    <option>Physics</option>
+                                    <option>Chemistry</option>
+                                    <option>Biology</option>
+                                    {contentType !== 'TEXTBOOK' && <option>Botany</option>}
+                                    {contentType !== 'TEXTBOOK' && <option>Zoology</option>}
+                                </select>
+                            </div>
+                        )}
                     </div>
-                        {contentType !== 'TEXTBOOK' && (
+                        {contentType !== 'TEXTBOOK' && contentType !== 'PYQ' && (
                             <div>
                                 <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Topic (optional)</label>
                                 <input type="text" placeholder="Enter topic" value={topic} onChange={(e) => setTopic(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
@@ -105,7 +120,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType }) => {
                 </div>
                 <div className={`p-6 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'} flex gap-3 justify-end`}>
                     <button onClick={onClose} disabled={loading} className={`px-6 py-2 border rounded-lg ${darkMode ? 'border-gray-600 hover:bg-gray-800 text-white' : 'border-gray-300 hover:bg-gray-50'}`}>Cancel</button>
-                    <button onClick={handleUpload} disabled={!title || !file || loading} className="px-6 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white rounded-lg font-semibold">
+                    <button onClick={handleUpload} disabled={!title || !file || (contentType === 'PYQ' && !year) || loading} className="px-6 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white rounded-lg font-semibold">
                         {loading ? 'Uploading...' : 'Upload'}
                     </button>
                 </div>

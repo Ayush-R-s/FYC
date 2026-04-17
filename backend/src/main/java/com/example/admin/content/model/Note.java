@@ -27,6 +27,7 @@ public class Note {
     private String subject;
     private String topic;
     private String classLevel;
+    private String year;
     private Integer pages;
     @jakarta.persistence.Column(columnDefinition = "TEXT")
     private String content;
@@ -98,6 +99,14 @@ public class Note {
 
     public void setClassLevel(String classLevel) {
         this.classLevel = classLevel;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 
     public Admin getUploadedBy() {

@@ -63,7 +63,7 @@ public class ContentService {
         return videoRepository.findAll();
     }
 
-    public Note uploadNotes(MultipartFile file, String title, String subject, String topic, Integer pages, String description, String contentType, String classLevel) {
+    public Note uploadNotes(MultipartFile file, String title, String subject, String topic, Integer pages, String description, String contentType, String classLevel, String year) {
         String path = storageService.save(file, "notes/");
 
         Note note = new Note();
@@ -71,6 +71,7 @@ public class ContentService {
         note.setSubject(subject);
         note.setTopic(topic);
         note.setClassLevel(classLevel);
+        note.setYear(year);
         note.setContentType(contentType != null ? contentType : "NOTES");
         
         // Automate page count if not provided or to ensure accuracy
@@ -88,7 +89,7 @@ public class ContentService {
         
         // Create notification
         Notification notification = new Notification(
-            "New " + subject + " " + note.getContentType().toLowerCase() + ": " + title,
+            "New " + (year != null ? year + " " : "") + subject + " " + note.getContentType().toLowerCase() + ": " + title,
             null // global notification
         );
         notificationRepository.save(notification);
@@ -157,12 +158,13 @@ public class ContentService {
     }
 
     public Note updateNotes(Long id, MultipartFile file, String title, String subject, String topic,
-            Integer pages, String description, String contentType, String classLevel) {
+            Integer pages, String description, String contentType, String classLevel, String year) {
         Note note = repository.findById(id).orElseThrow(() -> new RuntimeException("Note not found"));
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
         note.setClassLevel(classLevel);
+        note.setYear(year);
         note.setContent(description);
         if (contentType != null) {
             note.setContentType(contentType);
