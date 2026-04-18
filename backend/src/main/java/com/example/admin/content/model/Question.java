@@ -16,8 +16,11 @@ public class Question {
 
     @ElementCollection
     @CollectionTable(name = "question_answers", joinColumns = @JoinColumn(name = "question_id"))
-    @Column(name = "answers", columnDefinition = "LONGTEXT")
+    @Column(name = "answer_content", columnDefinition = "TEXT")
+    @Lob
     private List<String> answers = new java.util.ArrayList<>();
+
+
 
 
     @ElementCollection

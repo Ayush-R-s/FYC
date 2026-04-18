@@ -70,10 +70,8 @@ public class ContentService {
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
-        System.out.println("DEBUG: [upload] Received category: [" + category + "], contentType: [" + contentType + "]");
         String finalCategory = (category == null || category.trim().isEmpty()) ? "11" : category.trim();
         note.setCategory(finalCategory);
-        System.out.println("DEBUG: [upload] Final assigned category: [" + finalCategory + "]");
         note.setYear(year);
         note.setContentType(contentType != null ? contentType : "NOTES");
         
@@ -89,7 +87,6 @@ public class ContentService {
         note.setUploadedAt(LocalDateTime.now());
 
         Note savedNote = repository.save(note);
-        System.out.println("DEBUG: [upload] AFTER SAVE - ID: " + savedNote.getId() + ", category: [" + savedNote.getCategory() + "]");
         
         // Create notification
         Notification notification = new Notification(
@@ -169,10 +166,6 @@ public class ContentService {
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
-        System.out.println("DEBUG: [update] Received category: [" + category + "], contentType: [" + contentType + "]");
-        String finalCategory = (category == null || category.trim().isEmpty()) ? "11" : category.trim();
-        note.setCategory(finalCategory);
-        System.out.println("DEBUG: [update] Final assigned category: [" + finalCategory + "]");
         note.setYear(year);
         note.setContent(description);
         if (contentType != null) {
@@ -193,7 +186,6 @@ public class ContentService {
             note.setPages(pages);
         }
         Note savedNote = repository.save(note);
-        System.out.println("DEBUG: [update] AFTER SAVE - ID: " + savedNote.getId() + ", category: [" + savedNote.getCategory() + "]");
         return savedNote;
     }
 

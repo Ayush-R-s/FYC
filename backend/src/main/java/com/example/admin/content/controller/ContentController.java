@@ -68,7 +68,6 @@ public class ContentController {
             @RequestParam String subject,
             @RequestParam(required = false) String duration,
             @RequestParam(required = false) String category) {
-        System.out.println("DEBUG: Video upload started for: " + title + " (file present: " + (file != null) + ", filePath: " + filePath + ", category: " + category + ")");
         return contentService.uploadVideo(file, filePath, fileName, title, subject, duration, category);
     }
 
