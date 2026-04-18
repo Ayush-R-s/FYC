@@ -23,7 +23,9 @@ public class Test {
 
     private String title;
     private String subject;
+    private String chapter;
     private String topic;
+
     private String duration;
     private TestCategory category;
     private Integer marksPerQuestion;
@@ -64,6 +66,14 @@ public class Test {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public String getChapter() {
+        return chapter;
+    }
+
+    public void setChapter(String chapter) {
+        this.chapter = chapter;
     }
 
     public List<Video> getVideos() {

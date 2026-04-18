@@ -71,4 +71,15 @@ public class QuestionController {
         }
         return repository.saveAll(questions);
     }
+
+    @GetMapping("/unique-chapters")
+    public List<String> getUniqueChapters(@RequestParam String subject) {
+        return repository.findDistinctChaptersBySubject(subject);
+    }
+
+    @GetMapping("/unique-topics")
+    public List<String> getUniqueTopics(@RequestParam String subject, @RequestParam String chapter) {
+        return repository.findDistinctTopicsBySubjectAndChapter(subject, chapter);
+    }
 }
+

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, X, Trash, Sparkles, ChevronDown, CheckSquare, Square, ArrowLeft } from 'lucide-react';
 import AIQuestionGenerator from './AIQuestionGenerator';
-import { createTest, updateTestApi, getAllVideosApi } from '../../../services/contentPortalApi';
+import { createTest, updateTestApi, getAllVideosApi, getUniqueChapters, getUniqueTopics } from '../../../services/contentPortalApi';
 
 const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) => {
     const [testTitle, setTestTitle] = useState(editingTestData?.title || '');
     const [subject, setSubject] = useState(editingTestData?.subject || 'physics');
+    const [selectedChapter, setSelectedChapter] = useState(editingTestData?.chapter || '');
     const [topic, setTopicName] = useState(editingTestData?.topic || '');
     const [testCategory, setTestCategory] = useState(editingTestData?.category || 'MOCK');
     const [totalTime, setTotalTime] = useState(editingTestData?.duration ? parseInt(editingTestData.duration) : 60);
@@ -13,6 +14,11 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
     const [randomSubject, setRandomSubject] = useState('mixed');
     const [questionCount, setQuestionCount] = useState(10);
     const [marksPerQuestion, setMarksPerQuestionState] = useState(4);
+    
+    const [chapters, setChapters] = useState([]);
+    const [topics, setTopics] = useState([]);
+    const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+
     const [questions, setQuestions] = useState(() => {
         const initialQuestions = editingTestData?.questions || editingTestData?.questions_data || [{ id: 1, text: '', answers: ['', '', '', ''], correctAnswers: [], points: 4, subject: editingTestData?.subject || 'physics', topic: editingTestData?.topic || '' }];
         return initialQuestions.map(q => ({
@@ -22,6 +28,58 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
             topic: q.topic || editingTestData?.topic || ''
         }));
     });
+
+    // Fetch Chapters when subject changes
+    useEffect(() => {
+        const fetchChapters = async () => {
+            if (subject === 'all') {
+                setChapters([]);
+                setSelectedChapter('');
+                setTopicName('');
+                return;
+            }
+            setIsLoadingCategories(true);
+            try {
+                const data = await getUniqueChapters(subject);
+                setChapters(data);
+                // If not editing or subject changed, reset chapter/topic
+                if (!editingTestData || editingTestData.subject !== subject) {
+                    setSelectedChapter('');
+                    setTopicName('');
+                } else {
+                    setSelectedChapter(editingTestData.chapter || '');
+                }
+            } catch (error) {
+                console.error('Error fetching chapters:', error);
+            } finally {
+                setIsLoadingCategories(false);
+            }
+        };
+        fetchChapters();
+    }, [subject]);
+
+    // Fetch Topics when chapter changes
+    useEffect(() => {
+        const fetchTopics = async () => {
+            if (!selectedChapter || subject === 'all') {
+                setTopics([]);
+                return;
+            }
+            try {
+                const data = await getUniqueTopics(subject, selectedChapter);
+                setTopics(data);
+                // If subject and chapter match editing data, restore topic, else reset
+                if (editingTestData && editingTestData.subject === subject && editingTestData.chapter === selectedChapter) {
+                    setTopicName(editingTestData.topic || '');
+                } else {
+                    setTopicName('');
+                }
+            } catch (error) {
+                console.error('Error fetching topics:', error);
+            }
+        };
+        fetchTopics();
+    }, [subject, selectedChapter]);
 
     // Video selection state
     const [availableVideos, setAvailableVideos] = useState([]);
@@ -118,6 +176,7 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
             const testData = {
                 title: testTitle,
                 subject,
+                chapter: selectedChapter, // Added chapter
                 topic: topic,
                 category: testCategory,
                 duration: `${totalTime} min`,
@@ -230,17 +289,33 @@ const TestBuilder = ({ onClose, darkMode, onPublish, editingTestData = null }) =
                                 <div>
                                     <label className={`block text-[11px] sm:text-xs font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject</label>
                                     <select value={subject} onChange={(e) => setSubject(e.target.value)} className={`w-full px-3 py-2 border rounded-lg text-sm transition-all focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-gray-50'}`}>
-                                        <option value="all">All Subjects</option>
                                         <option value="physics">Physics</option>
                                         <option value="chemistry">Chemistry</option>
                                         <option value="biology">Biology</option>
-                                        <option value="botany">Botany</option>
-                                        <option value="zoology">Zoology</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className={`block text-[11px] sm:text-xs font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Chapter Name</label>
+                                    <select 
+                                        value={selectedChapter} 
+                                        onChange={(e) => setSelectedChapter(e.target.value)} 
+                                        className={`w-full px-3 py-2 border rounded-lg text-sm transition-all focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-gray-50'}`}
+                                    >
+                                        <option value="">Select Chapter</option>
+                                        {chapters.map(ch => <option key={ch} value={ch}>{ch}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className={`block text-[11px] sm:text-xs font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Topic Name</label>
-                                    <input type="text" placeholder="e.g., Thermodynamics" value={topic} onChange={(e) => setTopicName(e.target.value)} className={`w-full px-3 py-2 border rounded-lg text-sm transition-all focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-gray-50'}`} />
+                                    <select 
+                                        value={topic} 
+                                        onChange={(e) => setTopicName(e.target.value)} 
+                                        disabled={!selectedChapter}
+                                        className={`w-full px-3 py-2 border rounded-lg text-sm transition-all focus:ring-2 focus:ring-orange-500 outline-none disabled:opacity-50 ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-gray-50'}`}
+                                    >
+                                        <option value="">Select Topic</option>
+                                        {topics.map(t => <option key={t} value={t}>{t}</option>)}
+                                    </select>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-1">
                                     <div>

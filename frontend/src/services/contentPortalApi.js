@@ -321,3 +321,28 @@ export const bulkAddQuestionsToPool = async (questions) => {
         throw error;
     }
 };
+
+export const getUniqueChapters = async (subject) => {
+    try {
+        const response = await axios.get('/admin/content/questions/unique-chapters', {
+            params: { subject }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching unique chapters:', error);
+        throw error;
+    }
+};
+
+export const getUniqueTopics = async (subject, chapter) => {
+    try {
+        const response = await axios.get('/admin/content/questions/unique-topics', {
+            params: { subject, chapter }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching unique topics:', error);
+        throw error;
+    }
+};
+
