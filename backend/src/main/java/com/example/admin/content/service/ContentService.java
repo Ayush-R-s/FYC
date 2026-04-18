@@ -105,7 +105,7 @@ public class ContentService {
         return storageService.generatePresignedUploadUrl(fileName, contentType, "videos/");
     }
 
-    public Video uploadVideo(MultipartFile file, String filePath, String fileName, String title, String subject, String duration) {
+    public Video uploadVideo(MultipartFile file, String filePath, String fileName, String title, String subject, String duration, String category) {
         String path = filePath;
         String finalFileName = fileName;
         
@@ -121,6 +121,8 @@ public class ContentService {
         video.setFilePath(path);
 
         video.setDuration(duration);
+        String finalCategory = (category == null || category.trim().isEmpty()) ? "11" : category.trim();
+        video.setCategory(finalCategory);
         // createdAt is already set in Video constructor
 
         Video savedVideo = videoRepository.save(video);
@@ -195,11 +197,14 @@ public class ContentService {
         return savedNote;
     }
 
-    public Video updateVideo(Long id, MultipartFile file, String title, String subject, String duration) {
+    public Video updateVideo(Long id, MultipartFile file, String title, String subject, String duration, String category) {
         Video video = videoRepository.findById(id).orElseThrow(() -> new RuntimeException("Video not found"));
         video.setTitle(title);
         video.setSubject(subject);
         video.setDuration(duration);
+        if (category != null) {
+            video.setCategory(category);
+        }
         if (file != null && !file.isEmpty()) {
             // Delete old file from S3 before uploading replacement
             if (video.getFilePath() != null) {

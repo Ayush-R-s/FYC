@@ -37,8 +37,8 @@ const SearchFilters = ({
                 <option value="All">{t("all") || "All Subjects"}</option>
                 <option value="Physics">{t("physics") || "Physics"}</option>
                 <option value="Chemistry">{t("chemistry") || "Chemistry"}</option>
-                <option value="Zoology">{t("zoology") || "Zoology"}</option>
-                <option value="Botany">{t("botany") || "Botany"}</option>
+                <option value="Biology">{t("biology") || "Biology"}</option>
+
             </select>
             <input
                 type="date"

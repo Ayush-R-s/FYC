@@ -66,9 +66,10 @@ public class ContentController {
             @RequestParam(required = false) String fileName,
             @RequestParam String title,
             @RequestParam String subject,
-            @RequestParam(required = false) String duration) {
-        System.out.println("DEBUG: Video upload started for: " + title + " (file present: " + (file != null) + ", filePath: " + filePath + ")");
-        return contentService.uploadVideo(file, filePath, fileName, title, subject, duration);
+            @RequestParam(required = false) String duration,
+            @RequestParam(required = false) String category) {
+        System.out.println("DEBUG: Video upload started for: " + title + " (file present: " + (file != null) + ", filePath: " + filePath + ", category: " + category + ")");
+        return contentService.uploadVideo(file, filePath, fileName, title, subject, duration, category);
     }
 
     @PutMapping("/notes/{id}")
@@ -92,8 +93,9 @@ public class ContentController {
             @RequestParam(required = false) MultipartFile file,
             @RequestParam String title,
             @RequestParam String subject,
-            @RequestParam(required = false) String duration) {
-        return contentService.updateVideo(id, file, title, subject, duration);
+            @RequestParam(required = false) String duration,
+            @RequestParam(required = false) String category) {
+        return contentService.updateVideo(id, file, title, subject, duration, category);
     }
 
     @DeleteMapping("/{id}")

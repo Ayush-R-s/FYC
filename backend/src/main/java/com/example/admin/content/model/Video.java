@@ -16,6 +16,9 @@ public class Video {
     private String subject;
     private String fileName;
 
+    @Column(name = "class_level")
+    private String category;
+
     private String filePath;
 
     private String duration; // displayed in frontend list
@@ -44,6 +47,14 @@ public class Video {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getFilePath() {

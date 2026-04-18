@@ -408,7 +408,10 @@ const ContentManagement = () => {
                                                 ...item,
                                                 category: item.category || '11'
                                             });
-                                            else if (activeTab === 'videos') setEditingVideo(item);
+                                            else if (activeTab === 'videos') setEditingVideo({
+                                                ...item,
+                                                category: item.category || '11'
+                                            });
                                             else if (activeTab === 'tests') { setEditingTest(item); setShowTestBuilder(true); }
                                         }}
                                         className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 sm:p-2.5 rounded-xl ${darkMode ? 'bg-gray-800 hover:bg-gray-700 text-blue-400' : 'bg-slate-50 hover:bg-blue-50 text-blue-600'} transition-colors border border-transparent hover:border-blue-100`}
@@ -655,16 +658,24 @@ const ContentManagement = () => {
                                 <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Title</label>
                                 <input type="text" value={editingVideo.title} onChange={(e) => setEditingVideo({ ...editingVideo, title: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
                             </div>
-                            <div>
-                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject</label>
-                                <select value={editingVideo.subject} onChange={(e) => setEditingVideo({ ...editingVideo, subject: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
-                                    <option>Physics</option>
-                                    <option>Chemistry</option>
-                                    <option>Biology</option>
-                                    <option>Botany</option>
-                                    <option>Zoology</option>
-
-                                </select>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject</label>
+                                    <select value={editingVideo.subject} onChange={(e) => setEditingVideo({ ...editingVideo, subject: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                        <option>Physics</option>
+                                        <option>Chemistry</option>
+                                        <option>Biology</option>
+                                        <option>Botany</option>
+                                        <option>Zoology</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class Level</label>
+                                    <select value={editingVideo.category || '11'} onChange={(e) => setEditingVideo({ ...editingVideo, category: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                        <option value="11">Class 11th</option>
+                                        <option value="12">Class 12th</option>
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Current Video</label>
@@ -726,7 +737,8 @@ const ContentManagement = () => {
                                         editingVideo.newFile,
                                         editingVideo.title,
                                         editingVideo.subject,
-                                        editingVideo.duration
+                                        editingVideo.duration,
+                                        editingVideo.category
                                     );
                                     setVideos(videos.map(v => v.id === editingVideo.id ? updated : v));
                                     setEditingVideo(null);

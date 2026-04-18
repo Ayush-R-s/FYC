@@ -133,13 +133,14 @@ export const uploadVideoDirect = async (url, file) => {
     }
 };
 
-export const uploadVideoMetadata = async (filePath, fileName, title, subject, duration) => {
+export const uploadVideoMetadata = async (filePath, fileName, title, subject, duration, category) => {
     const formData = new FormData();
     formData.append('filePath', filePath);
     formData.append('fileName', fileName);
     formData.append('title', title);
     formData.append('subject', subject);
     if (duration) formData.append('duration', duration);
+    if (category) formData.append('category', category);
 
     try {
         const response = await axios.post('/admin/content/video', formData, {
@@ -152,12 +153,14 @@ export const uploadVideoMetadata = async (filePath, fileName, title, subject, du
     }
 };
 
-export const updateVideoApi = async (id, file, title, subject, duration) => {
+export const updateVideoApi = async (id, file, title, subject, duration, category) => {
     const formData = new FormData();
     if (file) formData.append('file', file);
     formData.append('title', title);
     formData.append('subject', subject);
     if (duration) formData.append('duration', duration);
+    if (category) formData.append('category', category);
+
 
     try {
         const response = await axios.put(`/admin/content/video/${id}`, formData, {

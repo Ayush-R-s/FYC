@@ -5,6 +5,7 @@ import { getPresignedVideoUrl, uploadVideoMetadata } from '../../../services/con
 const UploadVideoModal = ({ onClose, darkMode, onUpload }) => {
     const [title, setTitle] = useState('');
     const [subject, setSubject] = useState('Physics');
+    const [category, setCategory] = useState('11');
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [fileSize, setFileSize] = useState('');
@@ -109,7 +110,7 @@ const UploadVideoModal = ({ onClose, darkMode, onUpload }) => {
             // 3. Save metadata to backend
             setUploadPhase('saving');
             setUploadProgress(100);
-            const uploadedVideo = await uploadVideoMetadata(key, file.name, title, subject, duration);
+            const uploadedVideo = await uploadVideoMetadata(key, file.name, title, subject, duration, category);
 
             onUpload(uploadedVideo);
             onClose();
@@ -141,7 +142,7 @@ const UploadVideoModal = ({ onClose, darkMode, onUpload }) => {
                     <h2 className={`font-bold text-xl ${darkMode ? 'text-white' : 'text-gray-900'}`}>Upload Video</h2>
                     <button onClick={handleCancel} className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}><X className="w-5 h-5" /></button>
                 </div>
-                <div className="p-6 space-y-4">
+                <div className="p-6 space-y-4 overflow-y-auto max-h-[70vh]">
                     {error && (
                         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                             {error}
@@ -151,15 +152,24 @@ const UploadVideoModal = ({ onClose, darkMode, onUpload }) => {
                         <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Topic Name *</label>
                         <input type="text" placeholder="Enter video topic" value={title} onChange={(e) => setTitle(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} disabled={loading} />
                     </div>
-                    <div>
-                        <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject *</label>
-                        <select value={subject} onChange={(e) => setSubject(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} disabled={loading}>
-                            <option>Physics</option>
-                            <option>Chemistry</option>
-                            <option>Biology</option>
-                            <option>Botany</option>
-                            <option>Zoology</option>
-                        </select>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject *</label>
+                            <select value={subject} onChange={(e) => setSubject(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} disabled={loading}>
+                                <option>Physics</option>
+                                <option>Chemistry</option>
+                                <option>Biology</option>
+                                <option>Botany</option>
+                                <option>Zoology</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class Level *</label>
+                            <select value={category} onChange={(e) => setCategory(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} disabled={loading}>
+                                <option value="11">Class 11th</option>
+                                <option value="12">Class 12th</option>
+                            </select>
+                        </div>
                     </div>
                     <div>
                         <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Video File *</label>
@@ -213,6 +223,7 @@ const UploadVideoModal = ({ onClose, darkMode, onUpload }) => {
             </div>
         </div>
     );
+
 };
 
 export default UploadVideoModal;
