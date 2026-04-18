@@ -15,8 +15,10 @@ public class Question {
     private String text;
 
     @ElementCollection
-    @Column(columnDefinition = "LONGTEXT")
+    @CollectionTable(name = "question_answers", joinColumns = @JoinColumn(name = "question_id"))
+    @Column(name = "answers", columnDefinition = "LONGTEXT")
     private List<String> answers = new java.util.ArrayList<>();
+
 
     @ElementCollection
     private List<Integer> correctAnswers = new java.util.ArrayList<>();
