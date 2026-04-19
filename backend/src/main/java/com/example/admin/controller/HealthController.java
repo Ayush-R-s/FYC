@@ -12,7 +12,7 @@ public class HealthController {
         return "Backend is running";
     }
 
-    @GetMapping("/api/health")
+    @GetMapping("/health")
     public Map<String, String> health() {
         return Map.of("status", "UP");
     }
