@@ -13,9 +13,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.web.filter.CorsFilter;
 
 import com.example.admin.auth.security.JwtFilter;
 
@@ -37,21 +38,23 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.disable()) // Handled by our Global CorsFilter bean
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.disable()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/admin/content/files/**").permitAll()
-                        .requestMatchers("/notifications/**").permitAll()
-                        .requestMatchers("/activity/**").permitAll()
-                        .requestMatchers("/data").permitAll()
-                        .requestMatchers("/debug/**").permitAll()
-                        .requestMatchers("/api/debug/**").permitAll()
-                        .requestMatchers("/", "/health").permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/admin/content/files/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/notifications/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/activity/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/data")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/debug/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/debug/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/health")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/health")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e.authenticationEntryPoint(
                         (req, res, ex) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
@@ -76,26 +79,27 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(
-            "http://www.fycneet.com",
-            "https://www.fycneet.com",
-            "http://fycneet.com",
-            "https://fycneet.com",
-            "http://fyc-frontend.s3-website.ap-south-1.amazonaws.com",
-            "http://localhost:5173",
-            "http://localhost:3000",
-            "http://localhost:3001"
-        ));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
-        config.setExposedHeaders(List.of("Authorization", "Link", "X-Total-Count"));
-        config.setAllowCredentials(true);
-        config.setMaxAge(3600L); // 1 hour Cache for preflight
-
+    public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        
+        config.setAllowCredentials(true);
+        // Allow all origins that end with fycneet.com or are localhost
+        config.setAllowedOriginPatterns(List.of(
+            "http://localhost:[*]",
+            "https://*.fycneet.com",
+            "http://*.fycneet.com",
+            "https://fycneet.com",
+            "http://fycneet.com",
+            "http://fyc-frontend.s3-website.ap-south-1.amazonaws.com"
+        ));
+        
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
+        config.setExposedHeaders(List.of("Authorization", "Link", "X-Total-Count"));
+        config.setMaxAge(3600L);
+
         source.registerCorsConfiguration("/**", config);
-        return source;
+        return new CorsFilter(source);
     }
 }
