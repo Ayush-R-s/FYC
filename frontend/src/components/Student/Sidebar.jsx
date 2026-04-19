@@ -12,7 +12,8 @@ import {
   Settings,
   LogOut,
   X,
-  Target
+  Target,
+  Calendar
 } from "lucide-react"
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen, t }) {
@@ -28,6 +29,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, t }) {
     { id: "streaks", label: translate("streaks", "Streaks"), icon: Flame, path: "/student/streaks" },
     { id: "resources", label: translate("study_materials", "Study Materials"), icon: BookOpen, path: "/student/resources" },
     { id: "notes", label: translate("notes", "Notes"), icon: FileText, path: "/student/notes" },
+    { id: "timetable", label: translate("timetable", "Timetable"), icon: Calendar, path: "/student/timetable" },
     { id: "tests", label: translate("tests", "Tests"), icon: Target, path: "/student/tests" },
     { id: "videos", label: translate("videos", "Videos"), icon: PlayCircle, path: "/student/videos" },
     { id: "badges", label: translate("badges", "Badges"), icon: Award, path: "/student/badges" },
