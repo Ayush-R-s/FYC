@@ -235,9 +235,7 @@ const ResourcesPage = () => {
                                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-orange-500/20 text-orange-400" : "bg-orange-100 text-orange-600"}`}>
                                             Year: {res.year || 'N/A'}
                                         </span>
-                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600"}`}>
-                                            Class {res.category}
-                                        </span>
+
                                         {res.pages && <span>{res.pages} pages</span>}
                                     </div>
                                 </div>

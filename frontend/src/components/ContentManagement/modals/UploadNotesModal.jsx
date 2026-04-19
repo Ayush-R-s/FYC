@@ -35,13 +35,12 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
         setLoading(true);
         setError('');
 
-        console.log(`DEBUG: Handing upload for ${contentType}. initialCategory was ${initialCategory}, current category is ${category}`);
         try {
             const finalSubject = contentType === 'PYQ' ? 'PYQ' : subject;
             const description = contentType === 'PYQ' ? `Previous Year Question - ${year}` : `${subject}${topic ? ' - ' + topic : ''}`;
-            console.log(`DEBUG: Final API payload - contentType: ${contentType}, category: ${category}, title: ${title}, subject: ${finalSubject}`);
-            // Pages is now null as it is automated in the backend
-            const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, category, year);
+            const finalCategory = contentType === 'PYQ' ? 'PYQ' : category;
+            
+            const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, finalCategory, year);
             onUpload(uploadedNote);
             onClose();
         } catch (err) {
@@ -72,14 +71,16 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
                             <input type="text" placeholder={contentType === 'TEXTBOOK' ? 'Enter book title' : 'Enter title'} value={title} onChange={(e) => setTitle(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
                         </div>
                     </div>
-                    <div className={`grid ${contentType === 'PYQ' ? 'grid-cols-2' : 'grid-cols-2'} gap-4`}>
-                        <div>
-                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class *</label>
-                            <select value={category} onChange={(e) => setCategory(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
-                                <option value="11">11th</option>
-                                <option value="12">12th</option>
-                            </select>
-                        </div>
+                    <div className={`grid ${contentType === 'PYQ' ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
+                        {contentType !== 'PYQ' && (
+                            <div>
+                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class *</label>
+                                <select value={category} onChange={(e) => setCategory(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                    <option value="11">11th</option>
+                                    <option value="12">12th</option>
+                                </select>
+                            </div>
+                        )}
                         {contentType === 'PYQ' ? (
                             <div>
                                 <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Exam Year *</label>

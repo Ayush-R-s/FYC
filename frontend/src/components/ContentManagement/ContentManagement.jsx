@@ -363,13 +363,15 @@ const ContentManagement = () => {
                                                     Year: {item.year}
                                                 </span>
                                             )}
-                                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest border ${
-                                                item.category 
-                                                ? 'bg-gray-100 text-gray-500' 
-                                                : 'bg-red-50 text-red-500 border-red-100'
-                                            }`}>
-                                                {item.category ? `Class ${item.category}` : (item.category === null ? 'CLASS: NULL' : 'CLASS: UNDEF')}
-                                            </span>
+                                            {activeTab !== 'pyqs' && (
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest border ${
+                                                    item.category 
+                                                    ? 'bg-gray-100 text-gray-500' 
+                                                    : 'bg-red-50 text-red-500 border-red-100'
+                                                }`}>
+                                                    {item.category ? `Class ${item.category}` : (item.category === null ? 'CLASS: NULL' : 'CLASS: UNDEF')}
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="flex items-center gap-x-3 gap-y-1 mt-1 flex-wrap">
                                             <span className={`text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 ${darkMode ? 'bg-gray-700 text-gray-400' : 'text-slate-500'}`}>
@@ -546,14 +548,7 @@ const ContentManagement = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-2 gap-4">
-                                     <div>
-                                        <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class</label>
-                                        <select value={editingNote.category || '11'} onChange={(e) => setEditingNote({ ...editingNote, category: e.target.value })} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-800 text-white' : 'border-gray-300'}`}>
-                                            <option value="11">11th</option>
-                                            <option value="12">12th</option>
-                                        </select>
-                                    </div>
+                                <div className="grid grid-cols-1 gap-4">
                                     <div>
                                         <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Exam Year</label>
                                         <input type="text" value={editingNote.year || ''} onChange={(e) => setEditingNote({ ...editingNote, year: e.target.value })} placeholder="e.g. 2023" className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
