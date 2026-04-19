@@ -65,10 +65,36 @@ public class ContentService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @jakarta.annotation.PostConstruct
-    public void migrateOldData() {
+    @Transactional
+    public void safeJavaMigration() {
         try {
-            System.out.println("Checking for old 'TEXTBOOK' and 'PYQ' data in notes table to migrate...");
+            System.out.println("Starting manual Java migration relying on JDBC...");
+            // Run JDBC to verify content_type column
+            try {
+                jdbcTemplate.execute("SELECT content_type FROM notes LIMIT 1");
+            } catch (Exception e) {
+                System.out.println("content_type column no longer exists. Analyzing by properties...");
+                // Fallback: look for category = 'PYQ'
+                List<Note> pyqNotes = noteRepository.findByCategory("PYQ");
+                System.out.println("Found " + pyqNotes.size() + " potential PYQs missing content_type.");
+                for(Note n : pyqNotes) {
+                    PYQ p = new PYQ();
+                    p.setTitle(n.getTitle());
+                    p.setSubject(n.getSubject());
+                    p.setCategory("PYQ");
+                    p.setYear("Previous Years"); // default
+                    p.setFileName(n.getFileName());
+                    p.setFileUrl(n.getFileUrl());
+                    p.setUploadedBy(null); 
+                    p.setUploadedAt(n.getUploadedAt());
+                    pyqRepository.save(p);
+                    noteRepository.delete(n);
+                }
+                return;
+            }
+
+            // If column exists, run raw SQL manually
+            System.out.println("content_type column exists. Running SQL migration...");
             int textbooksMigrated = jdbcTemplate.update(
                 "INSERT INTO textbooks (title, file_name, file_url, subject, class_level, uploaded_by_id, uploaded_at) " +
                 "SELECT title, file_name, file_url, subject, class_level, uploaded_by_id, uploaded_at FROM notes WHERE content_type = 'TEXTBOOK'");
@@ -87,7 +113,8 @@ public class ContentService {
                 System.out.println("Migrated " + pyqsMigrated + " PYQs.");
             }
         } catch(Exception e) {
-            System.out.println("Migration skipped. (Expected if content_type column is already removed or doesn't exist)");
+            System.err.println("Migration failed: " + e.getMessage());
+            throw new RuntimeException("Migration failed: " + e.getMessage());
         }
     }
 

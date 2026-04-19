@@ -38,6 +38,16 @@ public class ContentController {
         return contentService.getAllContent();
     }
 
+    @PostMapping("/migrate-legacy")
+    public org.springframework.http.ResponseEntity<String> migrateLegacy() {
+        try {
+            contentService.safeJavaMigration();
+            return org.springframework.http.ResponseEntity.ok("Migration successful!");
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
     // --- GET LISTS ---
 
     @GetMapping("/notes")
