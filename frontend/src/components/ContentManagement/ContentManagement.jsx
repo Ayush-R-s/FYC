@@ -35,11 +35,18 @@ const ContentManagement = () => {
     const [error, setError] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('11'); // For Textbooks folder system
     const [expandedSubjects, setExpandedSubjects] = useState(['Physics']); // Default open folder
+    const [selectedIds, setSelectedIds] = useState(new Set());
+    const [isDeletingBulk, setIsDeletingBulk] = useState(false);
 
     // Fetch data from backend on component mount
     useEffect(() => {
         fetchData();
     }, []);
+
+    // Clear selections when tab or category changes
+    useEffect(() => {
+        setSelectedIds(new Set());
+    }, [activeTab, selectedCategory]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -71,8 +78,34 @@ const ContentManagement = () => {
         }
     };
 
+    const handleBulkDelete = async () => {
+        if (selectedIds.size === 0) return;
+        if (!confirm(`Are you sure you want to delete ${selectedIds.size} selected items?`)) return;
+        setIsDeletingBulk(true);
+        try {
+            const activeTabContentType = activeTab === 'notes' ? 'NOTES' : 
+                                       activeTab === 'textbooks' ? 'TEXTBOOK' : 
+                                       activeTab === 'pyqs' ? 'PYQ' : 
+                                       activeTab === 'timetables' ? 'TIMETABLE' : 
+                                       activeTab === 'videos' ? 'VIDEO' : 'TEST';
+            
+            await Promise.all(Array.from(selectedIds).map(id => {
+                if (activeTab === 'tests') return deleteTest(id);
+                return deleteContent(id, activeTabContentType);
+            }));
+
+            // Reload data purely to ensure sync
+            await fetchData();
+            setSelectedIds(new Set());
+        } catch (err) {
+            alert('Failed to delete some items. Please try again.');
+        } finally {
+            setIsDeletingBulk(false);
+        }
+    };
+
     const getCurrentContent = () => {
-        let allContent;
+        let allContent = [];
         if (activeTab === 'notes') allContent = notes;
         else if (activeTab === 'textbooks') allContent = textbooks;
         else if (activeTab === 'pyqs') allContent = pyqs;
@@ -215,8 +248,20 @@ const ContentManagement = () => {
                             )}
                         </div>
 
-                        <button onClick={() => {
-                            if (activeTab === 'notes' || activeTab === 'textbooks' || activeTab === 'pyqs' || activeTab === 'timetables') setShowUploadNotes(true);
+                        <div className="flex gap-2">
+                            {selectedIds.size > 0 && (
+                                <button 
+                                    onClick={handleBulkDelete}
+                                    disabled={isDeletingBulk}
+                                    className="flex items-center justify-center gap-2 px-4 py-2 sm:py-2.5 bg-red-500 hover:bg-red-600 border border-transparent text-white rounded-lg font-semibold text-sm sm:text-base whitespace-nowrap opacity-90 transition-all hover:scale-105"
+                                >
+                                    <Trash className={`w-4 h-4 ${isDeletingBulk ? 'animate-spin' : ''}`} />
+                                    <span className="hidden sm:inline">Delete ({selectedIds.size})</span>
+                                    <span className="sm:hidden">Del ({selectedIds.size})</span>
+                                </button>
+                            )}
+                            <button onClick={() => {
+                                if (activeTab === 'notes' || activeTab === 'textbooks' || activeTab === 'pyqs' || activeTab === 'timetables') setShowUploadNotes(true);
                             else if (activeTab === 'videos') setShowUploadVideo(true);
                             else setShowTestBuilder(true);
                         }} className="flex items-center justify-center gap-2 px-4 py-2 sm:py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold text-sm sm:text-base whitespace-nowrap">
@@ -230,6 +275,7 @@ const ContentManagement = () => {
                             </span>
                             <span className="sm:hidden">Add</span>
                         </button>
+                        </div>
                     </div>
                 </div>
 
@@ -291,6 +337,18 @@ const ContentManagement = () => {
                                                     {subjectTextbooks.map((item) => (
                                                         <div key={item.id} className={`flex items-center justify-between p-4 rounded-2xl border transition-all group gap-4 ${darkMode ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-800' : 'bg-white border-slate-100 hover:shadow-lg'}`}>
                                                             <div className="flex items-center gap-4 flex-1 min-w-0">
+                                                                <input 
+                                                                    type="checkbox" 
+                                                                    checked={selectedIds.has(item.id)}
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                    onChange={(e) => {
+                                                                        const newAttrs = new Set(selectedIds);
+                                                                        if (e.target.checked) newAttrs.add(item.id);
+                                                                        else newAttrs.delete(item.id);
+                                                                        setSelectedIds(newAttrs);
+                                                                    }}
+                                                                    className="w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer"
+                                                                />
                                                                 <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${darkMode ? 'bg-orange-900/30 text-orange-400' : 'bg-orange-50 text-orange-500'}`}>
                                                                     <FileText className="w-5 h-5" />
                                                                 </div>
@@ -353,6 +411,18 @@ const ContentManagement = () => {
                         {getCurrentContent().map((item) => (
                             <div key={item.id} className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-5 rounded-2xl border transition-all group gap-4 ${darkMode ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-800' : 'bg-white border-slate-100 hover:shadow-lg hover:shadow-slate-200/50'}`}>
                                 <div className="flex items-start sm:items-center gap-4 flex-1 min-w-0 w-full">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={selectedIds.has(item.id)}
+                                        onClick={(e) => e.stopPropagation()}
+                                        onChange={(e) => {
+                                            const newAttrs = new Set(selectedIds);
+                                            if (e.target.checked) newAttrs.add(item.id);
+                                            else newAttrs.delete(item.id);
+                                            setSelectedIds(newAttrs);
+                                        }}
+                                        className="mt-1 sm:mt-0 w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer"
+                                    />
                                     <div className={`w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center ${activeTab === 'notes' ? (darkMode ? 'bg-blue-900/30' : 'bg-blue-50') : activeTab === 'videos' ? (darkMode ? 'bg-purple-900/30' : 'bg-purple-50') : (darkMode ? 'bg-orange-900/30' : 'bg-orange-50')}`}>
                                         {activeTab === 'notes' && <FileText className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-500'}`} />}
                                         {activeTab === 'videos' && <Video className={`w-6 h-6 ${darkMode ? 'text-purple-400' : 'text-purple-500'}`} />}
