@@ -16,6 +16,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
     const [contentType, setContentType] = useState(initialContentType);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files?.[0];
@@ -40,10 +41,21 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
             const description = contentType === 'PYQ' ? `Previous Year Question - ${year}` : `${subject}${topic ? ' - ' + topic : ''}`;
             const finalCategory = contentType === 'PYQ' ? 'PYQ' : category;
             
-            const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, finalCategory, year);
+            const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, finalCategory, year, (progressEvent) => {
+                if (progressEvent.total) {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setUploadProgress(percentCompleted);
+                }
+            });
             onUpload(uploadedNote);
             onClose();
         } catch (err) {
+            console.error('Upload Error Details:', {
+                message: err.message,
+                response: err.response?.data,
+                status: err.response?.status,
+                endpoint: '/admin/content/notes'
+            });
             setError(err.response?.data?.message || 'Failed to upload content. Please try again.');
         } finally {
             setLoading(false);
@@ -119,6 +131,22 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
                             <input type="file" onChange={handleFileChange} accept=".pdf,.docx,.ppt,.pptx,.doc" className="hidden" />
                         </label>
                     </div>
+                    {/* Progress Bar */}
+                    {loading && (
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                                <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    Uploading... {uploadProgress}%
+                                </span>
+                            </div>
+                            <div className={`w-full rounded-full h-2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                                <div
+                                    className="h-2 rounded-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300 ease-out"
+                                    style={{ width: `${uploadProgress}%` }}
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <div className={`p-6 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'} flex gap-3 justify-end`}>
                     <button onClick={onClose} disabled={loading} className={`px-6 py-2 border rounded-lg ${darkMode ? 'border-gray-600 hover:bg-gray-800 text-white' : 'border-gray-300 hover:bg-gray-50'}`}>Cancel</button>

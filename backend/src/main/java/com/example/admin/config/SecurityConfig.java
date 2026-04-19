@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/data").permitAll()
                         .requestMatchers("/debug/**").permitAll()
                         .requestMatchers("/api/debug/**").permitAll()
-                        .requestMatchers("/", "/api/health").permitAll()
+                        .requestMatchers("/", "/health").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
@@ -78,15 +78,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of(
+        config.setAllowedOrigins(List.of(
             "http://www.fycneet.com",
             "https://www.fycneet.com",
             "http://fycneet.com",
             "https://fycneet.com",
             "http://fyc-frontend.s3-website.ap-south-1.amazonaws.com",
-            "https://api.fycneet.com",
             "http://localhost:5173",
-            "http://localhost:3000"
+            "http://localhost:3000",
+            "http://localhost:3001"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));

@@ -22,6 +22,8 @@ const ContentManagement = () => {
     const [playingVideo, setPlayingVideo] = useState(null);
     const [editingTest, setEditingTest] = useState(null);
     const [showQuestionPool, setShowQuestionPool] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     const [notes, setNotes] = useState([]);
     const [textbooks, setTextbooks] = useState([]);
@@ -600,11 +602,28 @@ const ContentManagement = () => {
                                     }} accept=".pdf,.docx,.doc,.txt" className="hidden" />
                                 </label>
                             </div>
+                            {isUpdating && (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center">
+                                        <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                            Uploading... {uploadProgress}%
+                                        </span>
+                                    </div>
+                                    <div className={`w-full rounded-full h-2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                                        <div
+                                            className="h-2 rounded-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300 ease-out"
+                                            style={{ width: `${uploadProgress}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className={`p-6 border-t ${darkMode ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-white'} flex gap-3 justify-end sticky bottom-0`}>
                             <button onClick={() => setEditingNote(null)} className={`px-6 py-2 border rounded-lg ${darkMode ? 'border-gray-600 hover:bg-gray-800 text-white' : 'border-gray-300'}`}>Cancel</button>
                             <button onClick={async () => {
                                 try {
+                                    setIsUpdating(true);
+                                    setUploadProgress(0);
                                     console.log(`DEBUG: Updating note ${editingNote.id} with title: "${editingNote.title}", category: "${editingNote.category}", subject: "${editingNote.subject}"`);
                                     const updated = await updateNote(
                                         editingNote.id,
@@ -616,7 +635,13 @@ const ContentManagement = () => {
                                         editingNote.content || '',
                                         editingNote.contentType,
                                         editingNote.category,
-                                        editingNote.year
+                                        editingNote.year,
+                                        (progressEvent) => {
+                                            if (progressEvent.total) {
+                                                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                                                setUploadProgress(percentCompleted);
+                                            }
+                                        }
                                     );
                                     if (updated.contentType === 'TEXTBOOK') {
                                         console.log('>>> TEXTBOOK SAVED SUCCESSFULLY (UPDATE):', updated);
@@ -627,15 +652,22 @@ const ContentManagement = () => {
                                     setEditingNote(null);
                                     alert('Content updated successfully!');
                                 } catch (error) {
-                                    console.error('Update failed:', error);
+                                    console.error('Note Update Error Details:', {
+                                        message: error.message,
+                                        response: error.response?.data,
+                                        status: error.response?.status,
+                                        id: editingNote.id
+                                    });
                                     if (error.response) {
                                         console.error('Server response:', error.response.data);
                                     }
                                     alert(`Failed to update: ${error.response?.data?.message || error.message}`);
                                 } finally {
-                                    setLoading(false);
+                                    setIsUpdating(false);
                                 }
-                            }} className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold">Save Changes</button>
+                            }} disabled={isUpdating} className="px-6 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white rounded-lg font-semibold">
+                                {isUpdating ? 'Saving...' : 'Save Changes'}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -722,27 +754,59 @@ const ContentManagement = () => {
                                     }} accept=".mp4,.mov" className="hidden" />
                                 </label>
                             </div>
+                            {isUpdating && (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center">
+                                        <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                            Uploading... {uploadProgress}%
+                                        </span>
+                                    </div>
+                                    <div className={`w-full rounded-full h-2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                                        <div
+                                            className="h-2 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 transition-all duration-300 ease-out"
+                                            style={{ width: `${uploadProgress}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className={`p-6 border-t ${darkMode ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-white'} flex gap-3 justify-end sticky bottom-0`}>
                             <button onClick={() => setEditingVideo(null)} className={`px-6 py-2 border rounded-lg ${darkMode ? 'border-gray-600 hover:bg-gray-800 text-white' : 'border-gray-300'}`}>Cancel</button>
                             <button onClick={async () => {
                                 try {
+                                    setIsUpdating(true);
+                                    setUploadProgress(0);
                                     const updated = await updateVideoApi(
                                         editingVideo.id,
                                         editingVideo.newFile,
                                         editingVideo.title,
                                         editingVideo.subject,
                                         editingVideo.duration,
-                                        editingVideo.category
+                                        editingVideo.category,
+                                        (progressEvent) => {
+                                            if (progressEvent.total) {
+                                                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                                                setUploadProgress(percentCompleted);
+                                            }
+                                        }
                                     );
                                     setVideos(videos.map(v => v.id === editingVideo.id ? updated : v));
                                     setEditingVideo(null);
                                     alert('Video updated successfully!');
                                 } catch (error) {
-                                    console.error('Update failed:', error);
+                                    console.error('Video Update Error Details:', {
+                                        message: error.message,
+                                        response: error.response?.data,
+                                        status: error.response?.status,
+                                        id: editingVideo.id
+                                    });
                                     alert('Failed to update video.');
+                                } finally {
+                                    setIsUpdating(false);
                                 }
-                            }} className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold">Save Changes</button>
+                            }} disabled={isUpdating} className="px-6 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white rounded-lg font-semibold">
+                                {isUpdating ? 'Saving...' : 'Save Changes'}
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -17,6 +17,7 @@ const QuestionPool = ({ onClose, darkMode }) => {
     const [importChapter, setImportChapter] = useState('');
     const [importTopic, setImportTopic] = useState('');
     const [isImporting, setIsImporting] = useState(false);
+    const [importProgress, setImportProgress] = useState(0);
     const [reviewQuestions, setReviewQuestions] = useState([]);
     const [isReviewMode, setIsReviewMode] = useState(false);
     const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
@@ -535,34 +536,65 @@ const QuestionPool = ({ onClose, darkMode }) => {
                             </label>
                         </div>
 
+                        {/* Progress Bar */}
+                        {isImporting && (
+                            <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <div className="flex justify-between items-center">
+                                    <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                        Uploading... {importProgress}%
+                                    </span>
+                                </div>
+                                <div className={`w-full rounded-full h-2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                                    <div
+                                        className="h-2 rounded-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300 ease-out"
+                                        style={{ width: `${importProgress}%` }}
+                                    />
+                                </div>
+                                {importProgress === 100 && (
+                                    <p className={`text-xs animate-pulse font-bold ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>
+                                        Engine is parsing PDF content...
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
                         <button 
                             onClick={async () => {
                                 if (!importFile) return;
                                 try {
                                     setIsImporting(true);
-                                    const result = await importQuestionsFromPDF(importFile, importSubject, importChapter, importTopic);
+                                    setImportProgress(0);
+                                    const result = await importQuestionsFromPDF(importFile, importSubject, importChapter, importTopic, (progressEvent) => {
+                                        if (progressEvent.total) {
+                                            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                                            setImportProgress(percentCompleted);
+                                        }
+                                    });
                                     
                                     if (result.length === 0) {
                                         alert('No questions were identified in this document. \n\nTroubleshooting Tip: Ensure the questions are numbered (1., Q1.) and options are labeled (a, b, c). \n\nCheck the server console for "DEBUG" logs to see the raw text extraction.');
-                                        setIsImporting(false);
-                                        return;
+                                    } else {
+                                        setReviewQuestions(result.map(q => ({
+                                            ...q,
+                                            answers: q.answers || ['', '', '', ''],
+                                            correctAnswers: q.correctAnswers || [0],
+                                            points: 4,
+                                            subject: importSubject,
+                                            chapter: importChapter,
+                                            topic: importTopic
+                                        })));
+                                        setIsReviewMode(true);
+                                        setIsImportModalOpen(false);
+                                        setImportFile(null);
                                     }
-
-                                    setReviewQuestions(result.map(q => ({
-                                        ...q,
-                                        answers: q.answers || ['', '', '', ''],
-                                        correctAnswers: q.correctAnswers || [0],
-                                        points: 4,
-                                        subject: importSubject,
-                                        chapter: importChapter,
-                                        topic: importTopic
-                                    })));
-                                    setIsReviewMode(true);
-                                    setIsImportModalOpen(false);
-                                    setImportFile(null);
                                 } catch (err) {
-                                    console.error(err);
-                                    alert('Failed to parse document. Please ensure it has a clear question-answer structure.');
+                                    console.error('Import Error Details:', {
+                                        message: err.message,
+                                        response: err.response?.data,
+                                        status: err.response?.status,
+                                        endpoint: '/admin/content/questions/import'
+                                    });
+                                    alert('Failed to import questions. Check your network or file format.');
                                 } finally {
                                     setIsImporting(false);
                                 }

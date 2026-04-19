@@ -35,7 +35,7 @@ export const deleteContent = async (id) => {
 
 // --- NOTES ---
 
-export const uploadNotes = async (file, title, subject, topic, pages, description, contentType, category, year) => {
+export const uploadNotes = async (file, title, subject, topic, pages, description, contentType, category, year, onUploadProgress) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title);
@@ -49,7 +49,8 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
 
     try {
         const response = await axios.post('/admin/content/notes', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress
         });
         return response.data;
     } catch (error) {
@@ -58,7 +59,7 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
     }
 };
 
-export const updateNote = async (id, file, title, subject, topic, pages, content, contentType, category, year) => {
+export const updateNote = async (id, file, title, subject, topic, pages, content, contentType, category, year, onUploadProgress) => {
     const formData = new FormData();
     if (file) formData.append('file', file);
     formData.append('title', title);
@@ -72,7 +73,8 @@ export const updateNote = async (id, file, title, subject, topic, pages, content
 
     try {
         const response = await axios.put(`/admin/content/notes/${id}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress
         });
         return response.data;
     } catch (error) {
@@ -83,7 +85,7 @@ export const updateNote = async (id, file, title, subject, topic, pages, content
 
 // --- VIDEOS ---
 
-export const uploadVideo = async (file, title, subject, duration) => {
+export const uploadVideo = async (file, title, subject, duration, onUploadProgress) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title);
@@ -92,7 +94,8 @@ export const uploadVideo = async (file, title, subject, duration) => {
 
     try {
         const response = await axios.post('/admin/content/video', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress
         });
         return response.data;
     } catch (error) {
@@ -153,7 +156,7 @@ export const uploadVideoMetadata = async (filePath, fileName, title, subject, du
     }
 };
 
-export const updateVideoApi = async (id, file, title, subject, duration, category) => {
+export const updateVideoApi = async (id, file, title, subject, duration, category, onUploadProgress) => {
     const formData = new FormData();
     if (file) formData.append('file', file);
     formData.append('title', title);
@@ -164,7 +167,8 @@ export const updateVideoApi = async (id, file, title, subject, duration, categor
 
     try {
         const response = await axios.put(`/admin/content/video/${id}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress
         });
         return response.data;
     } catch (error) {
@@ -277,7 +281,7 @@ export const deleteQuestionFromPool = async (id) => {
     }
 };
 
-export const generateAIQuestions = async (file, numQuestions, difficulty) => {
+export const generateAIQuestions = async (file, numQuestions, difficulty, onUploadProgress) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('numberOfQuestions', numQuestions); // Backend expected name
@@ -285,7 +289,8 @@ export const generateAIQuestions = async (file, numQuestions, difficulty) => {
 
     try {
         const response = await axios.post('/admin/content/ai/generate', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress
         });
         return response.data;
     } catch (error) {
@@ -294,7 +299,7 @@ export const generateAIQuestions = async (file, numQuestions, difficulty) => {
     }
 };
 
-export const importQuestionsFromPDF = async (file, subject, chapter, topic) => {
+export const importQuestionsFromPDF = async (file, subject, chapter, topic, onUploadProgress) => {
     const formData = new FormData();
     formData.append('file', file);
     if (subject) formData.append('subject', subject);
@@ -303,7 +308,8 @@ export const importQuestionsFromPDF = async (file, subject, chapter, topic) => {
 
     try {
         const response = await axios.post('/admin/content/questions/import', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress
         });
         return response.data;
     } catch (error) {

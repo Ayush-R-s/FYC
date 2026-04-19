@@ -9,6 +9,7 @@ const AIQuestionGenerator = ({ onClose, darkMode, onGenerateQuestions }) => {
     const [fileName, setFileName] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [error, setError] = useState('');
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     const handleFileUpload = (e) => {
         const file = e.target.files?.[0];
@@ -28,23 +29,35 @@ const AIQuestionGenerator = ({ onClose, darkMode, onGenerateQuestions }) => {
         setError('');
 
         try {
-            const generatedQuestions = await generateAIQuestions(uploadedFile, numQuestions, difficulty);
+            const generatedQuestions = await generateAIQuestions(uploadedFile, numQuestions, difficulty, (progressEvent) => {
+                if (progressEvent.total) {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setUploadProgress(percentCompleted);
+                }
+            });
 
             // Transform the response to match expected format
             const formattedQuestions = generatedQuestions.map((q, i) => ({
-                ...q,
                 id: Date.now() + i,
-                // Ensure fields exist even if backend returns different names (fallback)
-                text: q.text || q.questionText || q.question || `Question ${i + 1}`,
-                answers: q.answers || q.options || ['Option A', 'Option B', 'Option C', 'Option D'],
-                correctAnswers: q.correctAnswers || (q.correctAnswer !== undefined ? [q.correctAnswer] : [0]),
-                points: q.points || 1
+                text: q.questionText || q.question,
+                options: q.options || [],
+                correctAnswer: q.correctAnswer || q.answer,
+                subject: q.subject || 'AI Generated',
+                chapter: q.chapter || '',
+                topic: q.topic || '',
+                difficulty: q.difficulty || difficulty
             }));
 
             onGenerateQuestions(formattedQuestions);
             alert('Questions generated successfully!');
             onClose();
         } catch (err) {
+            console.error('AI Generation Error Details:', {
+                message: err.message,
+                response: err.response?.data,
+                status: err.response?.status,
+                endpoint: '/admin/content/ai/generate'
+            });
             setError(err.response?.data?.message || 'Failed to generate questions. Please try again.');
         } finally {
             setIsGenerating(false);
@@ -110,6 +123,28 @@ const AIQuestionGenerator = ({ onClose, darkMode, onGenerateQuestions }) => {
                             </p>
                         </div>
                     </div>
+                    
+                    {/* Progress Bar */}
+                    {isGenerating && (
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                                <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    Uploading... {uploadProgress}%
+                                </span>
+                            </div>
+                            <div className={`w-full rounded-full h-2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                                <div
+                                    className="h-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 ease-out"
+                                    style={{ width: `${uploadProgress}%` }}
+                                />
+                            </div>
+                            {uploadProgress === 100 && (
+                                <p className={`text-xs animate-pulse ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                                    AI is now analyzing your content. This may take a moment...
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div className={`p-6 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'} flex gap-3 justify-end`}>
