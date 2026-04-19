@@ -23,9 +23,15 @@ export const getAllContent = async () => {
     }
 };
 
-export const deleteContent = async (id) => {
+export const deleteContent = async (id, contentType) => {
+    let endpoint = `/admin/content/${id}`;
+    if (contentType === 'TEXTBOOK') endpoint = `/admin/content/textbooks/${id}`;
+    else if (contentType === 'PYQ') endpoint = `/admin/content/pyqs/${id}`;
+    else if (contentType === 'TIMETABLE') endpoint = `/admin/content/timetables/${id}`;
+    else if (contentType === 'NOTES') endpoint = `/admin/content/notes/${id}`;
+
     try {
-        const response = await axios.delete(`/admin/content/${id}`);
+        const response = await axios.delete(endpoint);
         return response.data;
     } catch (error) {
         console.error(`Error deleting content ${id}:`, error);
@@ -39,16 +45,20 @@ export const uploadNotes = async (file, title, subject, topic, pages, descriptio
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title);
-    formData.append('subject', subject);
+    if (subject) formData.append('subject', subject);
     if (topic) formData.append('topic', topic);
     if (pages) formData.append('pages', pages);
     if (description) formData.append('description', description);
-    if (contentType) formData.append('contentType', contentType);
     if (category) formData.append('category', String(category));
     if (year) formData.append('year', year);
 
+    let endpoint = '/admin/content/notes';
+    if (contentType === 'TEXTBOOK') endpoint = '/admin/content/textbooks';
+    else if (contentType === 'PYQ') endpoint = '/admin/content/pyqs';
+    else if (contentType === 'TIMETABLE') endpoint = '/admin/content/timetables';
+
     try {
-        const response = await axios.post('/admin/content/notes', formData, {
+        const response = await axios.post(endpoint, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             onUploadProgress
         });
@@ -63,16 +73,20 @@ export const updateNote = async (id, file, title, subject, topic, pages, content
     const formData = new FormData();
     if (file) formData.append('file', file);
     formData.append('title', title);
-    formData.append('subject', subject);
+    if (subject) formData.append('subject', subject);
     if (topic) formData.append('topic', topic);
     if (pages) formData.append('pages', pages);
     if (content) formData.append('description', content);
-    if (contentType) formData.append('contentType', contentType);
     if (category) formData.append('category', String(category));
     if (year) formData.append('year', year);
 
+    let endpoint = `/admin/content/notes/${id}`;
+    if (contentType === 'TEXTBOOK') endpoint = `/admin/content/textbooks/${id}`;
+    else if (contentType === 'PYQ') endpoint = `/admin/content/pyqs/${id}`;
+    else if (contentType === 'TIMETABLE') endpoint = `/admin/content/timetables/${id}`;
+
     try {
-        const response = await axios.put(`/admin/content/notes/${id}`, formData, {
+        const response = await axios.put(endpoint, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             onUploadProgress
         });

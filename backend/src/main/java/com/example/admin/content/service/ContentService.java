@@ -15,9 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.admin.content.model.Note;
+import com.example.admin.content.model.PYQ;
+import com.example.admin.content.model.Textbook;
+import com.example.admin.content.model.Timetable;
 import com.example.admin.content.model.Video;
-import com.example.admin.content.repository.ContentRepository;
+import com.example.admin.content.repository.NoteRepository;
+import com.example.admin.content.repository.PYQRepository;
 import com.example.admin.content.repository.TestRepository;
+import com.example.admin.content.repository.TextbookRepository;
+import com.example.admin.content.repository.TimetableRepository;
 import com.example.admin.content.repository.VideoRepository;
 import com.example.admin.student.entity.Notification;
 import com.example.admin.student.repository.NotificationRepository;
@@ -26,76 +32,141 @@ import com.example.admin.student.repository.VideoProgressRepository;
 @Service
 public class ContentService {
 
-    private final ContentRepository repository;
+    private final NoteRepository noteRepository;
+    private final TextbookRepository textbookRepository;
+    private final PYQRepository pyqRepository;
+    private final TimetableRepository timetableRepository;
     private final VideoRepository videoRepository;
     private final FileStorageService storageService;
     private final NotificationRepository notificationRepository;
     private final VideoProgressRepository videoProgressRepository;
     private final TestRepository testRepository;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
-    public ContentService(ContentRepository repository, VideoRepository videoRepository,
-            FileStorageService storageService, NotificationRepository notificationRepository,
-            VideoProgressRepository videoProgressRepository, TestRepository testRepository) {
-        this.repository = repository;
+    public ContentService(NoteRepository noteRepository,
+            TextbookRepository textbookRepository,
+            PYQRepository pyqRepository,
+            TimetableRepository timetableRepository,
+            VideoRepository videoRepository,
+            FileStorageService storageService, 
+            NotificationRepository notificationRepository,
+            VideoProgressRepository videoProgressRepository, 
+            TestRepository testRepository,
+            org.springframework.jdbc.core.JdbcTemplate jdbcTemplate) {
+        this.noteRepository = noteRepository;
+        this.textbookRepository = textbookRepository;
+        this.pyqRepository = pyqRepository;
+        this.timetableRepository = timetableRepository;
         this.videoRepository = videoRepository;
         this.storageService = storageService;
         this.notificationRepository = notificationRepository;
         this.videoProgressRepository = videoProgressRepository;
         this.testRepository = testRepository;
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @jakarta.annotation.PostConstruct
+    public void migrateOldData() {
+        try {
+            System.out.println("Checking for old 'TEXTBOOK' and 'PYQ' data in notes table to migrate...");
+            int textbooksMigrated = jdbcTemplate.update(
+                "INSERT INTO textbooks (title, file_name, file_url, subject, class_level, uploaded_by_id, uploaded_at) " +
+                "SELECT title, file_name, file_url, subject, class_level, uploaded_by_id, uploaded_at FROM notes WHERE content_type = 'TEXTBOOK'");
+            
+            if (textbooksMigrated > 0) {
+                jdbcTemplate.update("DELETE FROM notes WHERE content_type = 'TEXTBOOK'");
+                System.out.println("Migrated " + textbooksMigrated + " textbooks.");
+            }
+
+            int pyqsMigrated = jdbcTemplate.update(
+                "INSERT INTO pyqs (title, file_name, file_url, subject, class_level, year, uploaded_by_id, uploaded_at) " +
+                "SELECT title, file_name, file_url, subject, class_level, year, uploaded_by_id, uploaded_at FROM notes WHERE content_type = 'PYQ'");
+            
+            if (pyqsMigrated > 0) {
+                jdbcTemplate.update("DELETE FROM notes WHERE content_type = 'PYQ'");
+                System.out.println("Migrated " + pyqsMigrated + " PYQs.");
+            }
+        } catch(Exception e) {
+            System.out.println("Migration skipped. (Expected if content_type column is already removed or doesn't exist)");
+        }
     }
 
     public List<Object> getAllContent() {
         List<Object> allContent = new ArrayList<>();
-        allContent.addAll(repository.findAll());
+        allContent.addAll(noteRepository.findAll());
+        allContent.addAll(textbookRepository.findAll());
+        allContent.addAll(pyqRepository.findAll());
+        allContent.addAll(timetableRepository.findAll());
         allContent.addAll(videoRepository.findAll());
         return allContent;
     }
 
-    public List<Note> getAllNotes() {
-        return repository.findAll();
-    }
+    public List<Note> getAllNotes() { return noteRepository.findAll(); }
+    public List<Textbook> getAllTextbooks() { return textbookRepository.findAll(); }
+    public List<PYQ> getAllPYQs() { return pyqRepository.findAll(); }
+    public List<Timetable> getAllTimetables() { return timetableRepository.findAll(); }
+    public List<Video> getAllVideos() { return videoRepository.findAll(); }
 
-    public List<Note> getNotesByType(String contentType) {
-        return repository.findByContentType(contentType);
-    }
+    // ====== UPLOAD ======
 
-    public List<Video> getAllVideos() {
-        return videoRepository.findAll();
-    }
-
-    public Note uploadNotes(MultipartFile file, String title, String subject, String topic, Integer pages, String description, String contentType, String category, String year) {
+    public Note uploadNote(MultipartFile file, String title, String subject, String topic, Integer pages, String description, String category) {
         String path = storageService.save(file, "notes/");
-
         Note note = new Note();
         note.setTitle(title);
         note.setSubject(subject);
         note.setTopic(topic);
-        String finalCategory = (category == null || category.trim().isEmpty()) ? "11" : category.trim();
-        note.setCategory(finalCategory);
-        note.setYear(year);
-        note.setContentType(contentType != null ? contentType : "NOTES");
-        
-        // Automate page count if not provided or to ensure accuracy
-        if (pages == null || pages <= 0) {
-            pages = countPages(file);
-        }
-        
+        note.setCategory((category == null || category.trim().isEmpty()) ? "11" : category.trim());
+        if (pages == null || pages <= 0) pages = countPages(file);
         note.setPages(pages);
         note.setContent(description);
         note.setFileName(file.getOriginalFilename());
         note.setFileUrl(path);
         note.setUploadedAt(LocalDateTime.now());
+        Note saved = noteRepository.save(note);
+        notificationRepository.save(new Notification("New " + subject + " notes: " + title, null));
+        return saved;
+    }
 
-        Note savedNote = repository.save(note);
-        
-        // Create notification
-        Notification notification = new Notification(
-            "New " + (year != null ? year + " " : "") + subject + " " + note.getContentType().toLowerCase() + ": " + title,
-            null // global notification
-        );
-        notificationRepository.save(notification);
-        
-        return savedNote;
+    public Textbook uploadTextbook(MultipartFile file, String title, String subject, String category) {
+        String path = storageService.save(file, "textbooks/");
+        Textbook tb = new Textbook();
+        tb.setTitle(title);
+        tb.setSubject(subject);
+        tb.setCategory((category == null || category.trim().isEmpty()) ? "11" : category.trim());
+        tb.setFileName(file.getOriginalFilename());
+        tb.setFileUrl(path);
+        tb.setUploadedAt(LocalDateTime.now());
+        Textbook saved = textbookRepository.save(tb);
+        notificationRepository.save(new Notification("New " + subject + " textbook: " + title, null));
+        return saved;
+    }
+
+    public PYQ uploadPYQ(MultipartFile file, String title, String year, String subject, String category) {
+        String path = storageService.save(file, "pyqs/");
+        PYQ pyq = new PYQ();
+        pyq.setTitle(title);
+        pyq.setYear(year);
+        pyq.setSubject(subject != null ? subject : "PYQ");
+        pyq.setCategory((category == null || category.trim().isEmpty()) ? "11" : category.trim());
+        pyq.setFileName(file.getOriginalFilename());
+        pyq.setFileUrl(path);
+        pyq.setUploadedAt(LocalDateTime.now());
+        PYQ saved = pyqRepository.save(pyq);
+        notificationRepository.save(new Notification("New PYQ (" + year + "): " + title, null));
+        return saved;
+    }
+
+    public Timetable uploadTimetable(MultipartFile file, String title, String category) {
+        String path = storageService.save(file, "timetables/");
+        Timetable tt = new Timetable();
+        tt.setTitle(title);
+        tt.setCategory((category == null || category.trim().isEmpty()) ? "11" : category.trim());
+        tt.setFileName(file.getOriginalFilename());
+        tt.setFileUrl(path);
+        tt.setUploadedAt(LocalDateTime.now());
+        Timetable saved = timetableRepository.save(tt);
+        notificationRepository.save(new Notification("New Timetable added for Class " + tt.getCategory(), null));
+        return saved;
     }
 
     public Map<String, String> generatePresignedVideoUploadUrl(String fileName, String contentType) {
@@ -105,41 +176,152 @@ public class ContentService {
     public Video uploadVideo(MultipartFile file, String filePath, String fileName, String title, String subject, String duration, String category) {
         String path = filePath;
         String finalFileName = fileName;
-        
         if (file != null && !file.isEmpty()) {
             path = storageService.save(file, "videos/");
             finalFileName = file.getOriginalFilename();
         }
-
         Video video = new Video();
         video.setTitle(title);
         video.setSubject(subject);
         video.setFileName(finalFileName);
         video.setFilePath(path);
-
         video.setDuration(duration);
-        String finalCategory = (category == null || category.trim().isEmpty()) ? "11" : category.trim();
-        video.setCategory(finalCategory);
-        // createdAt is already set in Video constructor
+        video.setCategory((category == null || category.trim().isEmpty()) ? "11" : category.trim());
+        Video saved = videoRepository.save(video);
+        notificationRepository.save(new Notification("New " + subject + " video: " + title, null));
+        return saved;
+    }
 
-        Video savedVideo = videoRepository.save(video);
-        
-        // Create notification
-        Notification notification = new Notification(
-            "New " + subject + " video: " + title,
-            null // global notification
-        );
-        notificationRepository.save(notification);
-        
-        return savedVideo;
+    // ====== UPDATE ======
+
+    public Note updateNote(Long id, MultipartFile file, String title, String subject, String topic, Integer pages, String description, String category) {
+        Note note = noteRepository.findById(id).orElseThrow(() -> new RuntimeException("Note not found"));
+        note.setTitle(title);
+        note.setSubject(subject);
+        note.setTopic(topic);
+        note.setContent(description);
+        if (category != null) note.setCategory(category);
+        if (file != null && !file.isEmpty()) {
+            if (note.getFileUrl() != null) try { storageService.delete(note.getFileUrl()); } catch (Exception e) {}
+            String path = storageService.save(file, "notes/");
+            note.setFileName(file.getOriginalFilename());
+            note.setFileUrl(path);
+            note.setPages(countPages(file));
+        } else if (pages != null) {
+            note.setPages(pages);
+        }
+        return noteRepository.save(note);
+    }
+
+    public Textbook updateTextbook(Long id, MultipartFile file, String title, String subject, String category) {
+        Textbook tb = textbookRepository.findById(id).orElseThrow(() -> new RuntimeException("Textbook not found"));
+        tb.setTitle(title);
+        tb.setSubject(subject);
+        if (category != null) tb.setCategory(category);
+        if (file != null && !file.isEmpty()) {
+            if (tb.getFileUrl() != null) try { storageService.delete(tb.getFileUrl()); } catch (Exception e) {}
+            String path = storageService.save(file, "textbooks/");
+            tb.setFileName(file.getOriginalFilename());
+            tb.setFileUrl(path);
+        }
+        return textbookRepository.save(tb);
+    }
+
+    public PYQ updatePYQ(Long id, MultipartFile file, String title, String year, String subject, String category) {
+        PYQ pyq = pyqRepository.findById(id).orElseThrow(() -> new RuntimeException("PYQ not found"));
+        pyq.setTitle(title);
+        pyq.setYear(year);
+        pyq.setSubject(subject);
+        if (category != null) pyq.setCategory(category);
+        if (file != null && !file.isEmpty()) {
+            if (pyq.getFileUrl() != null) try { storageService.delete(pyq.getFileUrl()); } catch (Exception e) {}
+            String path = storageService.save(file, "pyqs/");
+            pyq.setFileName(file.getOriginalFilename());
+            pyq.setFileUrl(path);
+        }
+        return pyqRepository.save(pyq);
+    }
+
+    public Timetable updateTimetable(Long id, MultipartFile file, String title, String category) {
+        Timetable tt = timetableRepository.findById(id).orElseThrow(() -> new RuntimeException("Timetable not found"));
+        tt.setTitle(title);
+        if (category != null) tt.setCategory(category);
+        if (file != null && !file.isEmpty()) {
+            if (tt.getFileUrl() != null) try { storageService.delete(tt.getFileUrl()); } catch (Exception e) {}
+            String path = storageService.save(file, "timetables/");
+            tt.setFileName(file.getOriginalFilename());
+            tt.setFileUrl(path);
+        }
+        return timetableRepository.save(tt);
+    }
+
+    public Video updateVideo(Long id, MultipartFile file, String title, String subject, String duration, String category) {
+        Video video = videoRepository.findById(id).orElseThrow(() -> new RuntimeException("Video not found"));
+        video.setTitle(title);
+        video.setSubject(subject);
+        video.setDuration(duration);
+        if (category != null) {
+            video.setCategory(category);
+        }
+        if (file != null && !file.isEmpty()) {
+            if (video.getFilePath() != null) {
+                try { storageService.delete(video.getFilePath()); } catch (Exception e) {}
+            }
+            String path = storageService.save(file, "videos/");
+            video.setFileName(file.getOriginalFilename());
+            video.setFilePath(path);
+        }
+        return videoRepository.save(video);
+    }
+
+    // ====== DELETE ======
+
+    @Transactional
+    public void deleteNote(Long id) {
+        noteRepository.findById(id).ifPresent(n -> {
+            if (n.getFileUrl() != null) storageService.delete(n.getFileUrl());
+            noteRepository.delete(n);
+        });
+    }
+
+    @Transactional
+    public void deleteTextbook(Long id) {
+        textbookRepository.findById(id).ifPresent(tb -> {
+            if (tb.getFileUrl() != null) storageService.delete(tb.getFileUrl());
+            textbookRepository.delete(tb);
+        });
+    }
+
+    @Transactional
+    public void deletePYQ(Long id) {
+        pyqRepository.findById(id).ifPresent(p -> {
+            if (p.getFileUrl() != null) storageService.delete(p.getFileUrl());
+            pyqRepository.delete(p);
+        });
+    }
+
+    @Transactional
+    public void deleteTimetable(Long id) {
+        timetableRepository.findById(id).ifPresent(tt -> {
+            if (tt.getFileUrl() != null) storageService.delete(tt.getFileUrl());
+            timetableRepository.delete(tt);
+        });
+    }
+
+    @Transactional
+    public void deleteVideo(Long id) {
+        videoRepository.findById(id).ifPresent(video -> {
+            videoProgressRepository.deleteByVideoId(video.getId());
+            testRepository.deleteVideoAssociations(video.getId());
+            if (video.getFilePath() != null) storageService.delete(video.getFilePath());
+            videoRepository.delete(video);
+        });
     }
 
     private Integer countPages(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null) return 0;
-        
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-        
         try {
             if (extension.equals(".pdf")) {
                 try (PDDocument document = PDDocument.load(file.getInputStream())) {
@@ -158,88 +340,5 @@ public class ContentService {
             System.err.println("Error counting pages for " + originalFilename + ": " + e.getMessage());
         }
         return 0;
-    }
-
-    public Note updateNotes(Long id, MultipartFile file, String title, String subject, String topic,
-            Integer pages, String description, String contentType, String category, String year) {
-        Note note = repository.findById(id).orElseThrow(() -> new RuntimeException("Note not found"));
-        note.setTitle(title);
-        note.setSubject(subject);
-        note.setTopic(topic);
-        note.setYear(year);
-        note.setContent(description);
-        if (contentType != null) {
-            note.setContentType(contentType);
-        }
-        if (file != null && !file.isEmpty()) {
-            // Delete old file from S3 before uploading replacement
-            if (note.getFileUrl() != null) {
-                try { storageService.delete(note.getFileUrl()); } catch (Exception e) {
-                    System.err.println("Warning: Failed to delete old note file from S3: " + e.getMessage());
-                }
-            }
-            String path = storageService.save(file, "notes/");
-            note.setFileName(file.getOriginalFilename());
-            note.setFileUrl(path);
-            note.setPages(countPages(file));
-        } else if (pages != null) {
-            note.setPages(pages);
-        }
-        Note savedNote = repository.save(note);
-        return savedNote;
-    }
-
-    public Video updateVideo(Long id, MultipartFile file, String title, String subject, String duration, String category) {
-        Video video = videoRepository.findById(id).orElseThrow(() -> new RuntimeException("Video not found"));
-        video.setTitle(title);
-        video.setSubject(subject);
-        video.setDuration(duration);
-        if (category != null) {
-            video.setCategory(category);
-        }
-        if (file != null && !file.isEmpty()) {
-            // Delete old file from S3 before uploading replacement
-            if (video.getFilePath() != null) {
-                try { storageService.delete(video.getFilePath()); } catch (Exception e) {
-                    System.err.println("Warning: Failed to delete old video file from S3: " + e.getMessage());
-                }
-            }
-            String path = storageService.save(file, "videos/");
-            video.setFileName(file.getOriginalFilename());
-            video.setFilePath(path);
-        }
-        return videoRepository.save(video);
-    }
-
-    @Transactional
-    public void deleteContent(Long id) {
-        Optional<Note> noteOpt = repository.findById(id);
-        if (noteOpt.isPresent()) {
-            Note note = noteOpt.get();
-            if (note.getFileUrl() != null) {
-                storageService.delete(note.getFileUrl());
-            }
-            repository.delete(note);
-            return;
-        }
-
-        Optional<Video> videoOpt = videoRepository.findById(id);
-        if (videoOpt.isPresent()) {
-            Video video = videoOpt.get();
-            
-            // 1. Delete associated student progress records first (Foreign Key constraint)
-            videoProgressRepository.deleteByVideoId(video.getId());
-            
-            // 2. Clear associations in test_videos join table
-            testRepository.deleteVideoAssociations(video.getId());
-            
-            // 3. Delete physical file
-            if (video.getFilePath() != null) {
-                storageService.delete(video.getFilePath());
-            }
-            
-            // 3. Delete database record
-            videoRepository.delete(video);
-        }
     }
 }

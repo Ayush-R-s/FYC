@@ -23,7 +23,7 @@ import com.example.admin.content.repository.VideoRepository;
 import com.example.admin.student.dto.ActivityFeedItem;
 import com.example.admin.student.entity.Activity;
 import com.example.admin.student.repository.ActivityRepository;
-import com.example.admin.student.repository.NoteRepository;
+import com.example.admin.content.repository.NoteRepository;
 
 @CrossOrigin(origins = "*")
 @RestController

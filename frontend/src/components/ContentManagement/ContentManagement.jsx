@@ -28,6 +28,7 @@ const ContentManagement = () => {
     const [notes, setNotes] = useState([]);
     const [textbooks, setTextbooks] = useState([]);
     const [pyqs, setPyqs] = useState([]);
+    const [timetables, setTimetables] = useState([]);
     const [videos, setVideos] = useState([]);
     const [tests, setTests] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -53,11 +54,13 @@ const ContentManagement = () => {
             const notesData = contentData.filter(item => item.contentType === 'NOTES');
             const textbooksData = contentData.filter(item => item.contentType === 'TEXTBOOK');
             const pyqsData = contentData.filter(item => item.contentType === 'PYQ');
+            const timetablesData = contentData.filter(item => item.contentType === 'TIMETABLE');
             const videosData = contentData.filter(item => item.type === 'VIDEO' || item.contentType === 'VIDEO');
 
             setNotes(notesData);
             setTextbooks(textbooksData);
             setPyqs(pyqsData);
+            setTimetables(timetablesData);
             setVideos(videosData);
             setTests(testsData);
         } catch (err) {
@@ -73,6 +76,7 @@ const ContentManagement = () => {
         if (activeTab === 'notes') allContent = notes;
         else if (activeTab === 'textbooks') allContent = textbooks;
         else if (activeTab === 'pyqs') allContent = pyqs;
+        else if (activeTab === 'timetables') allContent = timetables;
         else if (activeTab === 'videos') allContent = videos;
         else allContent = tests;
 
@@ -97,6 +101,7 @@ const ContentManagement = () => {
         { id: 'notes', label: 'Notes', icon: FileText },
         { id: 'textbooks', label: 'Textbooks', icon: BookOpen },
         { id: 'pyqs', label: 'PYQs', icon: FileUp },
+        { id: 'timetables', label: 'Timetables', icon: Clock },
         { id: 'videos', label: 'Tutorial Videos', icon: Video },
         { id: 'tests', label: 'Tests', icon: Target },
     ];
@@ -211,7 +216,7 @@ const ContentManagement = () => {
                         </div>
 
                         <button onClick={() => {
-                            if (activeTab === 'notes' || activeTab === 'textbooks' || activeTab === 'pyqs') setShowUploadNotes(true);
+                            if (activeTab === 'notes' || activeTab === 'textbooks' || activeTab === 'pyqs' || activeTab === 'timetables') setShowUploadNotes(true);
                             else if (activeTab === 'videos') setShowUploadVideo(true);
                             else setShowTestBuilder(true);
                         }} className="flex items-center justify-center gap-2 px-4 py-2 sm:py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold text-sm sm:text-base whitespace-nowrap">
@@ -220,7 +225,8 @@ const ContentManagement = () => {
                                 {activeTab === 'notes' ? 'Upload Notes' :
                                     activeTab === 'textbooks' ? 'Upload Textbook' :
                                         activeTab === 'pyqs' ? 'Upload PYQ' :
-                                            activeTab === 'videos' ? 'Upload Video' : 'Create Test'}
+                                            activeTab === 'timetables' ? 'Upload Timetable' :
+                                                activeTab === 'videos' ? 'Upload Video' : 'Create Test'}
                             </span>
                             <span className="sm:hidden">Add</span>
                         </button>
@@ -319,11 +325,11 @@ const ContentManagement = () => {
                                                                 >
                                                                     <Edit className="w-4 h-4" />
                                                                 </button>
-                                                                <button 
+                                                                <button
                                                                     onClick={async (e) => {
                                                                         e.stopPropagation();
                                                                         if (confirm(`Delete this textbook?`)) {
-                                                                            await deleteContent(item.id);
+                                                                            await deleteContent(item.id, item.contentType);
                                                                             setTextbooks(textbooks.filter(n => n.id !== item.id));
                                                                         }
                                                                     }}
@@ -425,16 +431,17 @@ const ContentManagement = () => {
                                     </button>
                                     <button
                                         onClick={async () => {
-                                            if (confirm(`Delete this ${activeTab === 'notes' ? 'note' : activeTab === 'textbooks' ? 'textbook' : activeTab === 'pyqs' ? 'PYQ' : activeTab === 'videos' ? 'video' : 'test'}?`)) {
+                                            if (confirm(`Delete this ${activeTab === 'notes' ? 'note' : activeTab === 'textbooks' ? 'textbook' : activeTab === 'pyqs' ? 'PYQ' : activeTab === 'timetables' ? 'timetable' : activeTab === 'videos' ? 'video' : 'test'}?`)) {
                                                 try {
                                                     if (activeTab === 'tests') {
                                                         await deleteTest(item.id);
                                                         setTests(tests.filter(t => t.id !== item.id));
                                                     } else {
-                                                        await deleteContent(item.id);
+                                                        await deleteContent(item.id, item.contentType);
                                                         if (activeTab === 'notes') setNotes(notes.filter(n => n.id !== item.id));
                                                         else if (activeTab === 'textbooks') setTextbooks(textbooks.filter(n => n.id !== item.id));
                                                         else if (activeTab === 'pyqs') setPyqs(pyqs.filter(n => n.id !== item.id));
+                                                        else if (activeTab === 'timetables') setTimetables(timetables.filter(n => n.id !== item.id));
                                                         else setVideos(videos.filter(v => v.id !== item.id));
                                                     }
                                                 } catch (err) {
@@ -484,6 +491,7 @@ const ContentManagement = () => {
                             setTextbooks([...textbooks, note]);
                         }
                         else if (note.contentType === 'PYQ') setPyqs([...pyqs, note]);
+                        else if (note.contentType === 'TIMETABLE') setTimetables([...timetables, note]);
                         else setNotes([...notes, note]);
                         setShowUploadNotes(false);
                     }}

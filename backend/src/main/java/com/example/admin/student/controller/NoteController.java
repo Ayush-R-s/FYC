@@ -22,7 +22,7 @@ public class NoteController {
     }
 
     @GetMapping({"/notes", "/student/notes"})
-    public List<Note> getAllNotes() {
+    public List<Object> getAllNotes() {
         return noteService.getAllNotes();
     }
 }

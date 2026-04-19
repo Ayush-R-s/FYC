@@ -4,7 +4,7 @@ import { uploadNotes } from '../../../services/contentPortalApi';
 
 const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCategory }) => {
     // Map intendedType (from sidebar/tabs) to internal contentType
-    const initialContentType = intendedType === 'textbooks' ? 'TEXTBOOK' : (intendedType === 'pyqs' ? 'PYQ' : 'NOTES');
+    const initialContentType = intendedType === 'textbooks' ? 'TEXTBOOK' : (intendedType === 'pyqs' ? 'PYQ' : (intendedType === 'timetables' ? 'TIMETABLE' : 'NOTES'));
 
     const [title, setTitle] = useState('');
     const [subject, setSubject] = useState('Physics');
@@ -37,8 +37,8 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
         setError('');
 
         try {
-            const finalSubject = contentType === 'PYQ' ? 'PYQ' : subject;
-            const description = contentType === 'PYQ' ? `Previous Year Question - ${year}` : `${subject}${topic ? ' - ' + topic : ''}`;
+            const finalSubject = contentType === 'PYQ' ? 'PYQ' : (contentType === 'TIMETABLE' ? 'TIMETABLE' : subject);
+            const description = contentType === 'PYQ' ? `Previous Year Question - ${year}` : (contentType === 'TIMETABLE' ? `Timetable for Class ${category}` : `${subject}${topic ? ' - ' + topic : ''}`);
             const finalCategory = contentType === 'PYQ' ? 'PYQ' : category;
             
             const uploadedNote = await uploadNotes(file, title, finalSubject, topic, null, description, contentType, finalCategory, year, (progressEvent) => {
@@ -67,7 +67,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
             <div className={`${darkMode ? 'bg-gray-900' : 'bg-white'} rounded-2xl shadow-xl w-full max-w-2xl`}>
                 <div className={`p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between`}>
                     <h2 className={`font-bold text-xl ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                        Upload {contentType === 'TEXTBOOK' ? 'Textbook' : (contentType === 'PYQ' ? 'PYQ' : 'Notes')}
+                        Upload {contentType === 'TEXTBOOK' ? 'Textbook' : (contentType === 'PYQ' ? 'PYQ' : (contentType === 'TIMETABLE' ? 'Timetable' : 'Notes'))}
                     </h2>
                     <button onClick={onClose} className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}><X className="w-5 h-5" /></button>
                 </div>
@@ -83,7 +83,7 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
                             <input type="text" placeholder={contentType === 'TEXTBOOK' ? 'Enter book title' : 'Enter title'} value={title} onChange={(e) => setTitle(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />
                         </div>
                     </div>
-                    <div className={`grid ${contentType === 'PYQ' ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
+                    <div className={`grid ${contentType === 'PYQ' || contentType === 'TIMETABLE' ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
                         {contentType !== 'PYQ' && (
                             <div>
                                 <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Class *</label>
@@ -105,19 +105,21 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
                                 />
                             </div>
                         ) : (
-                            <div>
-                                <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject *</label>
-                                <select value={subject} onChange={(e) => setSubject(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
-                                    <option>Physics</option>
-                                    <option>Chemistry</option>
-                                    <option>Biology</option>
-                                    {contentType !== 'TEXTBOOK' && <option>Botany</option>}
-                                    {contentType !== 'TEXTBOOK' && <option>Zoology</option>}
-                                </select>
-                            </div>
+                            contentType !== 'TIMETABLE' && (
+                                <div>
+                                    <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Subject *</label>
+                                    <select value={subject} onChange={(e) => setSubject(e.target.value)} className={`w-full px-4 py-2 border rounded-lg ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`}>
+                                        <option>Physics</option>
+                                        <option>Chemistry</option>
+                                        <option>Biology</option>
+                                        {contentType !== 'TEXTBOOK' && <option>Botany</option>}
+                                        {contentType !== 'TEXTBOOK' && <option>Zoology</option>}
+                                    </select>
+                                </div>
+                            )
                         )}
                     </div>
-                        {contentType !== 'TEXTBOOK' && contentType !== 'PYQ' && (
+                        {contentType !== 'TEXTBOOK' && contentType !== 'PYQ' && contentType !== 'TIMETABLE' && (
                             <div>
                                 <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Topic (optional)</label>
                                 <input type="text" placeholder="Enter topic" value={topic} onChange={(e) => setTopic(e.target.value)} className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none ${darkMode ? 'border-gray-600 bg-gray-800 text-white' : 'border-gray-300'}`} />

@@ -21,7 +21,6 @@ public class Note {
     private Long id;
 
     private String title;
-    private String contentType = "NOTES";
     private String fileName;
     private String fileUrl;
 
@@ -30,8 +29,6 @@ public class Note {
 
     @Column(name = "class_level")
     private String category;
-
-    private String year;
     private Integer pages;
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -55,14 +52,6 @@ public class Note {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
     }
 
     public String getFileName() {
@@ -105,14 +94,6 @@ public class Note {
         this.category = category;
     }
 
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
     public Admin getUploadedBy() {
         return uploadedBy;
     }
@@ -144,5 +125,8 @@ public class Note {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @jakarta.persistence.Transient
+    public String getContentType() { return "NOTES"; }
 
 }

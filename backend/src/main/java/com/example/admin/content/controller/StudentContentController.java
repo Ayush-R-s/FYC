@@ -97,8 +97,17 @@ public class StudentContentController {
 
 
     @GetMapping("/materials/{type}")
-    public List<com.example.admin.content.model.Note> getMaterialsByType(@PathVariable String type) {
-        return contentService.getNotesByType(type.toUpperCase());
+    public List<Object> getMaterialsByType(@PathVariable String type) {
+        String t = type.toUpperCase();
+        if ("TEXTBOOK".equals(t)) {
+            return new java.util.ArrayList<>(contentService.getAllTextbooks());
+        } else if ("PYQ".equals(t)) {
+            return new java.util.ArrayList<>(contentService.getAllPYQs());
+        } else if ("TIMETABLE".equals(t)) {
+            return new java.util.ArrayList<>(contentService.getAllTimetables());
+        } else {
+            return new java.util.ArrayList<>(contentService.getAllNotes());
+        }
     }
 
     @GetMapping("/tests")
