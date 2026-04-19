@@ -68,50 +68,52 @@ public class ContentService {
     @Transactional
     public void safeJavaMigration() {
         try {
-            System.out.println("Starting manual Java migration relying on JDBC...");
-            // Run JDBC to verify content_type column
-            try {
-                jdbcTemplate.execute("SELECT content_type FROM notes LIMIT 1");
-            } catch (Exception e) {
-                System.out.println("content_type column no longer exists. Analyzing by properties...");
-                // Fallback: look for category = 'PYQ'
-                List<Note> pyqNotes = noteRepository.findByCategory("PYQ");
-                System.out.println("Found " + pyqNotes.size() + " potential PYQs missing content_type.");
-                for(Note n : pyqNotes) {
+            System.out.println("Starting heuristic Java migration for Textbooks and PYQs...");
+            List<Note> allNotes = noteRepository.findAll();
+            int pyqsMoved = 0;
+            int tbMoved = 0;
+
+            for (Note n : allNotes) {
+                // 1. Identify PYQs: category == 'PYQ' or subject == 'PYQ'
+                if ("PYQ".equalsIgnoreCase(n.getCategory()) || "PYQ".equalsIgnoreCase(n.getSubject())) {
                     PYQ p = new PYQ();
                     p.setTitle(n.getTitle());
-                    p.setSubject(n.getSubject());
+                    p.setSubject("PYQ");
                     p.setCategory("PYQ");
-                    p.setYear("Previous Years"); // default
+                    
+                    // Try to extract year from title or description; default if not found
+                    String desc = n.getContent() != null ? n.getContent() : "";
+                    String y = "Previous Years";
+                    if (desc.contains(" - ")) {
+                        y = desc.substring(desc.lastIndexOf("-") + 1).trim();
+                    }
+                    p.setYear(y);
+                    
                     p.setFileName(n.getFileName());
                     p.setFileUrl(n.getFileUrl());
                     p.setUploadedBy(null); 
                     p.setUploadedAt(n.getUploadedAt());
                     pyqRepository.save(p);
                     noteRepository.delete(n);
+                    pyqsMoved++;
                 }
-                return;
+                // 2. Identify Textbooks: topic is null/empty AND (description equals subject OR it has no ' - ')
+                else if ((n.getTopic() == null || n.getTopic().trim().isEmpty()) && 
+                         (n.getContent() != null && n.getContent().equals(n.getSubject()))) {
+                    Textbook tb = new Textbook();
+                    tb.setTitle(n.getTitle());
+                    tb.setSubject(n.getSubject());
+                    tb.setCategory(n.getCategory());
+                    tb.setFileName(n.getFileName());
+                    tb.setFileUrl(n.getFileUrl());
+                    tb.setUploadedBy(null);
+                    tb.setUploadedAt(n.getUploadedAt());
+                    textbookRepository.save(tb);
+                    noteRepository.delete(n);
+                    tbMoved++;
+                }
             }
-
-            // If column exists, run raw SQL manually
-            System.out.println("content_type column exists. Running SQL migration...");
-            int textbooksMigrated = jdbcTemplate.update(
-                "INSERT INTO textbooks (title, file_name, file_url, subject, class_level, uploaded_by_id, uploaded_at) " +
-                "SELECT title, file_name, file_url, subject, class_level, uploaded_by_id, uploaded_at FROM notes WHERE content_type = 'TEXTBOOK'");
-            
-            if (textbooksMigrated > 0) {
-                jdbcTemplate.update("DELETE FROM notes WHERE content_type = 'TEXTBOOK'");
-                System.out.println("Migrated " + textbooksMigrated + " textbooks.");
-            }
-
-            int pyqsMigrated = jdbcTemplate.update(
-                "INSERT INTO pyqs (title, file_name, file_url, subject, class_level, year, uploaded_by_id, uploaded_at) " +
-                "SELECT title, file_name, file_url, subject, class_level, year, uploaded_by_id, uploaded_at FROM notes WHERE content_type = 'PYQ'");
-            
-            if (pyqsMigrated > 0) {
-                jdbcTemplate.update("DELETE FROM notes WHERE content_type = 'PYQ'");
-                System.out.println("Migrated " + pyqsMigrated + " PYQs.");
-            }
+            System.out.println("Heuristic Migration Complete: " + pyqsMoved + " PYQs, " + tbMoved + " Textbooks moved.");
         } catch(Exception e) {
             System.err.println("Migration failed: " + e.getMessage());
             throw new RuntimeException("Migration failed: " + e.getMessage());
