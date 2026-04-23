@@ -129,8 +129,15 @@ const UploadNotesModal = ({ onClose, darkMode, onUpload, intendedType, initialCa
                         <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>File Upload *</label>
                         <label className={`border-2 border-dashed rounded-lg p-8 text-center hover:border-orange-500 cursor-pointer block ${darkMode ? 'border-gray-600' : 'border-gray-300'}`}>
                             <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                            <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>{fileName || 'Click to upload PDF, Word, or PPT'}</p>
-                            <input type="file" onChange={handleFileChange} accept=".pdf,.docx,.ppt,.pptx,.doc" className="hidden" />
+                            <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
+                                {fileName || (contentType === 'TIMETABLE' ? 'Click to upload Image, PDF, Word, or PPT' : 'Click to upload PDF, Word, or PPT')}
+                            </p>
+                            <input 
+                                type="file" 
+                                onChange={handleFileChange} 
+                                accept={contentType === 'TIMETABLE' ? ".pdf,.docx,.ppt,.pptx,.doc,image/*" : ".pdf,.docx,.ppt,.pptx,.doc"} 
+                                className="hidden" 
+                            />
                         </label>
                     </div>
                     {/* Progress Bar */}
