@@ -21,7 +21,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::000710252696:role/Fyc-Deploy
+          role-to-assume: arn:aws:iam::015911059751:role/Fyc-Deploy
           aws-region: ap-south-1
 
       - name: Build frontend
