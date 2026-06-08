@@ -32,12 +32,12 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 sync frontend/dist s3://www.fycneet.com --delete
+          aws s3 sync frontend/dist s3://fycneet-frontend-000710252696 --delete
 
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id EXWL7GJL8EOP4 \
+            --distribution-id E2S8JW1KMJ9VRC \
             --paths "/*"
 
 
@@ -59,7 +59,7 @@ jobs:
             echo "--- Starting Backend Deployment ---"
 
             # 1. Navigate to directory
-            cd ~/app/FYC/backend
+            cd ~/FYC/backend
             echo "Current directory: $(pwd)"
 
             # 2. Update code
