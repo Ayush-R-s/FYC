@@ -1,6 +1,5 @@
 package com.example.admin.report.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.admin.report.service.SchoolReportService;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/reports")
 public class ReportController {

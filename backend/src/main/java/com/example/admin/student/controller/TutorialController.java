@@ -1,6 +1,5 @@
 package com.example.admin.student.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.admin.content.model.Video;
 import com.example.admin.content.repository.VideoRepository;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping
 public class TutorialController {

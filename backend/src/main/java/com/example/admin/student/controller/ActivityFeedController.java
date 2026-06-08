@@ -1,6 +1,5 @@
 package com.example.admin.student.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import com.example.admin.student.entity.Activity;
 import com.example.admin.student.repository.ActivityRepository;
 import com.example.admin.content.repository.NoteRepository;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/activity/feed")
 public class ActivityFeedController {

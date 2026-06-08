@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Centralized API Base URL
 // Matches server.servlet.context-path=/api in backend
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://35.154.211.178/api';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://52.66.31.140/api';
 
 const instance = axios.create({
     baseURL: API_BASE_URL

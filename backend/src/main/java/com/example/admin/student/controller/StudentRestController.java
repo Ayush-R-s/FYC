@@ -1,6 +1,5 @@
 package com.example.admin.student.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ import com.example.admin.student.entity.Student;
 import com.example.admin.student.service.StudentAnalyticsService;
 import com.example.admin.student.service.StudentService;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/admin/students")
 public class StudentRestController {

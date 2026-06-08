@@ -1,6 +1,5 @@
 package com.example.admin.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,7 +23,6 @@ import com.example.admin.student.entity.VideoProgress;
 import com.example.admin.student.repository.StudentRepository;
 import com.example.admin.student.repository.VideoProgressRepository;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping
 public class DataController {

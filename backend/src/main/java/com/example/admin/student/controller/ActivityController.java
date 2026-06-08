@@ -1,6 +1,5 @@
 package com.example.admin.student.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.admin.student.entity.Activity;
 import com.example.admin.student.service.ActivityService;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping
 public class ActivityController {

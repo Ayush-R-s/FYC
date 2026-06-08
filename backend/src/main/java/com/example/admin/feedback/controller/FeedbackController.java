@@ -1,6 +1,5 @@
 package com.example.admin.feedback.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.admin.feedback.entity.Feedback;
 import com.example.admin.feedback.service.FeedbackService;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/admin/feedback")
 public class FeedbackController {

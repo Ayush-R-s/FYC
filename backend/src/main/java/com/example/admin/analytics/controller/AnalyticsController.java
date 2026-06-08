@@ -1,6 +1,5 @@
 package com.example.admin.analytics.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/admin/analytics")
 public class AnalyticsController {

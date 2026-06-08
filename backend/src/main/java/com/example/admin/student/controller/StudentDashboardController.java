@@ -1,6 +1,5 @@
 package com.example.admin.student.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.admin.student.dto.DashboardData;
 import com.example.admin.student.service.DashboardService;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping
 public class StudentDashboardController {

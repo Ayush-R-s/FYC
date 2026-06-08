@@ -1,6 +1,5 @@
 package com.example.admin.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.admin.model.LeaderboardEntryDTO;
 import com.example.admin.service.LeaderboardService;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/leaderboard")
 public class LeaderboardController {

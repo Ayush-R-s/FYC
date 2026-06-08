@@ -1,6 +1,5 @@
 package com.example.admin.student.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +14,6 @@ import com.example.admin.analytics.repository.TestHistoryRepository;
 import com.example.admin.student.entity.Student;
 import com.example.admin.student.repository.StudentRepository;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/admin/students-analytics")
 public class StudentController {

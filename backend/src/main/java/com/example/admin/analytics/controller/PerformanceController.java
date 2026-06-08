@@ -1,6 +1,5 @@
 package com.example.admin.analytics.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import com.example.admin.analytics.entity.Performance;
 import com.example.admin.analytics.repository.PerformanceRepository;
 
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/admin/performance")
 public class PerformanceController {

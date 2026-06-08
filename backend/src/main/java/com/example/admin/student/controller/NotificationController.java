@@ -1,6 +1,5 @@
 package com.example.admin.student.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,7 +19,6 @@ import com.example.admin.student.entity.NotificationReadStatus;
 import com.example.admin.student.repository.NotificationReadStatusRepository;
 import com.example.admin.student.repository.NotificationRepository;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/notifications")
 public class NotificationController {

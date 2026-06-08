@@ -1,6 +1,5 @@
 package com.example.admin.student.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.admin.student.entity.Student;
 import com.example.admin.student.repository.StudentRepository;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/debug")
 public class DebugController {

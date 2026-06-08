@@ -1,6 +1,5 @@
 package com.example.admin.gamification.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import com.example.admin.gamification.service.GamificationService;
 import com.example.admin.student.entity.Student;
 import com.example.admin.student.repository.StudentRepository;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/gamification")
 public class GamificationController {
