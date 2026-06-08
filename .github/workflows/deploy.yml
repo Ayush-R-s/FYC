@@ -82,7 +82,7 @@ jobs:
             
             if [ -n "$PID" ]; then
                 echo "Stopping existing process(es): $PID"
-                kill $PID 2>/dev/null || kill -9 $PID 2>/dev/null || true
+                sudo kill $PID 2>/dev/null || sudo kill -9 $PID 2>/dev/null || true
                 sleep 5
             else
                 echo "No existing process found."
@@ -90,15 +90,16 @@ jobs:
 
 
             # 6. Start new app
-            echo "Starting new instance..."
+            echo "Starting new instance on port 80..."
 
 
             export SPRING_DATASOURCE_URL=${{ secrets.DB_URL }}
             export SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
             export SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }}
             
-            # Start in background and detach
-            nohup java -jar target/admin-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+            # Start in background and detach using sudo to bind to port 80
+            # Note: passing environment variables to sudo requires the -E flag
+            sudo -E nohup java -jar target/admin-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
             
             echo "--- Deployment Script Sent to Background ---"
             exit 0
