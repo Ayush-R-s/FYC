@@ -84,18 +84,10 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         config.setAllowCredentials(true);
-        // Allow all origins that end with fycneet.com or are localhost
-        config.setAllowedOriginPatterns(List.of(
-            "http://localhost:[*]",
-            "https://*.fycneet.com",
-            "http://*.fycneet.com",
-            "https://fycneet.com",
-            "http://fycneet.com",
-            "http://fyc-frontend.s3-website.ap-south-1.amazonaws.com"
-        ));
-        
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
+        // Allow all origin patterns, methods and headers to avoid any CORS issues
+        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedMethods(List.of("*"));
+        config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization", "Link", "X-Total-Count"));
         config.setMaxAge(3600L);
 
