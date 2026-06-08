@@ -38,7 +38,7 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.disable())
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.disable()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -79,19 +79,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+    public org.springframework.boot.web.servlet.FilterRegistrationBean<org.springframework.web.filter.CorsFilter> corsFilterRegistrationBean() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        
         config.setAllowCredentials(true);
-        // Allow all origin patterns, methods and headers to avoid any CORS issues
         config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization", "Link", "X-Total-Count"));
         config.setMaxAge(3600L);
-
         source.registerCorsConfiguration("/**", config);
-        return source;
+        
+        org.springframework.boot.web.servlet.FilterRegistrationBean<org.springframework.web.filter.CorsFilter> bean = 
+            new org.springframework.boot.web.servlet.FilterRegistrationBean<>(new org.springframework.web.filter.CorsFilter(source));
+        bean.setOrder(org.springframework.core.Ordered.HIGHEST_PRECEDENCE);
+        return bean;
     }
 }
