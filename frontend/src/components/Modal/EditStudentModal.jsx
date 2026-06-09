@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
     X, User, Mail, Phone, School, Calendar, Lock,
-    CheckCircle2, Clock, MapPin, ShieldCheck, Save,
-    ChevronRight
+    CheckCircle2, Clock, Save, ChevronRight
 } from 'lucide-react';
 import { updateStudent } from '../../services/studentService';
 
@@ -18,19 +17,17 @@ const VALIDITY_OPTIONS = [
 ];
 
 const STATUS_OPTIONS = [
-    { value: 'ACTIVE', label: 'Active', color: 'text-emerald-600 bg-emerald-50' },
-    { value: 'INACTIVE', label: 'Inactive', color: 'text-slate-500 bg-slate-100' },
-    { value: 'EXPIRED', label: 'Expired', color: 'text-amber-600 bg-amber-50' },
+    { value: 'ACTIVE', label: 'Active', cls: 'border-emerald-500 bg-emerald-50 text-emerald-700' },
+    { value: 'INACTIVE', label: 'Inactive', cls: 'border-slate-400 bg-slate-100 text-slate-600' },
+    { value: 'EXPIRED', label: 'Expired', cls: 'border-amber-500 bg-amber-50 text-amber-700' },
 ];
 
 const TABS = [
     { id: 'personal', label: 'Personal', icon: User },
-    { id: 'address', label: 'Address', icon: MapPin },
-    { id: 'guardian', label: 'Guardian', icon: ShieldCheck },
     { id: 'account', label: 'Account', icon: Lock },
 ];
 
-const inputStyle = "w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm text-slate-800 placeholder-slate-400";
+const inputStyle = "w-full pl-10 pr-4 py-2.5 bg-orange-50/60 border border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500/25 focus:border-orange-500 outline-none transition-all text-sm text-slate-800 placeholder-slate-400";
 const labelStyle = "block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5";
 
 function Field({ label, icon: Icon, children }) {
@@ -38,7 +35,7 @@ function Field({ label, icon: Icon, children }) {
         <div>
             <label className={labelStyle}>{label}</label>
             <div className="relative">
-                {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />}
+                {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-400 pointer-events-none" />}
                 {children}
             </div>
         </div>
@@ -58,18 +55,6 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
         dob: '',
         schoolName: '',
         education: '',
-        address: '',
-        city: '',
-        state: '',
-        pincode: '',
-        guardianName: '',
-        guardianRelation: '',
-        guardianMobile: '',
-        guardianEmail: '',
-        guardianAddress: '',
-        guardianCity: '',
-        guardianState: '',
-        guardianPincode: '',
         status: 'ACTIVE',
         accountValidityDuration: 'NO_EXPIRY',
         accountExpiryDate: '',
@@ -77,7 +62,6 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
         confirmPassword: '',
     });
 
-    // Populate form when modal opens
     useEffect(() => {
         if (isOpen && student) {
             setForm({
@@ -87,18 +71,6 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                 dob: student.dob || '',
                 schoolName: student.schoolName || '',
                 education: student.education || '',
-                address: student.address || '',
-                city: student.city || '',
-                state: student.state || '',
-                pincode: student.pincode || '',
-                guardianName: student.guardianName || '',
-                guardianRelation: student.guardianRelation || '',
-                guardianMobile: student.guardianMobile || '',
-                guardianEmail: student.guardianEmail || '',
-                guardianAddress: student.guardianAddress || '',
-                guardianCity: student.guardianCity || '',
-                guardianState: student.guardianState || '',
-                guardianPincode: student.guardianPincode || '',
                 status: student.status || 'ACTIVE',
                 accountValidityDuration: student.accountValidityDuration || 'NO_EXPIRY',
                 accountExpiryDate: student.accountExpiryDate || '',
@@ -147,7 +119,7 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                 delete payload.accountValidityDuration;
                 delete payload.accountExpiryDate;
             }
-            if (payload.accountValidityDuration !== 'CUSTOM') {
+            if (payload.accountValidityDuration && payload.accountValidityDuration !== 'CUSTOM') {
                 delete payload.accountExpiryDate;
             }
 
@@ -182,25 +154,27 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
     return (
         <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/50 backdrop-blur-sm animate-in fade-in duration-200">
             <div
-                className="w-full max-w-2xl max-h-[92dvh] sm:max-h-[88vh] rounded-t-[2.5rem] sm:rounded-[2.5rem] bg-white shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300"
+                className="w-full max-w-lg max-h-[92dvh] sm:max-h-[88vh] rounded-t-[2rem] sm:rounded-[2rem] bg-white shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-300"
                 onClick={e => e.stopPropagation()}
             >
                 {/* ── Header ── */}
-                <div className="flex items-center justify-between p-6 sm:p-8 pb-4 border-b border-slate-100 shrink-0">
-                    <div>
-                        <h2 className="text-xl font-black text-slate-900 tracking-tight">Edit Student</h2>
-                        <p className="text-xs text-slate-400 mt-0.5 font-medium">
-                            {student.name} &nbsp;·&nbsp;
-                            <span className="font-mono text-slate-500">{student.studentId}</span>
-                        </p>
+                <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-orange-100 bg-gradient-to-r from-orange-50 to-amber-50 shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-orange-300">
+                            {student.name?.charAt(0) || '?'}
+                        </div>
+                        <div>
+                            <h2 className="text-base font-black text-slate-900 tracking-tight">Edit Student</h2>
+                            <p className="text-[11px] text-slate-400 font-medium font-mono">{student.studentId}</p>
+                        </div>
                     </div>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
-                        <X size={20} />
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-orange-100 text-slate-400 hover:text-orange-600 transition-colors">
+                        <X size={18} />
                     </button>
                 </div>
 
                 {/* ── Tab Bar ── */}
-                <div className="flex border-b border-slate-100 px-6 sm:px-8 overflow-x-auto no-scrollbar shrink-0">
+                <div className="flex border-b border-orange-100 px-6 sm:px-8 bg-white shrink-0">
                     {TABS.map(tab => {
                         const Icon = tab.icon;
                         const active = activeTab === tab.id;
@@ -208,14 +182,14 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-1.5 py-3.5 px-2 mr-4 text-xs font-bold border-b-2 transition-all whitespace-nowrap ${active
-                                    ? 'text-blue-600 border-blue-600'
-                                    : 'text-slate-400 border-transparent hover:text-slate-600'
-                                    }`}
+                                className={`flex items-center gap-1.5 py-3.5 px-1 mr-6 text-xs font-bold border-b-2 transition-all whitespace-nowrap ${
+                                    active
+                                        ? 'text-orange-600 border-orange-500'
+                                        : 'text-slate-400 border-transparent hover:text-slate-600 hover:border-slate-200'
+                                }`}
                             >
                                 <Icon size={13} />
                                 {tab.label}
-                                {active && <ChevronRight size={10} className="text-blue-400" />}
                             </button>
                         );
                     })}
@@ -224,16 +198,16 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                 {/* ── Error Banner ── */}
                 {error && (
                     <div className="mx-6 sm:mx-8 mt-4 p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-bold flex items-center gap-2 shrink-0 animate-in slide-in-from-top-1">
-                        <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse" />
+                        <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shrink-0" />
                         {error}
                     </div>
                 )}
 
                 {/* ── Tab Content ── */}
-                <div className="flex-1 overflow-y-auto p-6 sm:p-8 pt-5">
+                <div className="flex-1 overflow-y-auto px-6 sm:px-8 py-5">
                     {success ? (
-                        <div className="h-full flex flex-col items-center justify-center gap-4 animate-in zoom-in-95 duration-300">
-                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-500">
+                        <div className="h-full flex flex-col items-center justify-center gap-4 animate-in zoom-in-95 duration-300 py-12">
+                            <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center text-orange-500">
                                 <CheckCircle2 size={44} />
                             </div>
                             <div className="text-center">
@@ -271,63 +245,11 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                                 </div>
                             )}
 
-                            {/* ADDRESS TAB */}
-                            {activeTab === 'address' && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-300">
-                                    <div className="sm:col-span-2">
-                                        <Field label="Street Address" icon={MapPin}>
-                                            <input type="text" name="address" value={form.address} onChange={handleChange} className={inputStyle} placeholder="House / Street / Locality" />
-                                        </Field>
-                                    </div>
-                                    <Field label="City" icon={MapPin}>
-                                        <input type="text" name="city" value={form.city} onChange={handleChange} className={inputStyle} placeholder="City" />
-                                    </Field>
-                                    <Field label="State" icon={MapPin}>
-                                        <input type="text" name="state" value={form.state} onChange={handleChange} className={inputStyle} placeholder="State" />
-                                    </Field>
-                                    <Field label="Pincode" icon={MapPin}>
-                                        <input type="text" name="pincode" value={form.pincode} onChange={handleChange} className={inputStyle} placeholder="6-digit pincode" />
-                                    </Field>
-                                </div>
-                            )}
-
-                            {/* GUARDIAN TAB */}
-                            {activeTab === 'guardian' && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-300">
-                                    <Field label="Guardian Name" icon={ShieldCheck}>
-                                        <input type="text" name="guardianName" value={form.guardianName} onChange={handleChange} className={inputStyle} placeholder="Guardian's full name" />
-                                    </Field>
-                                    <Field label="Relation" icon={ShieldCheck}>
-                                        <input type="text" name="guardianRelation" value={form.guardianRelation} onChange={handleChange} className={inputStyle} placeholder="e.g. Father, Mother" />
-                                    </Field>
-                                    <Field label="Guardian Mobile" icon={Phone}>
-                                        <input type="text" name="guardianMobile" value={form.guardianMobile} onChange={handleChange} className={inputStyle} placeholder="10-digit number" />
-                                    </Field>
-                                    <Field label="Guardian Email" icon={Mail}>
-                                        <input type="email" name="guardianEmail" value={form.guardianEmail} onChange={handleChange} className={inputStyle} placeholder="guardian@email.com" />
-                                    </Field>
-                                    <div className="sm:col-span-2">
-                                        <Field label="Guardian Address" icon={MapPin}>
-                                            <input type="text" name="guardianAddress" value={form.guardianAddress} onChange={handleChange} className={inputStyle} placeholder="Guardian's address" />
-                                        </Field>
-                                    </div>
-                                    <Field label="Guardian City" icon={MapPin}>
-                                        <input type="text" name="guardianCity" value={form.guardianCity} onChange={handleChange} className={inputStyle} placeholder="City" />
-                                    </Field>
-                                    <Field label="Guardian State" icon={MapPin}>
-                                        <input type="text" name="guardianState" value={form.guardianState} onChange={handleChange} className={inputStyle} placeholder="State" />
-                                    </Field>
-                                    <Field label="Guardian Pincode" icon={MapPin}>
-                                        <input type="text" name="guardianPincode" value={form.guardianPincode} onChange={handleChange} className={inputStyle} placeholder="Pincode" />
-                                    </Field>
-                                </div>
-                            )}
-
                             {/* ACCOUNT TAB */}
                             {activeTab === 'account' && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-300">
+                                <div className="space-y-5 animate-in fade-in duration-300">
                                     {/* Status */}
-                                    <div className="sm:col-span-2">
+                                    <div>
                                         <label className={labelStyle}>Account Status</label>
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {STATUS_OPTIONS.map(opt => (
@@ -335,10 +257,11 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                                                     key={opt.value}
                                                     type="button"
                                                     onClick={() => setForm(prev => ({ ...prev, status: opt.value }))}
-                                                    className={`px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all ${form.status === opt.value
-                                                        ? `${opt.color} border-current shadow-sm`
-                                                        : 'bg-slate-50 text-slate-400 border-slate-200 hover:border-slate-300'
-                                                        }`}
+                                                    className={`px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
+                                                        form.status === opt.value
+                                                            ? opt.cls + ' shadow-sm'
+                                                            : 'bg-slate-50 text-slate-400 border-slate-200 hover:border-orange-200 hover:text-orange-500'
+                                                    }`}
                                                 >
                                                     {opt.label}
                                                 </button>
@@ -347,7 +270,7 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                                     </div>
 
                                     {/* Validity */}
-                                    <div className="sm:col-span-2">
+                                    <div>
                                         <Field label="Account Validity" icon={Clock}>
                                             <select
                                                 name="accountValidityDuration"
@@ -361,7 +284,7 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                                             </select>
                                         </Field>
                                         {getExpiryPreview() && (
-                                            <p className="mt-1.5 ml-1 text-[11px] font-semibold text-blue-600 flex items-center gap-1">
+                                            <p className="mt-1.5 ml-1 text-[11px] font-semibold text-orange-600 flex items-center gap-1">
                                                 <Clock size={11} />{getExpiryPreview()}
                                             </p>
                                         )}
@@ -373,7 +296,7 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                                     </div>
 
                                     {form.accountValidityDuration === 'CUSTOM' && (
-                                        <div className="sm:col-span-2 animate-in slide-in-from-top-1 duration-200">
+                                        <div className="animate-in slide-in-from-top-1 duration-200">
                                             <Field label="Custom Expiry Date" icon={Calendar}>
                                                 <input
                                                     type="date"
@@ -388,15 +311,18 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                                     )}
 
                                     {/* Password change */}
-                                    <div className="sm:col-span-2 pt-2 border-t border-slate-100">
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Change Password (leave blank to keep current)</p>
+                                    <div className="pt-4 border-t border-orange-100">
+                                        <p className={labelStyle + " mb-3"}>Change Password</p>
+                                        <p className="text-[10px] text-slate-400 mb-4">Leave blank to keep the current password unchanged.</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <Field label="New Password" icon={Lock}>
+                                                <input type="password" name="password" value={form.password} onChange={handleChange} className={inputStyle} placeholder="Min 6 characters" />
+                                            </Field>
+                                            <Field label="Confirm Password" icon={Lock}>
+                                                <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} className={inputStyle} placeholder="Repeat password" />
+                                            </Field>
+                                        </div>
                                     </div>
-                                    <Field label="New Password" icon={Lock}>
-                                        <input type="password" name="password" value={form.password} onChange={handleChange} className={inputStyle} placeholder="Min 6 characters" />
-                                    </Field>
-                                    <Field label="Confirm Password" icon={Lock}>
-                                        <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} className={inputStyle} placeholder="Repeat password" />
-                                    </Field>
                                 </div>
                             )}
                         </>
@@ -405,17 +331,17 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
 
                 {/* ── Footer ── */}
                 {!success && (
-                    <div className="px-6 sm:px-8 py-4 border-t border-slate-100 bg-white flex gap-3 shrink-0">
+                    <div className="px-6 sm:px-8 py-4 border-t border-orange-100 bg-orange-50/40 flex gap-3 shrink-0">
                         <button
                             onClick={onClose}
-                            className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold text-sm transition-all"
+                            className="flex-1 py-3 bg-white hover:bg-slate-50 text-slate-600 rounded-xl font-bold text-sm border border-slate-200 transition-all"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="flex-[2] py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                            className="flex-[2] py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-black text-sm shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             {saving ? (
                                 <>
