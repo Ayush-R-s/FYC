@@ -233,6 +233,9 @@ export default function Dashboard() {
                 isOpen={!!selectedStudent}
                 onClose={() => setSelectedStudent(null)}
                 studentsData={filteredStudents}
+                onUpdateSuccess={(updated) => {
+                    setSelectedStudent(prev => prev ? { ...prev, ...updated } : prev);
+                }}
             />
         </>
     );

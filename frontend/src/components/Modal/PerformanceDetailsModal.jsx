@@ -15,22 +15,26 @@ import {
     Search,
     History,
     Trash2,
-    AlertTriangle
+    AlertTriangle,
+    Pencil
 } from 'lucide-react';
 import { deleteStudent } from "../../services/studentService"
+import EditStudentModal from './EditStudentModal'
 
 export default function PerformanceDetailsModal({
     student,
     isOpen,
     onClose,
     studentsData,
-    onDeleteSuccess
+    onDeleteSuccess,
+    onUpdateSuccess
 }) {
     const [detailedStudent, setDetailedStudent] = useState(null);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const activeStudent = detailedStudent ? { ...student, ...detailedStudent } : student;
 
@@ -100,6 +104,7 @@ export default function PerformanceDetailsModal({
     ];
 
     return (
+        <>
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-slate-950/40 backdrop-blur-md transition-all duration-300">
             <div
                 className={`${glassEffect} w-full max-w-6xl h-full sm:h-auto max-h-[100dvh] sm:max-h-[90vh] rounded-none sm:rounded-[2rem] overflow-hidden sm:overflow-visible flex flex-col animate-in zoom-in-95 duration-200 shadow-2xl shadow-blue-900/10 relative`}
@@ -612,9 +617,16 @@ export default function PerformanceDetailsModal({
                         className="flex items-center gap-2 px-4 py-2 text-rose-600 hover:bg-rose-50 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
                     >
                         <Trash2 className="w-4 h-4" />
-                        Delete Student
+                        Delete
                     </button>
                     <div className="flex gap-3">
+                        <button
+                            onClick={() => setShowEditModal(true)}
+                            className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-blue-500/20 hover:-translate-y-0.5 active:translate-y-0"
+                        >
+                            <Pencil className="w-3.5 h-3.5" />
+                            Edit Student
+                        </button>
                         <button
                             onClick={onClose}
                             className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
@@ -661,5 +673,17 @@ export default function PerformanceDetailsModal({
                 )}
             </div>
         </div>
+
+        {/* EDIT STUDENT MODAL */}
+        <EditStudentModal
+            student={activeStudent}
+            isOpen={showEditModal}
+            onClose={() => setShowEditModal(false)}
+            onUpdateSuccess={(updatedStudent) => {
+                setShowEditModal(false);
+                if (onUpdateSuccess) onUpdateSuccess(updatedStudent);
+            }}
+        />
+    </>
     )
 }

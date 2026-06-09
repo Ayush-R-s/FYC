@@ -106,9 +106,12 @@ export default function StudentDetails() {
                 <td className="p-3">{student.email}</td>
                 <td className="p-3">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${student.status === "ACTIVE"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      student.status === "ACTIVE"
+                        ? "bg-green-100 text-green-700"
+                        : student.status === "EXPIRED"
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-red-100 text-red-700"
                       }`}
                   >
                     {student.status}
@@ -143,9 +146,12 @@ export default function StudentDetails() {
                 <p className="text-xs text-slate-500 font-mono">{student.studentId || '--'}</p>
               </div>
               <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${student.status === "ACTIVE"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  student.status === "ACTIVE"
+                    ? "bg-green-100 text-green-700"
+                    : student.status === "EXPIRED"
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-red-100 text-red-700"
                   }`}
               >
                 {student.status}
@@ -186,6 +192,10 @@ export default function StudentDetails() {
         studentsData={students}
         onClose={() => setShowPerformance(false)}
         onDeleteSuccess={fetchStudents}
+        onUpdateSuccess={(updated) => {
+          setStudents(prev => prev.map(s => s.id === updated.id ? { ...s, ...updated } : s));
+          setSelectedStudent(prev => prev ? { ...prev, ...updated } : prev);
+        }}
       />
 
       {/* ADD STUDENT MODAL */}

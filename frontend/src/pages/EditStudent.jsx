@@ -185,6 +185,15 @@ export default function StudentDetails() {
         isOpen={showPerformance}
         student={selectedStudent}
         onClose={() => setShowPerformance(false)}
+        studentsData={students}
+        onDeleteSuccess={(deletedId) => {
+          setStudents(prev => prev.filter(s => s.id !== deletedId));
+          setShowPerformance(false);
+        }}
+        onUpdateSuccess={(updated) => {
+          setStudents(prev => prev.map(s => s.id === updated.id ? { ...s, ...updated } : s));
+          setSelectedStudent(prev => prev ? { ...prev, ...updated } : prev);
+        }}
       />
 
       {/* DELETE MODAL */}
