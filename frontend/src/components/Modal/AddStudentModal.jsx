@@ -1,6 +1,17 @@
 import { useState } from 'react';
-import { X, User, Mail, Phone, School, Calendar, Lock, CheckCircle2 } from 'lucide-react';
+import { X, User, Mail, Phone, School, Calendar, Lock, CheckCircle2, Clock } from 'lucide-react';
 import authService from '../../services/authService';
+
+const VALIDITY_OPTIONS = [
+  { value: 'NO_EXPIRY', label: 'No Expiry (Permanent)' },
+  { value: '1_DAY', label: '1 Day' },
+  { value: '1_WEEK', label: '1 Week' },
+  { value: '1_MONTH', label: '1 Month' },
+  { value: '3_MONTHS', label: '3 Months' },
+  { value: '6_MONTHS', label: '6 Months' },
+  { value: '1_YEAR', label: '1 Year' },
+  { value: 'CUSTOM', label: 'Custom Date' },
+];
 
 export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -10,7 +21,9 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
     confirmPassword: '',
     mobile: '',
     dob: '',
-    schoolName: ''
+    schoolName: '',
+    accountValidityDuration: 'NO_EXPIRY',
+    accountExpiryDate: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -54,9 +67,33 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
       return;
     }
 
+    // Validate custom expiry date
+    if (formData.accountValidityDuration === 'CUSTOM') {
+      if (!formData.accountExpiryDate) {
+        setError("Please select a custom expiry date");
+        return;
+      }
+      const expiryDate = new Date(formData.accountExpiryDate);
+      if (expiryDate <= today) {
+        setError("Expiry date must be in the future");
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       const { confirmPassword, ...submitData } = formData;
+
+      // Don't send accountExpiryDate for non-CUSTOM durations (backend computes it)
+      if (submitData.accountValidityDuration !== 'CUSTOM') {
+        delete submitData.accountExpiryDate;
+      }
+      // Don't send validity fields if NO_EXPIRY
+      if (submitData.accountValidityDuration === 'NO_EXPIRY') {
+        delete submitData.accountValidityDuration;
+        delete submitData.accountExpiryDate;
+      }
+
       const result = await authService.registerStudent(submitData);
 
       if (result.success) {
@@ -72,7 +109,9 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
             confirmPassword: '',
             mobile: '',
             dob: '',
-            schoolName: ''
+            schoolName: '',
+            accountValidityDuration: 'NO_EXPIRY',
+            accountExpiryDate: ''
           });
         }, 1500);
       } else {
@@ -83,6 +122,30 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Compute a human-readable preview of when the account will expire
+  const getExpiryPreview = () => {
+    const dur = formData.accountValidityDuration;
+    if (dur === 'NO_EXPIRY' || !dur) return null;
+    if (dur === 'CUSTOM') {
+      return formData.accountExpiryDate
+        ? `Expires on ${new Date(formData.accountExpiryDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}`
+        : null;
+    }
+    const today = new Date();
+    const map = {
+      '1_DAY': 1,
+      '1_WEEK': 7,
+      '1_MONTH': 30,
+      '3_MONTHS': 90,
+      '6_MONTHS': 180,
+      '1_YEAR': 365,
+    };
+    const days = map[dur];
+    if (!days) return null;
+    const expiry = new Date(today.getTime() + days * 24 * 60 * 60 * 1000);
+    return `Expires on ~${expiry.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}`;
   };
 
   const glassEffect = "backdrop-blur-xl bg-white/90 border border-white/20 shadow-2xl";
@@ -243,6 +306,51 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
                     />
                   </div>
                 </div>
+
+                {/* ==================== ACCOUNT VALIDITY ==================== */}
+                <div className="sm:col-span-2">
+                  <label className={labelStyle}>Account Validity</label>
+                  <div className="relative">
+                    <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                    <select
+                      name="accountValidityDuration"
+                      value={formData.accountValidityDuration}
+                      onChange={handleChange}
+                      className={inputStyle + " appearance-none cursor-pointer"}
+                    >
+                      {VALIDITY_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Expiry preview */}
+                  {getExpiryPreview() && (
+                    <p className="mt-1.5 ml-1 text-[11px] font-semibold text-orange-600 flex items-center gap-1.5">
+                      <Clock size={12} />
+                      {getExpiryPreview()}
+                    </p>
+                  )}
+                </div>
+
+                {/* Custom date picker — only shown for CUSTOM */}
+                {formData.accountValidityDuration === 'CUSTOM' && (
+                  <div className="sm:col-span-2 animate-in slide-in-from-top-1 duration-200">
+                    <label className={labelStyle}>Custom Expiry Date</label>
+                    <div className="relative">
+                      <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                      <input
+                        type="date"
+                        name="accountExpiryDate"
+                        value={formData.accountExpiryDate}
+                        onChange={handleChange}
+                        min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+                        className={inputStyle}
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="sticky bottom-0 pt-4 bg-white/50 backdrop-blur-sm -mx-6 sm:-mx-8 px-6 sm:px-8 pb-4">

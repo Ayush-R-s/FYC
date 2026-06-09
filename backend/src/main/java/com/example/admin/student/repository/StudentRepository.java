@@ -23,4 +23,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             String name, String email, String studentId);
 
     List<Student> findBySchoolName(String schoolName);
+
+    List<Student> findByStatusAndAccountExpiryDateIsNotNullAndAccountExpiryDateLessThanEqual(Status status, String date);
 }

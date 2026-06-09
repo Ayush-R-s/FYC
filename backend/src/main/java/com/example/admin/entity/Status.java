@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Status {
-    ACTIVE, INACTIVE, SUSPENDED, GRADUATED;
+    ACTIVE, INACTIVE, SUSPENDED, GRADUATED, EXPIRED;
 
     @JsonCreator
     public static Status fromString(String value) {

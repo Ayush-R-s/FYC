@@ -79,6 +79,49 @@ public class SigninService {
         // -------------------- JOIN DATE --------------------
         student.setJoinDate(LocalDate.now().toString());
 
+        // -------------------- ACCOUNT VALIDITY / EXPIRY --------------------
+        String duration = student.getAccountValidityDuration();
+        if (duration != null && !duration.isEmpty() && !"NO_EXPIRY".equals(duration)) {
+            LocalDate expiryDate;
+            LocalDate today = LocalDate.now();
+
+            switch (duration) {
+                case "1_DAY":
+                    expiryDate = today.plusDays(1);
+                    break;
+                case "1_WEEK":
+                    expiryDate = today.plusWeeks(1);
+                    break;
+                case "1_MONTH":
+                    expiryDate = today.plusMonths(1);
+                    break;
+                case "3_MONTHS":
+                    expiryDate = today.plusMonths(3);
+                    break;
+                case "6_MONTHS":
+                    expiryDate = today.plusMonths(6);
+                    break;
+                case "1_YEAR":
+                    expiryDate = today.plusYears(1);
+                    break;
+                case "CUSTOM":
+                    // For CUSTOM, the accountExpiryDate is already set by the frontend
+                    expiryDate = null; // skip setting — already set
+                    break;
+                default:
+                    expiryDate = null;
+                    break;
+            }
+
+            if (expiryDate != null) {
+                student.setAccountExpiryDate(expiryDate.toString());
+            }
+            // For CUSTOM, validate that an expiry date was actually provided
+            if ("CUSTOM".equals(duration) && (student.getAccountExpiryDate() == null || student.getAccountExpiryDate().isEmpty())) {
+                throw new IllegalArgumentException("Custom validity requires an expiry date.");
+            }
+        }
+
         // -------------------- GUARDIAN FALLBACK --------------------
         if (student.getGuardianAddress() == null || student.getGuardianAddress().isBlank())
             student.setGuardianAddress(student.getAddress());

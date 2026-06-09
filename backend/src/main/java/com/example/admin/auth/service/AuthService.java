@@ -58,6 +58,29 @@ public class AuthService {
 
         // Student ID check removed as per user request
 
+        // -------------------- ACCOUNT EXPIRY CHECK --------------------
+        // Check 1: Already marked as EXPIRED
+        if (student.getStatus() == com.example.admin.entity.Status.EXPIRED) {
+            System.out.println("DEBUG: Account expired for student: " + student.getName());
+            throw new org.springframework.security.authentication.BadCredentialsException("Your account has expired. Please contact the administrator.");
+        }
+
+        // Check 2: Real-time expiry check (in case the scheduler hasn't run yet)
+        if (student.getAccountExpiryDate() != null && !student.getAccountExpiryDate().isEmpty()) {
+            try {
+                java.time.LocalDate expiryDate = java.time.LocalDate.parse(student.getAccountExpiryDate());
+                if (java.time.LocalDate.now().isAfter(expiryDate)) {
+                    // Update status to EXPIRED in the database
+                    student.setStatus(com.example.admin.entity.Status.EXPIRED);
+                    studentRepo.save(student);
+                    System.out.println("DEBUG: Account expired at login for student: " + student.getName() + " (expiry: " + student.getAccountExpiryDate() + ")");
+                    throw new org.springframework.security.authentication.BadCredentialsException("Your account has expired. Please contact the administrator.");
+                }
+            } catch (java.time.format.DateTimeParseException e) {
+                System.err.println("DEBUG: Invalid expiry date format for student " + student.getStudentId() + ": " + student.getAccountExpiryDate());
+            }
+        }
+
         System.out.println("DEBUG: Student found: " + student.getName());
         System.out.println("DEBUG: Stored Password Hash: " + student.getPassword());
         System.out.println("DEBUG: Input Password: " + request.getPassword());

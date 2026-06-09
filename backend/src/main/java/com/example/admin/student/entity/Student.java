@@ -115,6 +115,13 @@ public class Student {
     @Column(nullable = true)
     private String joinDate;
 
+    // Account Validity / Lifespan
+    @Column(nullable = true)
+    private String accountValidityDuration;  // e.g. "1_DAY", "1_WEEK", "1_MONTH", "1_YEAR", "CUSTOM", or null (no expiry)
+
+    @Column(nullable = true)
+    private String accountExpiryDate;  // ISO date string (YYYY-MM-DD) — computed from duration at creation
+
     @Column(nullable = true)
     private String createdAt;
 
@@ -628,5 +635,21 @@ public class Student {
 
     public void setActivityLog(List<Map<String, String>> activityLog) {
         this.activityLog = activityLog;
+    }
+
+    public String getAccountValidityDuration() {
+        return accountValidityDuration;
+    }
+
+    public void setAccountValidityDuration(String accountValidityDuration) {
+        this.accountValidityDuration = accountValidityDuration;
+    }
+
+    public String getAccountExpiryDate() {
+        return accountExpiryDate;
+    }
+
+    public void setAccountExpiryDate(String accountExpiryDate) {
+        this.accountExpiryDate = accountExpiryDate;
     }
 }
