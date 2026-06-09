@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Instagram, Twitter, MessageCircle, Menu, X } from 'lucide-react';
+import { Sun, Moon, Instagram, Twitter, MessageCircle, Menu, X, Linkedin, Youtube } from 'lucide-react';
 
 const MainLayout = ({ darkMode, toggleTheme }) => {
     const navigate = useNavigate();
@@ -102,14 +102,14 @@ const MainLayout = ({ darkMode, toggleTheme }) => {
                 <div className="py-20 text-center bg-secondary/30">
                     <strong className="block mb-8 text-2xl font-semibold">Join Our Community</strong>
                     <div className="flex justify-center gap-8">
-                        <a href="https://www.instagram.com/fyc_technologies?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
+                        <a href="https://www.instagram.com/fyc_neet_academy?igsh=NjZ6ZTU3OTQ3dzds" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
                             <Instagram size={32} className="text-[#E4405F] group-hover:scale-110 transition-transform" />
                         </a>
-                        <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
-                            <MessageCircle size={32} className="text-[#25D366] group-hover:scale-110 transition-transform" />
+                        <a href="https://youtube.com/@fycneetacademy?si=JXXTrNZ9q9W5Mv98" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
+                            <Youtube size={32} className="text-[#25D366] group-hover:scale-110 transition-transform" />
                         </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
-                            <Twitter size={32} className="text-[#1DA1F2] group-hover:scale-110 transition-transform" />
+                        <a href="https://www.linkedin.com/in/hari-harasudhan03?trk=universal-search-cluster" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
+                            <Linkedin size={32} className="text-[#1DA1F2] group-hover:scale-110 transition-transform" />
                         </a>
                     </div>
                 </div>
