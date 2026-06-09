@@ -12,7 +12,7 @@ const Home = () => {
                         Welcome to NEET Preparation Platform
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black mb-6 sm:mb-8 leading-[1.1] tracking-tighter text-text-primary text-balance">
-                        Crack <span className="text-accent underline decoration-orange-500/30 underline-offset-8">NEET 2026</span> with Us
+                        Crack <span className="text-accent underline decoration-orange-500/30 underline-offset-8">NEET 2027</span> with Us
                     </h1>
                     <p className="text-lg sm:text-xl text-text-secondary mb-8 sm:mb-10 max-w-2xl leading-relaxed font-medium">
                         Join thousands of aspiring doctors in our comprehensive NEET preparation program. Master Physics, Chemistry, and Biology with expert guidance.
