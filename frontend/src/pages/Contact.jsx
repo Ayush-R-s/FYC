@@ -18,11 +18,6 @@ const Contact = () => {
                                 <span className="text-text-secondary">fycneet@gmail.com</span>
                             </div>
                         </div>
-                        <div className="flex items-start gap-4">
-                            <div className="p-3 bg-secondary rounded-full text-accent">
-                                <Phone size={24} />
-                            </div>
-                        </div>
 
                         <div className="bg-accent text-white p-6 rounded-2xl mt-8 shadow-lg">
                             <strong className="block text-xl mb-4">Support Hours</strong>
