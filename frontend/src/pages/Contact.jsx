@@ -22,10 +22,6 @@ const Contact = () => {
                             <div className="p-3 bg-secondary rounded-full text-accent">
                                 <Phone size={24} />
                             </div>
-                            <div>
-                                <strong className="block text-lg mb-1 text-accent">Phone</strong>
-                                <span className="text-text-secondary">+91 9947593487<br />Mon-Fri: 9AM - 6PM</span>
-                            </div>
                         </div>
 
                         <div className="bg-accent text-white p-6 rounded-2xl mt-8 shadow-lg">
