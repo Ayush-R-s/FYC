@@ -16,7 +16,11 @@ public class StudentProfileDTO {
     private String videoTime;
     private Integer videosWatched;
     private String schoolName;
+    private String accountExpiryDate;
+    private String role;
+    private String accountValidityDuration;
 
+    
     public StudentProfileDTO() {
     }
 
@@ -131,5 +135,13 @@ public class StudentProfileDTO {
 
     public void setVideosWatched(Integer videosWatched) {
         this.videosWatched = videosWatched;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

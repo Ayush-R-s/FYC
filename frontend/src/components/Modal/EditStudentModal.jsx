@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
     X, User, Mail, Phone, School, Calendar, Lock,
-    CheckCircle2, Clock, Save, ChevronRight
+    CheckCircle2, Clock, Save, ChevronRight, ShieldCheck, UserCheck
 } from 'lucide-react';
 import { updateStudent } from '../../services/studentService';
 
@@ -20,6 +20,13 @@ const STATUS_OPTIONS = [
     { value: 'ACTIVE', label: 'Active', cls: 'border-emerald-500 bg-emerald-50 text-emerald-700' },
     { value: 'INACTIVE', label: 'Inactive', cls: 'border-slate-400 bg-slate-100 text-slate-600' },
     { value: 'EXPIRED', label: 'Expired', cls: 'border-amber-500 bg-amber-50 text-amber-700' },
+];
+
+const ROLE_OPTIONS = [
+    { value: 'STUDENT', label: '🎓 Student', color: 'text-blue-600' },
+    { value: 'ADMIN', label: '🛡️ Admin', color: 'text-red-600' },
+    { value: 'MARKETER', label: '📣 Marketer', color: 'text-purple-600' },
+    { value: 'AMBASSADOR', label: '🌟 Ambassador', color: 'text-amber-600' },
 ];
 
 const TABS = [
@@ -42,7 +49,7 @@ function Field({ label, icon: Icon, children }) {
     );
 }
 
-export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuccess }) {
+export default function EditStudentModal({ student, studentsData = [], isOpen, onClose, onUpdateSuccess }) {
     const [activeTab, setActiveTab] = useState('personal');
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -58,6 +65,8 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
         status: 'ACTIVE',
         accountValidityDuration: 'NO_EXPIRY',
         accountExpiryDate: '',
+        role: 'STUDENT',
+        referredBy: '',
         password: '',
         confirmPassword: '',
     });
@@ -74,6 +83,8 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                 status: student.status || 'ACTIVE',
                 accountValidityDuration: student.accountValidityDuration || 'NO_EXPIRY',
                 accountExpiryDate: student.accountExpiryDate || '',
+                role: student.role || 'STUDENT',
+                referredBy: student.referredBy || '',
                 password: '',
                 confirmPassword: '',
             });
@@ -87,8 +98,34 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
+        setForm(prev => {
+            const next = { ...prev, [name]: value };
+            if (name === 'role' && (value === 'ADMIN' || value === 'MARKETER')) {
+                next.referredBy = '';
+            }
+            if (name === 'role' && value === 'STUDENT' && prev.referredBy) {
+                const referrer = studentsData.find(s => s.studentId === prev.referredBy);
+                if (referrer && referrer.role !== 'AMBASSADOR') {
+                    next.referredBy = '';
+                }
+            }
+            return next;
+        });
         if (error) setError('');
+    };
+
+    const getReferrerOptions = () => {
+        if (!studentsData) return [];
+        if (form.role === 'STUDENT') {
+            return studentsData.filter(s => s.role === 'AMBASSADOR');
+        }
+        if (form.role === 'AMBASSADOR') {
+            return studentsData.filter(s => 
+                (s.role === 'MARKETER' || s.role === 'AMBASSADOR') && 
+                s.id !== student.id
+            );
+        }
+        return [];
     };
 
     const handleSave = async () => {
@@ -115,12 +152,8 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
             const payload = { ...form };
             delete payload.confirmPassword;
             if (!payload.password) delete payload.password;
-            if (payload.accountValidityDuration === 'NO_EXPIRY') {
-                delete payload.accountValidityDuration;
-                delete payload.accountExpiryDate;
-            }
-            if (payload.accountValidityDuration && payload.accountValidityDuration !== 'CUSTOM') {
-                delete payload.accountExpiryDate;
+            if (payload.accountValidityDuration !== 'CUSTOM') {
+                payload.accountExpiryDate = null;
             }
 
             const updated = await updateStudent(student.id, payload);
@@ -268,6 +301,50 @@ export default function EditStudentModal({ student, isOpen, onClose, onUpdateSuc
                                             ))}
                                         </div>
                                     </div>
+
+                                    {/* Role Selector */}
+                                    <div>
+                                        <Field label="Role" icon={ShieldCheck}>
+                                            <select
+                                                name="role"
+                                                value={form.role}
+                                                onChange={handleChange}
+                                                className={inputStyle + " appearance-none cursor-pointer font-semibold"}
+                                                required
+                                            >
+                                                {ROLE_OPTIONS.map(opt => (
+                                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                ))}
+                                            </select>
+                                        </Field>
+                                        <p className="mt-1.5 ml-1 text-[11px] font-semibold text-slate-400">
+                                            {form.role === 'ADMIN' && '⚠️ Admin users have full system access'}
+                                            {form.role === 'MARKETER' && 'Marketer can manage marketing & outreach content'}
+                                            {form.role === 'AMBASSADOR' && 'Ambassador represents FYC in their community'}
+                                            {form.role === 'STUDENT' && 'Standard student account with learning access'}
+                                        </p>
+                                    </div>
+
+                                    {/* Referrer Selector */}
+                                    {(form.role === 'STUDENT' || form.role === 'AMBASSADOR') && (
+                                        <div className="animate-in slide-in-from-top-1 duration-200">
+                                            <Field label="Referred By" icon={UserCheck}>
+                                                <select
+                                                    name="referredBy"
+                                                    value={form.referredBy || ''}
+                                                    onChange={handleChange}
+                                                    className={inputStyle + " appearance-none cursor-pointer font-semibold"}
+                                                >
+                                                    <option value="">-- No Referrer --</option>
+                                                    {getReferrerOptions().map(s => (
+                                                        <option key={s.studentId} value={s.studentId}>
+                                                            {s.name} ({s.studentId})
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </Field>
+                                        </div>
+                                    )}
 
                                     {/* Validity */}
                                     <div>

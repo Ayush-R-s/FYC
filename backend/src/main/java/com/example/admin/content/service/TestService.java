@@ -56,7 +56,7 @@ public class TestService {
             if (randSubject == null || randSubject.equalsIgnoreCase("mixed") || randSubject.equalsIgnoreCase("all")) {
                 questions = questionRepository.findRandomQuestions(count);
             } else {
-                questions = questionRepository.findRandomQuestionsBySubject(randSubject, count);
+                questions = questionRepository.findRandomQuestionsBySubject(count, randSubject);
             }
             
             // Create deep copies to avoid modifying pool questions and ensure they belong strictly to this test

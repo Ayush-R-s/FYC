@@ -201,6 +201,7 @@ export default function StudentDetails() {
       {/* ADD STUDENT MODAL */}
       <AddStudentModal
         isOpen={showAddModal}
+        studentsData={students}
         onClose={() => setShowAddModal(false)}
         onSuccess={fetchStudents}
       />

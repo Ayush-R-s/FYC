@@ -10,9 +10,6 @@ import com.example.admin.student.entity.Student;
 import com.example.admin.student.repository.StudentRepository;
 import com.example.admin.student.service.ExcelExportService;
 
-
-
-
 @Service
 public class SigninService {
     private final StudentRepository studentRepo;
@@ -20,7 +17,8 @@ public class SigninService {
     private final PasswordEncoder passwordEncoder;
     private final ExcelExportService excelExportService;
 
-    public SigninService(JwtUtil jwtUtil, PasswordEncoder passwordEncoder, StudentRepository studentRepo, ExcelExportService excelExportService) {
+    public SigninService(JwtUtil jwtUtil, PasswordEncoder passwordEncoder, StudentRepository studentRepo,
+            ExcelExportService excelExportService) {
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
         this.studentRepo = studentRepo;
@@ -30,7 +28,7 @@ public class SigninService {
     public Student addStudent(Student student) {
         // -------------------- VALIDATION --------------------
         System.out.println("Processing student registration for: " + student.getEmail());
-        
+
         if (student.getMobile() == null || !student.getMobile().matches("\\d{10}")) {
             String mobile = student.getMobile() != null ? student.getMobile() : "null";
             System.out.println("Validation failed: Invalid mobile number [" + mobile + "]");
@@ -47,7 +45,8 @@ public class SigninService {
             int age = java.time.Period.between(dob, LocalDate.now()).getYears();
             System.out.println("Calculated age: " + age + " for DOB: " + student.getDob());
             if (age < 14 || age > 26) {
-                throw new IllegalArgumentException("Age must be between 14 and 26. Your calculated age is " + age + ".");
+                throw new IllegalArgumentException(
+                        "Age must be between 14 and 26. Your calculated age is " + age + ".");
             }
         } catch (IllegalArgumentException e) {
             System.out.println("Validation failed: " + e.getMessage());
@@ -62,7 +61,7 @@ public class SigninService {
             throw new IllegalArgumentException("Password is required for registration.");
         }
         String plainPassword = student.getPassword();
-        
+
         // -------------------- AUTO STUDENT ID --------------------
         String year = String.valueOf(LocalDate.now().getYear());
         String random = String.format("%04d", (int) (Math.random() * 10000));
@@ -75,6 +74,13 @@ public class SigninService {
 
         // -------------------- STATUS DEFAULT --------------------
         student.setStatus(com.example.admin.entity.Status.ACTIVE);
+
+        // -------------------- ROLE DEFAULT --------------------
+        if (student.getRole
+
+        () == null) {
+            student.setRole(com.example.admin.student.entity.Role.STUDENT);
+        }
 
         // -------------------- JOIN DATE --------------------
         student.setJoinDate(LocalDate.now().toString());
@@ -117,28 +123,12 @@ public class SigninService {
                 student.setAccountExpiryDate(expiryDate.toString());
             }
             // For CUSTOM, validate that an expiry date was actually provided
-            if ("CUSTOM".equals(duration) && (student.getAccountExpiryDate() == null || student.getAccountExpiryDate().isEmpty())) {
+            if ("CUSTOM".equals(duration)
+                    && (student.getAccountExpiryDate() == null || student.getAccountExpiryDate().isEmpty())) {
                 throw new IllegalArgumentException("Custom validity requires an expiry date.");
             }
         }
 
-        // -------------------- GUARDIAN FALLBACK --------------------
-        if (student.getGuardianAddress() == null || student.getGuardianAddress().isBlank())
-            student.setGuardianAddress(student.getAddress());
-
-        if (student.getGuardianCity() == null || student.getGuardianCity().isBlank())
-            student.setGuardianCity(student.getCity());
-
-        if (student.getGuardianState() == null || student.getGuardianState().isBlank())
-            student.setGuardianState(student.getState());
-
-        if (student.getGuardianPincode() == null || student.getGuardianPincode().isBlank())
-            student.setGuardianPincode(student.getPincode());
-
         return studentRepo.save(student);
     }
-
-    
-
-
 }

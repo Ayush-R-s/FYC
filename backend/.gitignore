@@ -4,7 +4,27 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+# ========================
+# LOCAL / SECRET CONFIG  ← NEVER COMMIT THESE
+# ========================
+src/main/resources/application-local.properties
+src/main/resources/application-dev.properties
+src/main/resources/application-test.properties
+*.env
+.env
+
+# ========================
+# CREDENTIALS & EXPORTS
+# ========================
+# Excel files exported by the app (contain plain-text passwords)
+*.xlsx
+*.xls
+*.csv
+student-credentials*.xlsx
+
+# ========================
+# IDE: Spring Tool Suite
+# ========================
 .apt_generated
 .classpath
 .factorypath
@@ -13,13 +33,17 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+# ========================
+# IDE: IntelliJ IDEA
+# ========================
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# ========================
+# IDE: NetBeans
+# ========================
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -29,5 +53,19 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+# ========================
+# IDE: VS Code
+# ========================
+# Ignore all VS Code settings except shared extensions list
+.vscode/*
+!.vscode/extensions.json
+# But DO commit launch.json so teammates get the local profile config
+!.vscode/launch.json
+
+# ========================
+# LOGS & TEMP
+# ========================
+*.log
+logs/
+tmp/
+temp/

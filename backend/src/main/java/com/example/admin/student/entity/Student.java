@@ -28,7 +28,6 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
-// Force IDE Re-index
 @Entity
 @Table(name = "students")
 public class Student {
@@ -39,6 +38,10 @@ public class Student {
 
     @Column(unique = true)
     private String studentId;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     private String name;
     @Column(unique = true)
@@ -117,10 +120,14 @@ public class Student {
 
     // Account Validity / Lifespan
     @Column(nullable = true)
-    private String accountValidityDuration;  // e.g. "1_DAY", "1_WEEK", "1_MONTH", "1_YEAR", "CUSTOM", or null (no expiry)
+    private String accountValidityDuration; // e.g. "1_DAY", "1_WEEK", "1_MONTH", "1_YEAR", "CUSTOM", or null (no
+                                            // expiry)
 
     @Column(nullable = true)
-    private String accountExpiryDate;  // ISO date string (YYYY-MM-DD) — computed from duration at creation
+    private String accountExpiryDate; // ISO date string (YYYY-MM-DD) — computed from duration at creation
+
+    @Column(nullable = true)
+    private String referredBy; // studentId of the referrer (Ambassador / Marketer)
 
     @Column(nullable = true)
     private String createdAt;
@@ -214,6 +221,7 @@ public class Student {
         this.city = normalize(this.city);
         this.state = normalize(this.state);
         this.pincode = normalize(this.pincode);
+        this.referredBy = normalize(this.referredBy);
 
         this.guardianAddress = normalize(this.guardianAddress);
         this.guardianCity = normalize(this.guardianCity);
@@ -651,5 +659,21 @@ public class Student {
 
     public void setAccountExpiryDate(String accountExpiryDate) {
         this.accountExpiryDate = accountExpiryDate;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getReferredBy() {
+        return referredBy;
+    }
+
+    public void setReferredBy(String referredBy) {
+        this.referredBy = referredBy;
     }
 }

@@ -15,6 +15,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     { id: "progress", label: "Progress", icon: "🎯", path: "/admin/progress" },
     { id: "feedback", label: "Feedback", icon: "💬", path: "/admin/feedback" },
     { id: "reports", label: "School Reports", icon: "📝", path: "/admin/reports" },
+    { id: "reffered", label: "Reffered", icon: "👥", path: "/admin/reffered" }
   ]
 
   const isActive = (path) => location.pathname === path
@@ -44,7 +45,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="w-10 h-10 bg-orange-500 text-white rounded-lg font-bold shrink-0"
             >
-              A
+              FYC
             </button>
             {sidebarOpen && (
               <div className="min-w-0">

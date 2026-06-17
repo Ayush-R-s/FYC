@@ -154,6 +154,48 @@ public class StudentService {
             if (updated.getGuardianPincode() != null)
                 student.setGuardianPincode(updated.getGuardianPincode());
 
+            if (updated.getSchoolName() != null)
+                student.setSchoolName(updated.getSchoolName());
+
+            if (updated.getRole() != null)
+                student.setRole(updated.getRole());
+
+            if (updated.getReferredBy() != null) {
+                if (updated.getReferredBy().isEmpty() || "none".equalsIgnoreCase(updated.getReferredBy())) {
+                    student.setReferredBy(null);
+                } else {
+                    student.setReferredBy(updated.getReferredBy());
+                }
+            }
+
+            if (updated.getAccountValidityDuration() != null) {
+                String duration = updated.getAccountValidityDuration();
+                if ("NO_EXPIRY".equals(duration)) {
+                    student.setAccountValidityDuration(null);
+                    student.setAccountExpiryDate(null);
+                } else {
+                    student.setAccountValidityDuration(duration);
+                    if (!"CUSTOM".equals(duration)) {
+                        LocalDate expiryDate;
+                        LocalDate today = LocalDate.now();
+                        switch (duration) {
+                            case "1_DAY": expiryDate = today.plusDays(1); break;
+                            case "1_WEEK": expiryDate = today.plusWeeks(1); break;
+                            case "1_MONTH": expiryDate = today.plusMonths(1); break;
+                            case "3_MONTHS": expiryDate = today.plusMonths(3); break;
+                            case "6_MONTHS": expiryDate = today.plusMonths(6); break;
+                            case "1_YEAR": expiryDate = today.plusYears(1); break;
+                            default: expiryDate = null; break;
+                        }
+                        if (expiryDate != null) {
+                            student.setAccountExpiryDate(expiryDate.toString());
+                        }
+                    } else if (updated.getAccountExpiryDate() != null) {
+                        student.setAccountExpiryDate(updated.getAccountExpiryDate());
+                    }
+                }
+            }
+
             if (updated.getStatus() != null)
                 student.setStatus(updated.getStatus());
 

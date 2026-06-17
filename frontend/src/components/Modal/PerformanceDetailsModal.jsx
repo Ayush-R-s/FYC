@@ -677,6 +677,7 @@ export default function PerformanceDetailsModal({
         {/* EDIT STUDENT MODAL */}
         <EditStudentModal
             student={activeStudent}
+            studentsData={studentsData}
             isOpen={showEditModal}
             onClose={() => setShowEditModal(false)}
             onUpdateSuccess={(updatedStudent) => {

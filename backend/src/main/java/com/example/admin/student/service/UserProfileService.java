@@ -42,6 +42,7 @@ public class UserProfileService {
                 dto.setVideoTime(s.getVideoTime());
                 dto.setVideosWatched(s.getVideosWatched());
                 dto.setSchoolName(s.getSchoolName());
+                dto.setRole(s.getRole() != null ? s.getRole().name() : "STUDENT");
             }
         }
 

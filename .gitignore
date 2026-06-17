@@ -1,0 +1,24 @@
+# ========================
+# ROOT .gitignore
+# ========================
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.vscode/
+.idea/
+*.suo
+*.sw?
+
+# Secrets & local config (NEVER commit these)
+*.env
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/

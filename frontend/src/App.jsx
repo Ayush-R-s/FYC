@@ -17,6 +17,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"))
 const StudentDetails = lazy(() => import("./pages/StudentDetails"))
 const ContentManagement = lazy(() => import("./components/ContentManagement/ContentManagement"))
 const EditStudent = lazy(() => import("./pages/EditStudent"))
+const Reference = lazy(() => import("./pages/reference"))
 
 const Analytics = lazy(() => import("./pages/Analytics"))
 const Progress = lazy(() => import("./pages/Progress"))
@@ -39,6 +40,7 @@ const ResourcesPage = lazy(() => import("./pages/student/ResourcesPage"))
 const SchoolReportPage = lazy(() => import("./pages/admin/SchoolReportPage"))
 const TimetablePage = lazy(() => import("./pages/student/TimetablePage"))
 
+
 export default function App() {
   return (
     <Router>
@@ -52,51 +54,52 @@ export default function App() {
       }>
         <Routes>
 
-        {/* PUBLIC */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-        </Route>
+          {/* PUBLIC */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+          </Route>
 
-        {/* AUTH */}
-        <Route element={<AuthLayout />}>
-          <Route path="/student-login" element={<StudentLogin />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
-        </Route>
+          {/* AUTH */}
+          <Route element={<AuthLayout />}>
+            <Route path="/student-login" element={<StudentLogin />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
+          </Route>
 
-        {/* ADMIN */}
-        <Route element={<AdminLayout />}>
-          <Route path="/admin" element={<Dashboard />} />
-          <Route path="/admin/students" element={<StudentDetails />} />
-          <Route path="/admin/students/:id/edit" element={<EditStudent />} />
-          <Route path="/admin/content" element={<ContentManagement />} />
-          <Route path="/admin/analytics" element={<Analytics />} />
-          <Route path="/admin/progress" element={<Progress />} />
-          <Route path="/admin/feedback" element={<Feedback />} />
-          <Route path="/admin/reports" element={<SchoolReportPage />} />
-        </Route>
+          {/* ADMIN */}
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<Dashboard />} />
+            <Route path="/admin/students" element={<StudentDetails />} />
+            <Route path="/admin/students/:id/edit" element={<EditStudent />} />
+            <Route path="/admin/content" element={<ContentManagement />} />
+            <Route path="/admin/analytics" element={<Analytics />} />
+            <Route path="/admin/progress" element={<Progress />} />
+            <Route path="/admin/feedback" element={<Feedback />} />
+            <Route path="/admin/reports" element={<SchoolReportPage />} />
+            <Route path="/admin/reffered" element={<Reference />} />
+          </Route>
 
-        <Route element={<StudentLayout />}>
-          <Route path="/student" element={<StudentHome />} />
-          <Route path="/student/notes" element={<NotesPage />} />
-          <Route path="/student/settings" element={<SettingsPage />} />
-          <Route path="/student/accuracy" element={<AccuracyPage />} />
-          <Route path="/student/tutorials" element={<TutorialsPage />} />
-          <Route path="/student/progress" element={<ProgressPage />} />
-          <Route path="/student/tests" element={<Tests />} />
-          <Route path="/student/videos" element={<Videos />} />
-          <Route path="/student/feedback" element={<StudentFeedback />} />
-          <Route path="/student/streaks" element={<StreaksPage />} /> {/* New student route */}
-          <Route path="/student/badges" element={<BadgesPage />} /> {/* New student route */}
-          <Route path="/student/leaderboard" element={<LeaderboardPage />} /> {/* New student route */}
-          <Route path="/student/resources" element={<ResourcesPage />} />
-          <Route path="/student/timetable" element={<TimetablePage />} />
-        </Route>
+          <Route element={<StudentLayout />}>
+            <Route path="/student" element={<StudentHome />} />
+            <Route path="/student/notes" element={<NotesPage />} />
+            <Route path="/student/settings" element={<SettingsPage />} />
+            <Route path="/student/accuracy" element={<AccuracyPage />} />
+            <Route path="/student/tutorials" element={<TutorialsPage />} />
+            <Route path="/student/progress" element={<ProgressPage />} />
+            <Route path="/student/tests" element={<Tests />} />
+            <Route path="/student/videos" element={<Videos />} />
+            <Route path="/student/feedback" element={<StudentFeedback />} />
+            <Route path="/student/streaks" element={<StreaksPage />} /> {/* New student route */}
+            <Route path="/student/badges" element={<BadgesPage />} /> {/* New student route */}
+            <Route path="/student/leaderboard" element={<LeaderboardPage />} /> {/* New student route */}
+            <Route path="/student/resources" element={<ResourcesPage />} />
+            <Route path="/student/timetable" element={<TimetablePage />} />
+          </Route>
 
-        {/* FALLBACK */}
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+          {/* FALLBACK */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
       </Suspense>
     </Router>
   )

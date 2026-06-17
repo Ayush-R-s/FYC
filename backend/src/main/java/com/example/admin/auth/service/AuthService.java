@@ -92,6 +92,7 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateStudentToken(student.getEmail());
-        return new LoginResponse(token, student.getName(), student.getEmail(), "STUDENT", student.getId(), student.getStudentId());
+        String roleStr = student.getRole() != null ? student.getRole().name() : "STUDENT";
+        return new LoginResponse(token, student.getName(), student.getEmail(), roleStr, student.getId(), student.getStudentId());
     }
 }

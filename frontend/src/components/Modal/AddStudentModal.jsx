@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, User, Mail, Phone, School, Calendar, Lock, CheckCircle2, Clock } from 'lucide-react';
+import { X, User, Mail, Phone, School, Calendar, Lock, CheckCircle2, Clock, ShieldCheck, UserCheck } from 'lucide-react';
 import authService from '../../services/authService';
 
 const VALIDITY_OPTIONS = [
@@ -13,7 +13,14 @@ const VALIDITY_OPTIONS = [
   { value: 'CUSTOM', label: 'Custom Date' },
 ];
 
-export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
+const ROLE_OPTIONS = [
+  { value: 'STUDENT', label: '🎓 Student', color: 'text-blue-600' },
+  { value: 'ADMIN', label: '🛡️ Admin', color: 'text-red-600' },
+  { value: 'MARKETER', label: '📣 Marketer', color: 'text-purple-600' },
+  { value: 'AMBASSADOR', label: '🌟 Ambassador', color: 'text-amber-600' },
+];
+
+export default function AddStudentModal({ isOpen, studentsData = [], onClose, onSuccess }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,6 +29,8 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
     mobile: '',
     dob: '',
     schoolName: '',
+    role: 'STUDENT',
+    referredBy: '',
     accountValidityDuration: 'NO_EXPIRY',
     accountExpiryDate: ''
   });
@@ -33,11 +42,31 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => {
+      const next = { ...prev, [name]: value };
+      if (name === 'role' && (value === 'ADMIN' || value === 'MARKETER')) {
+        next.referredBy = '';
+      }
+      if (name === 'role' && value === 'STUDENT' && prev.referredBy) {
+        const referrer = studentsData.find(s => s.studentId === prev.referredBy);
+        if (referrer && referrer.role !== 'AMBASSADOR') {
+          next.referredBy = '';
+        }
+      }
+      return next;
+    });
     if (error) setError('');
+  };
+
+  const getReferrerOptions = () => {
+    if (!studentsData) return [];
+    if (formData.role === 'STUDENT') {
+      return studentsData.filter(s => s.role === 'AMBASSADOR');
+    }
+    if (formData.role === 'AMBASSADOR') {
+      return studentsData.filter(s => s.role === 'MARKETER' || s.role === 'AMBASSADOR');
+    }
+    return [];
   };
 
   const handleSubmit = async (e) => {
@@ -110,6 +139,8 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
             mobile: '',
             dob: '',
             schoolName: '',
+            role: 'STUDENT',
+            referredBy: '',
             accountValidityDuration: 'NO_EXPIRY',
             accountExpiryDate: ''
           });
@@ -306,6 +337,54 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }) {
                     />
                   </div>
                 </div>
+
+                {/* ==================== ROLE ==================== */}
+                <div className="sm:col-span-2">
+                  <label className={labelStyle}>Role</label>
+                  <div className="relative">
+                    <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                      className={inputStyle + " appearance-none cursor-pointer font-semibold"}
+                      required
+                    >
+                      {ROLE_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <p className="mt-1.5 ml-1 text-[11px] font-semibold text-slate-400">
+                    {formData.role === 'ADMIN' && '⚠️ Admin users have full system access'}
+                    {formData.role === 'MARKETER' && 'Marketer can manage marketing & outreach content'}
+                    {formData.role === 'AMBASSADOR' && 'Ambassador represents FYC in their community'}
+                    {formData.role === 'STUDENT' && 'Standard student account with learning access'}
+                  </p>
+                </div>
+
+                {/* ==================== REFERRER ==================== */}
+                {(formData.role === 'STUDENT' || formData.role === 'AMBASSADOR') && (
+                  <div className="sm:col-span-2 animate-in slide-in-from-top-1 duration-200">
+                    <label className={labelStyle}>Referred By</label>
+                    <div className="relative">
+                      <UserCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                      <select
+                        name="referredBy"
+                        value={formData.referredBy || ''}
+                        onChange={handleChange}
+                        className={inputStyle + " appearance-none cursor-pointer font-semibold"}
+                      >
+                        <option value="">-- No Referrer --</option>
+                        {getReferrerOptions().map(s => (
+                          <option key={s.studentId} value={s.studentId}>
+                            {s.name} ({s.studentId})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
 
                 {/* ==================== ACCOUNT VALIDITY ==================== */}
                 <div className="sm:col-span-2">

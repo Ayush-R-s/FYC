@@ -11,11 +11,11 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
-    @Query(value = "SELECT * FROM question ORDER BY RAND() LIMIT :count", nativeQuery = true)
+    @Query(value = "SELECT * FROM question ORDER BY RAND() LIMIT ?1", nativeQuery = true)
     List<Question> findRandomQuestions(@Param("count") int count);
 
-    @Query(value = "SELECT * FROM question WHERE LOWER(subject) = LOWER(:subject) ORDER BY RAND() LIMIT :count", nativeQuery = true)
-    List<Question> findRandomQuestionsBySubject(@Param("subject") String subject, @Param("count") int count);
+    @Query(value = "SELECT * FROM question WHERE LOWER(subject) = LOWER(?2) ORDER BY RAND() LIMIT ?1", nativeQuery = true)
+    List<Question> findRandomQuestionsBySubject(@Param("count") int count, @Param("subject") String subject);
 
     @Query("SELECT DISTINCT q.chapter FROM Question q WHERE LOWER(q.subject) = LOWER(:subject) AND q.chapter IS NOT NULL")
     List<String> findDistinctChaptersBySubject(@Param("subject") String subject);
