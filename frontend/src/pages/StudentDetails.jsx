@@ -13,6 +13,7 @@ import { Plus } from "lucide-react"
 export default function StudentDetails() {
   const [students, setStudents] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
+  const [roleFilter, setRoleFilter] = useState("ALL")
   const [loading, setLoading] = useState(true)
 
   const [selectedStudent, setSelectedStudent] = useState(null)
@@ -52,12 +53,16 @@ export default function StudentDetails() {
   }, [])
 
   // ================= FILTER =================
-  const filteredStudents = students.filter(s =>
-    s.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.studentId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(s.id).includes(searchTerm)
-  )
+  const filteredStudents = students.filter(s => {
+    const matchesSearch = s.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.studentId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(s.id).includes(searchTerm)
+    
+    const matchesRole = roleFilter === "ALL" || (s.role || "STUDENT") === roleFilter
+
+    return matchesSearch && matchesRole
+  })
 
   if (loading) return <div className="p-8 text-center">Loading students...</div>
 
@@ -76,13 +81,26 @@ export default function StudentDetails() {
         </button>
       </div>
 
-      {/* SEARCH */}
-      <input
-        className="w-full p-3 border rounded-lg"
-        placeholder="Search by name, email or Student ID"
-        value={searchTerm}
-        onChange={e => setSearchTerm(e.target.value)}
-      />
+      {/* SEARCH & FILTER */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <input
+          className="w-full sm:w-2/3 p-3 border rounded-lg"
+          placeholder="Search by name, email or Student ID"
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+        />
+        <select
+          className="w-full sm:w-1/3 p-3 border rounded-lg bg-white cursor-pointer"
+          value={roleFilter}
+          onChange={e => setRoleFilter(e.target.value)}
+        >
+          <option value="ALL">All Roles</option>
+          <option value="STUDENT">Student</option>
+          <option value="AMBASSADOR">Ambassador</option>
+          <option value="MARKETER">Marketer</option>
+          <option value="ADMIN">Admin</option>
+        </select>
+      </div>
 
       {/* TABLE - HIDDEN ON MOBILE */}
       <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow">
@@ -94,6 +112,7 @@ export default function StudentDetails() {
               <th className="p-3 text-left">Email</th>
               <th className="p-3 text-left">Status</th>
               <th className="p-3 text-left">School</th>
+              <th className="p-3 text-left">Role</th>
               <th className="p-3 text-center">Actions</th>
             </tr>
           </thead>
@@ -118,6 +137,11 @@ export default function StudentDetails() {
                   </span>
                 </td>
                 <td className="p-3">{student.schoolName || 'N/A'}</td>
+                <td className="p-3">
+                  <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded text-xs font-semibold">
+                    {student.role || 'STUDENT'}
+                  </span>
+                </td>
                 <td className="p-3 flex gap-3 justify-center">
                   <button
                     onClick={() => handleViewStudent(student)}
@@ -164,6 +188,10 @@ export default function StudentDetails() {
                 <p className="text-slate-700 truncate">{student.email}</p>
               </div>
               <div>
+                <p className="text-slate-400 font-medium">Role</p>
+                <p className="text-slate-700 truncate">{student.role || 'STUDENT'}</p>
+              </div>
+              <div className="col-span-2">
                 <p className="text-slate-400 font-medium">School</p>
                 <p className="text-slate-700 truncate">{student.schoolName || 'N/A'}</p>
               </div>
