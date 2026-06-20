@@ -15,6 +15,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     { id: "progress", label: "Progress", icon: "🎯", path: "/admin/progress" },
     { id: "feedback", label: "Feedback", icon: "💬", path: "/admin/feedback" },
     { id: "reports", label: "School Reports", icon: "📝", path: "/admin/reports" },
+    { id: "neet", label: "Question Bank", icon: "📚", path: "/admin/neet" },
     { id: "reffered", label: "Reffered", icon: "👥", path: "/admin/reffered" }
   ]
 

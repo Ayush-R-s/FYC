@@ -36,7 +36,12 @@ public class AuthService {
         Admin admin = adminRepo.findByEmail(request.getEmail())
             .orElseThrow(() -> new RuntimeException("Invalid email"));
 
-        if (!passwordEncoder.matches(request.getPassword(), admin.getPasswordHash())) {
+        String storedHash = admin.getPasswordHash();
+        if (storedHash != null) {
+            storedHash = storedHash.trim();
+        }
+        
+        if (storedHash == null || !passwordEncoder.matches(request.getPassword(), storedHash)) {
             throw new RuntimeException("Invalid password");
         }
 
@@ -84,10 +89,16 @@ public class AuthService {
         System.out.println("DEBUG: Student found: " + student.getName());
         System.out.println("DEBUG: Stored Password Hash: " + student.getPassword());
         System.out.println("DEBUG: Input Password: " + request.getPassword());
-        boolean matches = passwordEncoder.matches(request.getPassword(), student.getPassword());
+        
+        String storedPassword = student.getPassword();
+        if (storedPassword != null) {
+            storedPassword = storedPassword.trim();
+        }
+        
+        boolean matches = storedPassword != null && passwordEncoder.matches(request.getPassword(), storedPassword);
         System.out.println("DEBUG: Password Matches: " + matches);
 
-        if (student.getPassword() == null || !matches) {
+        if (storedPassword == null || !matches) {
             throw new org.springframework.security.authentication.BadCredentialsException("Invalid credentials");
         }
 

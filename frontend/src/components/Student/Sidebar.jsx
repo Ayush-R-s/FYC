@@ -13,7 +13,8 @@ import {
   LogOut,
   X,
   Target,
-  Calendar
+  Calendar,
+  PenTool
 } from "lucide-react"
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen, t }) {
@@ -30,6 +31,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, t }) {
     { id: "resources", label: translate("study_materials", "Study Materials"), icon: BookOpen, path: "/student/resources" },
     { id: "notes", label: translate("notes", "Notes"), icon: FileText, path: "/student/notes" },
     { id: "timetable", label: translate("timetable", "Timetable"), icon: Calendar, path: "/student/timetable" },
+    { id: "practice", label: translate("practice", "Practice"), icon: PenTool, path: "/student/practice" },
     { id: "tests", label: translate("tests", "Tests"), icon: Target, path: "/student/tests" },
     { id: "videos", label: translate("videos", "Videos"), icon: PlayCircle, path: "/student/videos" },
     { id: "badges", label: translate("badges", "Badges"), icon: Award, path: "/student/badges" },

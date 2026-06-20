@@ -17,7 +17,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"))
 const StudentDetails = lazy(() => import("./pages/StudentDetails"))
 const ContentManagement = lazy(() => import("./components/ContentManagement/ContentManagement"))
 const EditStudent = lazy(() => import("./pages/EditStudent"))
-const Reference = lazy(() => import("./pages/reference"))
+const Reference = lazy(() => import("./pages/Reference"))
 
 const Analytics = lazy(() => import("./pages/Analytics"))
 const Progress = lazy(() => import("./pages/Progress"))
@@ -38,7 +38,9 @@ const BadgesPage = lazy(() => import("./pages/student/BadgesPage"))
 const LeaderboardPage = lazy(() => import("./pages/student/LeaderboardPage"))
 const ResourcesPage = lazy(() => import("./pages/student/ResourcesPage"))
 const SchoolReportPage = lazy(() => import("./pages/admin/SchoolReportPage"))
+const NeetQuestionsPage = lazy(() => import("./pages/admin/NeetQuestionsPage"))
 const TimetablePage = lazy(() => import("./pages/student/TimetablePage"))
+const PracticePage = lazy(() => import("./pages/student/PracticePage"))
 
 
 export default function App() {
@@ -77,6 +79,7 @@ export default function App() {
             <Route path="/admin/progress" element={<Progress />} />
             <Route path="/admin/feedback" element={<Feedback />} />
             <Route path="/admin/reports" element={<SchoolReportPage />} />
+            <Route path="/admin/neet" element={<NeetQuestionsPage />} />
             <Route path="/admin/reffered" element={<Reference />} />
           </Route>
 
@@ -90,11 +93,12 @@ export default function App() {
             <Route path="/student/tests" element={<Tests />} />
             <Route path="/student/videos" element={<Videos />} />
             <Route path="/student/feedback" element={<StudentFeedback />} />
-            <Route path="/student/streaks" element={<StreaksPage />} /> {/* New student route */}
-            <Route path="/student/badges" element={<BadgesPage />} /> {/* New student route */}
-            <Route path="/student/leaderboard" element={<LeaderboardPage />} /> {/* New student route */}
+            <Route path="/student/streaks" element={<StreaksPage />} />
+            <Route path="/student/badges" element={<BadgesPage />} />
+            <Route path="/student/leaderboard" element={<LeaderboardPage />} />
             <Route path="/student/resources" element={<ResourcesPage />} />
             <Route path="/student/timetable" element={<TimetablePage />} />
+            <Route path="/student/practice" element={<PracticePage />} />
           </Route>
 
           {/* FALLBACK */}
