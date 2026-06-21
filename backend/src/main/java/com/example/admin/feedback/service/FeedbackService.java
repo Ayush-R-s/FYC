@@ -15,8 +15,18 @@ public class FeedbackService {
     @Autowired
     private FeedbackRepository feedbackRepository;
 
+    @Autowired
+    private com.example.admin.student.service.StudentService studentService;
+
     public List<Feedback> getAllFeedback() {
-        return feedbackRepository.findAll();
+        return feedbackRepository.findAll().stream()
+            .filter(f -> {
+                com.example.admin.student.entity.Student student = studentService.getStudentByStudentId(f.getStudentId());
+                if (student == null) return true; // Default to keeping feedback if no specific user record
+                String role = student.getRole() != null ? student.getRole().name().toUpperCase() : "STUDENT";
+                return role.equals("STUDENT") || role.equals("AMBASSADOR");
+            })
+            .collect(java.util.stream.Collectors.toList());
     }
 
     public List<Feedback> getFeedbackByStudentId(String studentId) {

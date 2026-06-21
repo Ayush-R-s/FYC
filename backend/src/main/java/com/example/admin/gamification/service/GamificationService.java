@@ -188,11 +188,11 @@ public class GamificationService {
     public List<Student> getLeaderboard(String schoolName) {
         List<Student> students;
         if (schoolName != null && !schoolName.isEmpty()) {
-            students = studentRepository.findAll().stream()
+            students = studentRepository.findAllValidStudents().stream()
                     .filter(s -> schoolName.equals(s.getSchoolName()))
                     .collect(Collectors.toList());
         } else {
-            students = studentRepository.findAll();
+            students = studentRepository.findAllValidStudents();
         }
 
         // Ensure metrics are populated for the leaderboard view
@@ -224,7 +224,7 @@ public class GamificationService {
      * Recalculates and persists global and school-specific ranks for all students.
      */
     public void updateAllRanks() {
-        List<Student> allStudents = studentRepository.findAll();
+        List<Student> allStudents = studentRepository.findAllValidStudents();
         
         List<Student> globalSorted = allStudents.stream()
                 .sorted((s1, s2) -> {

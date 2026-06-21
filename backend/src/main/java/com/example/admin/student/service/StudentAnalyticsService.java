@@ -181,7 +181,7 @@ public class StudentAnalyticsService {
     }
 
     public List<Student> getGlobalStudentsAnalytics() {
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = studentRepository.findAllValidStudents();
         List<TestHistory> allHistory = testHistoryRepository.findAll();
 
         // Calculate Video Completion Data
@@ -215,7 +215,7 @@ public class StudentAnalyticsService {
     }
 
     public Map<String, Object> getGlobalOverviewStats() {
-        long totalStudents = studentRepository != null ? studentRepository.count() : 0;
+        long totalStudents = studentRepository != null ? studentRepository.countValidStudents() : 0;
         long totalVideos = videoRepository != null ? videoRepository.count() : 0;
         long totalCompletions = videoProgressRepository != null ? videoProgressRepository.countByCompleted(true) : 0;
 
@@ -255,7 +255,7 @@ public class StudentAnalyticsService {
 
     public List<Map<String, Object>> getDetailedVideoAnalytics() {
         List<com.example.admin.content.model.Video> videos = videoRepository.findAll();
-        long totalStudents = studentRepository.count();
+        long totalStudents = studentRepository.countValidStudents();
         List<Map<String, Object>> result = new ArrayList<>();
 
         for (com.example.admin.content.model.Video video : videos) {
@@ -303,7 +303,7 @@ public class StudentAnalyticsService {
 
     public List<Map<String, Object>> getGlobalCompletionStats(String timeFrame) {
         List<com.example.admin.content.model.Video> allVideos = videoRepository.findAll();
-        long totalStudents = studentRepository.count();
+        long totalStudents = studentRepository.countValidStudents();
 
         Map<String, List<com.example.admin.content.model.Video>> videosBySubject = allVideos.stream()
                 .filter(v -> v.getSubject() != null)
