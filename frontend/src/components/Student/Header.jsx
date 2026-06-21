@@ -239,7 +239,9 @@ const Header = ({
           </div>
           <div className="flex flex-col text-left hidden md:flex">
             <span className={`text-xs font-black ${darkMode ? "text-slate-200" : "text-gray-800"} leading-none`}>{userProfile?.name || "Guest"}</span>
-            <span className="text-[9px] font-bold text-orange-500 uppercase tracking-tighter mt-0.5">Gold Member</span>
+            <span className={`text-[9px] font-bold uppercase tracking-tighter mt-0.5 ${userProfile?.role === 'AMBASSADOR' ? 'text-amber-500' : 'text-orange-500'}`}>
+              {userProfile?.role === 'AMBASSADOR' ? 'Ambassador' : 'Student'}
+            </span>
           </div>
         </button>
       </div>

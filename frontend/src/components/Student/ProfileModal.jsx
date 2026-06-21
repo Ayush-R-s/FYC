@@ -24,8 +24,18 @@ const ProfileModal = ({ isOpen, onClose, userProfile, currentStudent, darkMode, 
                         <div className="w-20 h-20 bg-orange-500 rounded-2xl flex items-center justify-center text-white mb-4 shadow-md shadow-orange-500/10">
                             <User size={40} />
                         </div>
-                        <h3 className="text-xl font-black tracking-tight">{userProfile.name}</h3>
-                        <p className="text-orange-500 font-bold uppercase text-[9px] tracking-widest mt-1">{t("studentId")}: #STU-{userProfile.id || "2024"}</p>
+                        <div className="flex flex-col items-center gap-1.5">
+                            <h3 className="text-xl font-black tracking-tight">{userProfile.name}</h3>
+                            {userProfile.role === 'AMBASSADOR' && (
+                                <span className="px-2.5 py-0.5 bg-amber-100 text-amber-700 border border-amber-200 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                                    <svg className="w-3 h-3 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    Ambassador
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-orange-500 font-bold uppercase text-[9px] tracking-widest mt-2">{t("studentId")}: #STU-{userProfile.id || "2024"}</p>
                     </div>
 
                     <div className="space-y-4">

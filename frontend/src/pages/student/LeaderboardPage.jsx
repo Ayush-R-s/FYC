@@ -21,7 +21,12 @@ export default function LeaderboardPage() {
             // If scope is school, we pass the user's school name
             const schoolName = scope === 'school' ? (userProfile?.schoolName || 'General') : null;
             const data = await fetchLeaderboard(schoolName);
-            setStudents(data);
+            // Only show students or ambassadors on the leaderboard
+            const filteredData = data.filter(s => {
+                const role = (s.role || 'STUDENT').toUpperCase();
+                return role === 'AMBASSADOR' || role === 'STUDENT';
+            });
+            setStudents(filteredData);
             setLoading(false);
         };
         loadLeaderboard();

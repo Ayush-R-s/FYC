@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Outlet } from "react-router-dom"
 import Sidebar from "../components/Student/Sidebar"
 import Header from "../components/Student/Header"
+import ProfileModal from "../components/Student/ProfileModal"
 import { useAppContext } from "../context/AppContext"
 
 export default function StudentLayout() {
@@ -14,6 +15,7 @@ export default function StudentLayout() {
     setLanguage,
     t,
     userProfile,
+    currentStudent,
     notificationsEnabled,
     setNotificationsEnabled
   } = useAppContext();
@@ -91,6 +93,15 @@ export default function StudentLayout() {
           </div>
         </main>
       </div>
+
+      <ProfileModal 
+        isOpen={showProfileModal} 
+        onClose={() => setShowProfileModal(false)} 
+        userProfile={userProfile || {}} 
+        currentStudent={currentStudent || {}} 
+        darkMode={darkMode} 
+        t={t} 
+      />
     </div>
   )
 }

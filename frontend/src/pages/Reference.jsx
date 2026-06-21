@@ -79,8 +79,9 @@ export default function Reference() {
                 const grandchildren = [...child.children];
                 let shouldPruneChild = false;
                 
+                // Only eject if BOTH the node (child) and its own child (grandchild) are Ambassadors
                 for (const grandchild of grandchildren) {
-                    if (grandchild.role === 'AMBASSADOR') {
+                    if (child.role === 'AMBASSADOR' && grandchild.role === 'AMBASSADOR') {
                         shouldPruneChild = true;
                         break;
                     }
