@@ -36,7 +36,9 @@ instance.interceptors.response.use(
                 path === '/student-login/register' ||
                 path === '/' ||
                 path === '/about' ||
-                path === '/contact';
+                path === '/contact' ||
+                path === '/practice-auth' ||
+                path === '/practice';
 
             if (!isAuthPage) {
                 window.location.href = '/admin-login';

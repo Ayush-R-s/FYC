@@ -33,6 +33,7 @@ export default function AdminLayout() {
     if (path.includes('progress')) return 'Progress';
     if (path.includes('feedback')) return 'Feedback';
     if (path.includes('reports')) return 'Reports';
+    if (path.includes('practice-requests')) return 'Practice Requests';
     return 'Admin';
   }
 

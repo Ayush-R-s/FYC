@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle, ArrowRight, PenTool } from 'lucide-react';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -17,12 +17,20 @@ const Home = () => {
                     <p className="text-lg sm:text-xl text-text-secondary mb-8 sm:mb-10 max-w-2xl leading-relaxed font-medium">
                         Join thousands of aspiring doctors in our comprehensive NEET preparation program. Master Physics, Chemistry, and Biology with expert guidance.
                     </p>
-                    <button
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-accent text-white px-8 lg:px-10 py-4 rounded-2xl text-lg lg:text-xl font-black shadow-lg shadow-orange-500/20 hover:-translate-y-1 hover:shadow-orange-500/40 transition-all transform duration-300 active:scale-95"
-                        onClick={() => navigate('/student-login')}
-                    >
-                        START LEARNING <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <button
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-accent text-white px-8 lg:px-10 py-4 rounded-2xl text-lg lg:text-xl font-black shadow-lg shadow-orange-500/20 hover:-translate-y-1 hover:shadow-orange-500/40 transition-all transform duration-300 active:scale-95"
+                            onClick={() => navigate('/student-login')}
+                        >
+                            START LEARNING <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+                        <button
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-slate-800 text-white px-8 lg:px-10 py-4 rounded-2xl text-lg lg:text-xl font-black shadow-lg hover:-translate-y-1 hover:bg-slate-700 transition-all transform duration-300 active:scale-95 border border-slate-700 hover:border-slate-600"
+                            onClick={() => navigate('/practice-auth')}
+                        >
+                            PRACTICE NOW <PenTool size={22} />
+                        </button>
+                    </div>
 
                     <div className="mt-10 sm:mt-12">
                         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">

@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api/debug/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/health")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/health")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/practice/request/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")

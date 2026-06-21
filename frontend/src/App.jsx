@@ -40,7 +40,9 @@ const ResourcesPage = lazy(() => import("./pages/student/ResourcesPage"))
 const SchoolReportPage = lazy(() => import("./pages/admin/SchoolReportPage"))
 const NeetQuestionsPage = lazy(() => import("./pages/admin/NeetQuestionsPage"))
 const TimetablePage = lazy(() => import("./pages/student/TimetablePage"))
+const PracticeAuthPage = lazy(() => import("./pages/PracticeAuthPage"))
 const PracticePage = lazy(() => import("./pages/student/PracticePage"))
+const AdminPracticeRequests = lazy(() => import("./components/Admin/PracticeRequests/AdminPracticeRequests"))
 
 
 export default function App() {
@@ -61,6 +63,8 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/practice-auth" element={<PracticeAuthPage />} />
+            <Route path="/practice" element={<PracticePage />} />
           </Route>
 
           {/* AUTH */}
@@ -81,6 +85,7 @@ export default function App() {
             <Route path="/admin/reports" element={<SchoolReportPage />} />
             <Route path="/admin/neet" element={<NeetQuestionsPage />} />
             <Route path="/admin/reffered" element={<Reference />} />
+            <Route path="/admin/practice-requests" element={<AdminPracticeRequests />} />
           </Route>
 
           <Route element={<StudentLayout />}>
@@ -98,7 +103,6 @@ export default function App() {
             <Route path="/student/leaderboard" element={<LeaderboardPage />} />
             <Route path="/student/resources" element={<ResourcesPage />} />
             <Route path="/student/timetable" element={<TimetablePage />} />
-            <Route path="/student/practice" element={<PracticePage />} />
           </Route>
 
           {/* FALLBACK */}

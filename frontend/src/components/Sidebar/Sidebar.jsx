@@ -16,7 +16,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     { id: "feedback", label: "Feedback", icon: "💬", path: "/admin/feedback" },
     { id: "reports", label: "School Reports", icon: "📝", path: "/admin/reports" },
     { id: "neet", label: "Question Bank", icon: "📚", path: "/admin/neet" },
-    { id: "reffered", label: "Reffered", icon: "👥", path: "/admin/reffered" }
+    { id: "reffered", label: "Reffered", icon: "👥", path: "/admin/reffered" },
+    { id: "practice-requests", label: "Practice Requests", icon: "✅", path: "/admin/practice-requests" }
   ]
 
   const isActive = (path) => location.pathname === path

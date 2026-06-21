@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Play, CheckCircle, XCircle, ArrowLeft, ArrowRight, Save, Target, AlertCircle } from 'lucide-react';
 import axios from '../../services/axiosInstance';
 import { useAppContext } from '../../context/AppContext';
@@ -41,10 +41,10 @@ export default function PracticePage() {
     }
   };
 
-  const finishPractice = () => {
+  const finishPractice = useCallback(() => {
     setSessionEndTime(Date.now());
     setStatus('results');
-  };
+  }, []);
 
   const handleOptionSelect = (qId, optionKey) => {
     setAnswers(prev => ({ ...prev, [qId]: optionKey }));
@@ -57,6 +57,76 @@ export default function PracticePage() {
   const handlePrev = () => {
     if (currentIndex > 0) setCurrentIndex(prev => prev - 1);
   };
+
+  useEffect(() => {
+    if (status !== 'practicing') return;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        alert("Warning: You switched tabs or minimized the window. The practice session will now end.");
+        finishPractice();
+      }
+    };
+
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+      alert("Right-click is disabled during practice.");
+    };
+
+    const handleCopyPaste = (e) => {
+      e.preventDefault();
+      alert("Copy/Paste is disabled during practice.");
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'PrintScreen') {
+        navigator.clipboard.writeText('');
+        alert("Screenshots are not allowed!");
+      }
+      if (e.ctrlKey || e.metaKey) {
+        const forbiddenKeys = ['c', 'v', 'x', 'p', 's'];
+        if (forbiddenKeys.includes(e.key.toLowerCase())) {
+          e.preventDefault();
+          alert("Keyboard shortcuts are disabled during practice.");
+        }
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.key === 'PrintScreen') {
+        navigator.clipboard.writeText('');
+        alert("Screenshots are not allowed!");
+      }
+    };
+
+    const handleWindowBlur = () => {
+      finishPractice();
+      // Use setTimeout so the UI updates to 'results' before showing the alert
+      setTimeout(() => {
+        alert("Warning: Window lost focus. This could be due to taking a screenshot, screen recording, or opening another app. The practice session has ended.");
+      }, 0);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("copy", handleCopyPaste);
+    document.addEventListener("cut", handleCopyPaste);
+    document.addEventListener("paste", handleCopyPaste);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", handleWindowBlur);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("copy", handleCopyPaste);
+      document.removeEventListener("cut", handleCopyPaste);
+      document.removeEventListener("paste", handleCopyPaste);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("blur", handleWindowBlur);
+    };
+  }, [status, finishPractice]);
 
   const renderIdle = () => (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
@@ -102,7 +172,7 @@ export default function PracticePage() {
     const currentAnswer = answers[q.id];
 
     return (
-      <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300">
+      <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300 select-none">
         {/* Header */}
         <div className={`p-4 rounded-xl flex flex-wrap items-center justify-between gap-4 border ${darkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} shadow-sm`}>
           <div className="flex items-center gap-4">
