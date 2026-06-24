@@ -1,26 +1,30 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAppContext } from "../../context/AppContext"
-import { Sun, Moon, LogOut, X } from "lucide-react"
+import { Sun, Moon, LogOut, X, Lock } from "lucide-react"
+import { isSuperAdmin } from "../../utils/roleUtils"
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate()
   const location = useLocation()
   const { darkMode, setDarkMode, logout } = useAppContext()
+  const superAdmin = isSuperAdmin()
 
+  // role: 'all' = any admin, 'super' = SUPER_ADMIN only
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: "📊", path: "/admin" },
-    { id: "students", label: "Student Details", icon: "👥", path: "/admin/students" },
-    { id: "content", label: "Content Portal", icon: "📁", path: "/admin/content" },
-    { id: "analytics", label: "Analytics", icon: "📈", path: "/admin/analytics" },
-    { id: "progress", label: "Progress", icon: "🎯", path: "/admin/progress" },
-    { id: "feedback", label: "Feedback", icon: "💬", path: "/admin/feedback" },
-    { id: "reports", label: "School Reports", icon: "📝", path: "/admin/reports" },
-    { id: "neet", label: "Question Bank", icon: "📚", path: "/admin/neet" },
-    { id: "reffered", label: "Reffered", icon: "👥", path: "/admin/reffered" },
-    { id: "practice-requests", label: "Practice Requests", icon: "✅", path: "/admin/practice-requests" }
+    { id: "dashboard",         label: "Dashboard",         icon: "📊", path: "/admin",                role: "all" },
+    { id: "students",          label: "Student Details",   icon: "👥", path: "/admin/students",        role: "super" },
+    { id: "content",           label: "Content Portal",    icon: "📁", path: "/admin/content",         role: "all" },
+    { id: "analytics",         label: "Analytics",         icon: "📈", path: "/admin/analytics",       role: "all" },
+    { id: "progress",          label: "Progress",          icon: "🎯", path: "/admin/progress",        role: "all" },
+    { id: "feedback",          label: "Feedback",          icon: "💬", path: "/admin/feedback",        role: "all" },
+    { id: "reports",           label: "School Reports",    icon: "📝", path: "/admin/reports",         role: "all" },
+    { id: "neet",              label: "Question Bank",     icon: "📚", path: "/admin/neet",            role: "super" },
+    { id: "reffered",          label: "Referred",          icon: "👥", path: "/admin/reffered",        role: "super" },
+    { id: "practice-requests", label: "Practice Requests", icon: "✅", path: "/admin/practice-requests", role: "super" },
   ]
 
   const isActive = (path) => location.pathname === path
+  const canAccess = (role) => role === "all" || superAdmin
 
   const handleLogout = () => {
     logout();
@@ -52,7 +56,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             {sidebarOpen && (
               <div className="min-w-0">
                 <h3 className="text-white font-semibold truncate">Admin Panel</h3>
-                <p className="text-xs text-slate-400">Dashboard</p>
+                <p className="text-xs text-slate-400">
+                  {superAdmin ? "Super Admin" : "Teacher Admin"}
+                </p>
               </div>
             )}
           </div>
@@ -70,19 +76,30 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
         {/* Navigation */}
         <nav className="p-3 space-y-2 flex-1 overflow-y-auto">
-          {menuItems.map(item => (
-            <button
-              key={item.id}
-              onClick={() => navigate(item.path)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all
-              ${isActive(item.path)
-                  ? "bg-orange-500 text-white shadow"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-white"}`}
-            >
-              <span className="text-xl">{item.icon}</span>
-              {sidebarOpen && <span>{item.label}</span>}
-            </button>
-          ))}
+          {menuItems.map(item => {
+            const allowed = canAccess(item.role)
+            return (
+              <button
+                key={item.id}
+                onClick={() => navigate(item.path)}
+                title={!allowed ? "Super Admin access required" : item.label}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all
+                ${isActive(item.path)
+                    ? "bg-orange-500 text-white shadow"
+                    : allowed
+                      ? "text-slate-400 hover:bg-slate-800 hover:text-white"
+                      : "text-slate-600 cursor-pointer hover:bg-slate-800/50"}`}
+              >
+                <span className="text-xl">{item.icon}</span>
+                {sidebarOpen && (
+                  <span className="flex-1 text-left">{item.label}</span>
+                )}
+                {sidebarOpen && !allowed && (
+                  <Lock size={13} className="text-slate-600 shrink-0" />
+                )}
+              </button>
+            )
+          })}
         </nav>
 
         <div className="p-4 border-t border-slate-800 space-y-2">

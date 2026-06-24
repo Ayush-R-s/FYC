@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from "react"
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import RoleGuard from "./components/Common/RoleGuard"
 
 const MainLayout = lazy(() => import("./layouts/MainLayout"))
 const AuthLayout = lazy(() => import("./layouts/AuthLayout"))
@@ -75,17 +76,40 @@ export default function App() {
 
           {/* ADMIN */}
           <Route element={<AdminLayout />}>
+            {/* Available to ALL admin roles */}
             <Route path="/admin" element={<Dashboard />} />
-            <Route path="/admin/students" element={<StudentDetails />} />
-            <Route path="/admin/students/:id/edit" element={<EditStudent />} />
             <Route path="/admin/content" element={<ContentManagement />} />
             <Route path="/admin/analytics" element={<Analytics />} />
             <Route path="/admin/progress" element={<Progress />} />
             <Route path="/admin/feedback" element={<Feedback />} />
             <Route path="/admin/reports" element={<SchoolReportPage />} />
-            <Route path="/admin/neet" element={<NeetQuestionsPage />} />
-            <Route path="/admin/reffered" element={<Reference />} />
-            <Route path="/admin/practice-requests" element={<AdminPracticeRequests />} />
+
+            {/* SUPER_ADMIN only */}
+            <Route path="/admin/students" element={
+              <RoleGuard allowedRoles={['SUPER_ADMIN']}>
+                <StudentDetails />
+              </RoleGuard>
+            } />
+            <Route path="/admin/students/:id/edit" element={
+              <RoleGuard allowedRoles={['SUPER_ADMIN']}>
+                <EditStudent />
+              </RoleGuard>
+            } />
+            <Route path="/admin/neet" element={
+              <RoleGuard allowedRoles={['SUPER_ADMIN']}>
+                <NeetQuestionsPage />
+              </RoleGuard>
+            } />
+            <Route path="/admin/reffered" element={
+              <RoleGuard allowedRoles={['SUPER_ADMIN']}>
+                <Reference />
+              </RoleGuard>
+            } />
+            <Route path="/admin/practice-requests" element={
+              <RoleGuard allowedRoles={['SUPER_ADMIN']}>
+                <AdminPracticeRequests />
+              </RoleGuard>
+            } />
           </Route>
 
           <Route element={<StudentLayout />}>

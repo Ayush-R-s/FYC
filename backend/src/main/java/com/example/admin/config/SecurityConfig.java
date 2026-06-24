@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,6 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtFilter jwtAuthFilter;
@@ -43,6 +45,7 @@ public class SecurityConfig {
                         .frameOptions(frame -> frame.disable()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // ── Public endpoints ─────────────────────────────────────────────
                         .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin/content/files/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/notifications/**")).permitAll()
@@ -54,8 +57,21 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api/health")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/practice/request/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
+                        // ── SUPER_ADMIN only ─────────────────────────────────────────────
+                        .requestMatchers(new AntPathRequestMatcher("/admin/students/**")).hasRole("SUPER_ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/iit-jee-questions/**")).hasRole("SUPER_ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/credentials/**")).hasRole("SUPER_ADMIN")
+                        // ── SUPER_ADMIN or TEACHER_ADMIN ─────────────────────────────────
+                        .requestMatchers(new AntPathRequestMatcher("/admin/students-analytics/**")).hasAnyRole("SUPER_ADMIN", "TEACHER_ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/content/**")).hasAnyRole("SUPER_ADMIN", "TEACHER_ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/analytics/**")).hasAnyRole("SUPER_ADMIN", "TEACHER_ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/performance/**")).hasAnyRole("SUPER_ADMIN", "TEACHER_ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/feedback/**")).hasAnyRole("SUPER_ADMIN", "TEACHER_ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/stats/**")).hasAnyRole("SUPER_ADMIN", "TEACHER_ADMIN")
+                        // ── Catch-all admin routes → SUPER_ADMIN ─────────────────────────
+                        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("SUPER_ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e.authenticationEntryPoint(
                         (req, res, ex) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED)))

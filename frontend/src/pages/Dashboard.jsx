@@ -28,8 +28,14 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const [studentsResponse, statsResponse] = await Promise.all([
-          getAllStudents(),
-          analyticsService.getOverallStats()
+          getAllStudents().catch(err => {
+            console.warn("Could not fetch students (might be restricted)", err);
+            return [];
+          }),
+          analyticsService.getOverallStats().catch(err => {
+            console.warn("Could not fetch stats", err);
+            return null;
+          })
         ]);
 
         // ✅ SAFETY CHECK FOR STUDENTS
@@ -37,6 +43,8 @@ export default function Dashboard() {
           setStudentsData(studentsResponse)
         } else if (Array.isArray(studentsResponse?.data)) {
           setStudentsData(studentsResponse.data)
+        } else {
+          setStudentsData([])
         }
 
         setStatsData(statsResponse)
