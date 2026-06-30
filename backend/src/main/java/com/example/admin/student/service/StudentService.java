@@ -94,7 +94,7 @@ public class StudentService {
     // ==========================================================
 
     public List<Student> getAllStudents() {
-        return repository.findAllValidStudents();
+        return repository.findAll();
     }
 
     public Student getStudentById(Long id) {
@@ -106,12 +106,8 @@ public class StudentService {
     }
 
     public List<Student> searchStudents(String query) {
-        List<Student> results = repository
-                .findByNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrStudentIdContainingIgnoreCase(
+        return repository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrStudentIdContainingIgnoreCase(
                         query, query, query);
-        return results.stream()
-                .filter(s -> s.getRole() == null || "STUDENT".equalsIgnoreCase(s.getRole().name()) || "AMBASSADOR".equalsIgnoreCase(s.getRole().name()))
-                .collect(java.util.stream.Collectors.toList());
     }
 
     // ==========================================================
