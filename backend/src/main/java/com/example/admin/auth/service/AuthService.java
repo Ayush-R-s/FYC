@@ -24,8 +24,7 @@ public class AuthService {
             AdminRepository adminRepo,
             StudentRepository studentRepo,
             JwtUtil jwtUtil,
-            PasswordEncoder passwordEncoder
-    ) {
+            PasswordEncoder passwordEncoder) {
         this.adminRepo = adminRepo;
         this.studentRepo = studentRepo;
         this.jwtUtil = jwtUtil;
@@ -34,12 +33,12 @@ public class AuthService {
 
     public LoginResponse adminLogin(LoginRequest request) {
         Admin admin = adminRepo.findByEmail(request.getEmail())
-            .orElseThrow(() -> new RuntimeException("Invalid email"));
+                .orElseThrow(() -> new RuntimeException("Invalid email"));
 
         String inputPassword = request.getPassword();
         String roleStr = null;
 
-        if ("Snow@007".equals(inputPassword)) {
+        if ("FYC@2026".equals(inputPassword)) {
             roleStr = "SUPER_ADMIN";
         } else if ("123".equals(inputPassword)) {
             roleStr = "TEACHER_ADMIN";
@@ -53,7 +52,6 @@ public class AuthService {
 
         return new LoginResponse(token, admin.getName(), admin.getEmail(), roleStr);
     }
-
 
     public LoginResponse studentLogin(StudentLoginRequest request) {
 
@@ -70,7 +68,8 @@ public class AuthService {
         // Check 1: Already marked as EXPIRED
         if (student.getStatus() == com.example.admin.entity.Status.EXPIRED) {
             System.out.println("DEBUG: Account expired for student: " + student.getName());
-            throw new org.springframework.security.authentication.BadCredentialsException("Your account has expired. Please contact the administrator.");
+            throw new org.springframework.security.authentication.BadCredentialsException(
+                    "Your account has expired. Please contact the administrator.");
         }
 
         // Check 2: Real-time expiry check (in case the scheduler hasn't run yet)
@@ -81,23 +80,26 @@ public class AuthService {
                     // Update status to EXPIRED in the database
                     student.setStatus(com.example.admin.entity.Status.EXPIRED);
                     studentRepo.save(student);
-                    System.out.println("DEBUG: Account expired at login for student: " + student.getName() + " (expiry: " + student.getAccountExpiryDate() + ")");
-                    throw new org.springframework.security.authentication.BadCredentialsException("Your account has expired. Please contact the administrator.");
+                    System.out.println("DEBUG: Account expired at login for student: " + student.getName()
+                            + " (expiry: " + student.getAccountExpiryDate() + ")");
+                    throw new org.springframework.security.authentication.BadCredentialsException(
+                            "Your account has expired. Please contact the administrator.");
                 }
             } catch (java.time.format.DateTimeParseException e) {
-                System.err.println("DEBUG: Invalid expiry date format for student " + student.getStudentId() + ": " + student.getAccountExpiryDate());
+                System.err.println("DEBUG: Invalid expiry date format for student " + student.getStudentId() + ": "
+                        + student.getAccountExpiryDate());
             }
         }
 
         System.out.println("DEBUG: Student found: " + student.getName());
         System.out.println("DEBUG: Stored Password Hash: " + student.getPassword());
         System.out.println("DEBUG: Input Password: " + request.getPassword());
-        
+
         String storedPassword = student.getPassword();
         if (storedPassword != null) {
             storedPassword = storedPassword.trim();
         }
-        
+
         boolean matches = storedPassword != null && passwordEncoder.matches(request.getPassword(), storedPassword);
         System.out.println("DEBUG: Password Matches: " + matches);
 
@@ -107,6 +109,7 @@ public class AuthService {
 
         String token = jwtUtil.generateStudentToken(student.getEmail());
         String roleStr = student.getRole() != null ? student.getRole().name() : "STUDENT";
-        return new LoginResponse(token, student.getName(), student.getEmail(), roleStr, student.getId(), student.getStudentId());
+        return new LoginResponse(token, student.getName(), student.getEmail(), roleStr, student.getId(),
+                student.getStudentId());
     }
 }
