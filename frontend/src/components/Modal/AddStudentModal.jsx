@@ -358,7 +358,7 @@ export default function AddStudentModal({ isOpen, studentsData = [], onClose, on
                   <p className="mt-1.5 ml-1 text-[11px] font-semibold text-slate-400">
                     {formData.role === 'ADMIN' && '⚠️ Admin users have full system access'}
                     {formData.role === 'MARKETER' && 'Marketer can manage marketing & outreach content'}
-                    {formData.role === 'AMBASSADOR' && 'Ambassador represents FYC in their community'}
+                    {formData.role === 'AMBASSADOR' && 'Ambassador represents jest in their community'}
                     {formData.role === 'STUDENT' && 'Standard student account with learning access'}
                   </p>
                 </div>

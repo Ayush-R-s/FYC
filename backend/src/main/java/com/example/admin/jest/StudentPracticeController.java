@@ -1,4 +1,4 @@
-package com.example.admin.neet;
+package com.example.admin.jest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,15 +11,15 @@ import java.util.List;
 @RequestMapping("/student/practice")
 public class StudentPracticeController {
 
-    private final neetQuestionService service;
+    private final jestQuestionService service;
 
-    public StudentPracticeController(neetQuestionService service) {
+    public StudentPracticeController(jestQuestionService service) {
         this.service = service;
     }
 
     @GetMapping("/questions")
-    public List<neetQuestion> getPracticeQuestions() {
-        List<neetQuestion> questions = service.getAllQuestions();
+    public List<jestQuestion> getPracticeQuestions() {
+        List<jestQuestion> questions = service.getAllQuestions();
         // Return in random order as requested by the user
         Collections.shuffle(questions);
         return questions;

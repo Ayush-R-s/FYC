@@ -150,7 +150,7 @@ const Analytics = () => {
           <div className="flex items-center gap-4">
             <div>
               <h1 className={`text-2xl sm:text-4xl font-bold ${textColor}`}>Analytics & Dashboard</h1>
-              <p className={`${textSecondary} mt-2 text-sm sm:text-base`}>Student Learning Analytics - NEET Preparation</p>
+              <p className={`${textSecondary} mt-2 text-sm sm:text-base`}>Student Learning Analytics - Jest Preparation</p>
             </div>
           </div>
         </div>

@@ -20,7 +20,7 @@ The application uses `DefaultCredentialsProvider`, which means it will automatic
 | Variable | Description | Example | Required for IAM? |
 |----------|-------------|---------|-------------------|
 | `AWS_REGION` | AWS Region where bucket is located | `us-east-1` | **Yes** |
-| `AWS_S3_BUCKET_NAME` | Name of the S3 bucket | `my-fyc-bucket` | **Yes** |
+| `AWS_S3_BUCKET_NAME` | Name of the S3 bucket | `my-jesttprep-bucket` | **Yes** |
 | `AWS_ACCESS_KEY_ID` | AWS IAM User Access Key | `AKIA...` | No |
 | `AWS_SECRET_ACCESS_KEY` | AWS IAM User Secret Key | `SECRET...` | No |
 

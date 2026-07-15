@@ -1,10 +1,10 @@
-package com.example.admin.neet;
+package com.example.admin.jest;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "iit_jee_questions")
-public class neetQuestion {
+public class jestQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

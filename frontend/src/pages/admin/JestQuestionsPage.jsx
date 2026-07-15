@@ -15,7 +15,7 @@ import {
   X
 } from "lucide-react"
 
-export default function neetQuestionsPage() {
+export default function JestQuestionsPage() {
   const [questions, setQuestions] = useState([])
   const [loading, setLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -225,7 +225,7 @@ export default function neetQuestionsPage() {
       <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-950 p-6 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-            <span>📚</span> IIT JEE & NEET Question Portal
+            <span>📚</span> IIT JEE & Jest Question Portal
           </h1>
           <p className="text-slate-400 text-sm mt-1">
             Separate upload structure to parse standard objective questions and save them into a new dedicated table.
@@ -302,8 +302,8 @@ export default function neetQuestionsPage() {
                   key={tab}
                   onClick={() => { setSubjectFilter(tab); setCurrentPage(1); }}
                   className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${subjectFilter === tab
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-500 hover:text-slate-950"
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-950"
                     }`}
                 >
                   {tab}

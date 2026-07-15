@@ -136,7 +136,7 @@ export default function PracticePage() {
       <div className="max-w-md">
         <h1 className="text-3xl font-bold mb-4">Self-Paced Practice</h1>
         <p className={`mb-8 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-          Sharpen your skills with randomized questions from the NEET question bank.
+          Sharpen your skills with randomized questions from the Jest question bank.
           There is no time limit—start and stop whenever you want.
         </p>
         <button
@@ -212,13 +212,13 @@ export default function PracticePage() {
                   key={opt.key}
                   onClick={() => handleOptionSelect(q.id, opt.key)}
                   className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-start gap-4 ${isSelected
-                      ? (darkMode ? 'bg-orange-500/20 border-orange-500' : 'bg-orange-50 border-orange-500')
-                      : (darkMode ? 'bg-slate-800/50 border-slate-700 hover:border-slate-600 hover:bg-slate-800' : 'bg-slate-50 border-slate-200 hover:border-slate-300 hover:bg-slate-100')
+                    ? (darkMode ? 'bg-orange-500/20 border-orange-500' : 'bg-orange-50 border-orange-500')
+                    : (darkMode ? 'bg-slate-800/50 border-slate-700 hover:border-slate-600 hover:bg-slate-800' : 'bg-slate-50 border-slate-200 hover:border-slate-300 hover:bg-slate-100')
                     }`}
                 >
                   <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${isSelected
-                      ? 'bg-orange-500 text-white'
-                      : (darkMode ? 'bg-slate-700 text-slate-300' : 'bg-slate-200 text-slate-700')
+                    ? 'bg-orange-500 text-white'
+                    : (darkMode ? 'bg-slate-700 text-slate-300' : 'bg-slate-200 text-slate-700')
                     }`}>
                     {opt.key}
                   </div>
@@ -237,8 +237,8 @@ export default function PracticePage() {
             onClick={handlePrev}
             disabled={currentIndex === 0}
             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${currentIndex === 0
-                ? 'opacity-50 cursor-not-allowed text-slate-500 bg-slate-100 dark:bg-slate-800 dark:border-slate-800 border'
-                : 'text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 dark:text-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700'
+              ? 'opacity-50 cursor-not-allowed text-slate-500 bg-slate-100 dark:bg-slate-800 dark:border-slate-800 border'
+              : 'text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 dark:text-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700'
               }`}
           >
             <ArrowLeft size={18} />
@@ -248,8 +248,8 @@ export default function PracticePage() {
           <button
             onClick={currentIndex === questions.length - 1 ? finishPractice : handleNext}
             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${currentIndex === questions.length - 1
-                ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/25'
-                : 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25'
+              ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/25'
+              : 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25'
               }`}
           >
             {currentIndex === questions.length - 1 ? (

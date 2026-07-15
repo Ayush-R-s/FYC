@@ -1,4 +1,4 @@
-package com.example.admin.neet;
+package com.example.admin.jest;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -13,31 +13,31 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class neetQuestionService {
+public class jestQuestionService {
 
-    private final neetQuestionRepository repository;
+    private final jestQuestionRepository repository;
 
-    public neetQuestionService(neetQuestionRepository repository) {
+    public jestQuestionService(jestQuestionRepository repository) {
         this.repository = repository;
     }
 
-    public List<neetQuestion> getAllQuestions() {
+    public List<jestQuestion> getAllQuestions() {
         return repository.findAll();
     }
 
     @Transactional
-    public List<neetQuestion> saveAll(List<neetQuestion> questions) {
+    public List<jestQuestion> saveAll(List<jestQuestion> questions) {
         if (questions == null || questions.isEmpty()) {
             return new ArrayList<>();
         }
         // Clear out existing IDs to prevent updates and force clean inserts
-        for (neetQuestion q : questions) {
+        for (jestQuestion q : questions) {
             q.setId(null);
         }
         return repository.saveAll(questions);
     }
 
-    public List<neetQuestion> parsePdf(byte[] pdfBytes) throws IOException {
+    public List<jestQuestion> parsePdf(byte[] pdfBytes) throws IOException {
         String text;
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes))) {
             PDFTextStripper stripper = new PDFTextStripper();
@@ -48,8 +48,8 @@ public class neetQuestionService {
         return parseQuestionsFromText(text);
     }
 
-    private List<neetQuestion> parseQuestionsFromText(String content) {
-        List<neetQuestion> questions = new ArrayList<>();
+    private List<jestQuestion> parseQuestionsFromText(String content) {
+        List<jestQuestion> questions = new ArrayList<>();
         if (content == null || content.trim().isEmpty()) {
             return questions;
         }
@@ -109,7 +109,7 @@ public class neetQuestionService {
         }
 
         for (QuestionBlock b : blocks) {
-            neetQuestion q = parseQuestionBlock(b);
+            jestQuestion q = parseQuestionBlock(b);
             if (q != null) {
                 questions.add(q);
             }
@@ -118,8 +118,8 @@ public class neetQuestionService {
         return questions;
     }
 
-    private neetQuestion parseQuestionBlock(QuestionBlock b) {
-        neetQuestion q = new neetQuestion();
+    private jestQuestion parseQuestionBlock(QuestionBlock b) {
+        jestQuestion q = new jestQuestion();
         q.setQuestionNumber(b.questionNumber);
         q.setSubject(b.subject);
         q.setCorrectOption(b.answerLine);

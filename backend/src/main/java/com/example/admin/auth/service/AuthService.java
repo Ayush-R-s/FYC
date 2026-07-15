@@ -38,7 +38,7 @@ public class AuthService {
         String inputPassword = request.getPassword();
         String roleStr = null;
 
-        if ("FYC@2026".equals(inputPassword)) {
+        if ("jestT@2026".equals(inputPassword)) {
             roleStr = "SUPER_ADMIN";
         } else if ("123".equals(inputPassword)) {
             roleStr = "TEACHER_ADMIN";

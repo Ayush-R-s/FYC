@@ -23,11 +23,11 @@ public class AdminSeeder {
 
     @PostConstruct
     public void initAdmin() {
-        repo.findByEmail("admin@fyc.com").orElseGet(() -> {
+        repo.findByEmail("admin@jesttprep.com").orElseGet(() -> {
 
             Admin admin = new Admin();
             admin.setName("Admin");
-            admin.setEmail("admin@fyc.com");
+            admin.setEmail("admin@jesttprep.com");
             admin.setPasswordHash(passwordEncoder.encode("123"));
             admin.setRole(AdminRole.ADMIN);
 

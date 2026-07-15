@@ -23,9 +23,9 @@ const MainLayout = ({ darkMode, toggleTheme }) => {
             {/* Header */}
             <header className="fixed w-full top-0 z-50 bg-header-bg text-header-text flex justify-between items-center px-6 sm:px-8 py-5 shadow-lg backdrop-blur-sm bg-opacity-95">
                 <div className="flex items-center text-xl sm:text-2xl font-bold text-accent cursor-pointer" onClick={() => navigate('/')}>
-                    <img src="/images/fyc.jpeg" alt="FYC Logo" className="h-8 sm:h-9 mr-2 sm:mr-3" />
-                    <span>FYC</span>
-                    <small className="hidden xs:inline-block text-xs sm:base opacity-80 ml-2 font-normal text-text-secondary dark:text-gray-400">NEET Preparation</small>
+                    <img src="/images/jest.jpeg" alt="jest Logo" className="h-8 sm:h-9 mr-2 sm:mr-3" />
+                    <span>jest</span>
+                    <small className="hidden xs:inline-block text-xs sm:base opacity-80 ml-2 font-normal text-text-secondary dark:text-gray-400">Jest Preparation</small>
                 </div>
 
                 {/* Desktop Navigation */}
@@ -56,8 +56,8 @@ const MainLayout = ({ darkMode, toggleTheme }) => {
                         {/* Sidebar Header */}
                         <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-white">
                             <div className="flex items-center text-xl font-bold text-accent cursor-pointer" onClick={() => { setIsMenuOpen(false); navigate('/'); }}>
-                                <img src="/images/fyc.jpeg" alt="FYC Logo" className="h-8 mr-2" />
-                                <span>FYC</span>
+                                <img src="/images/jest.jpeg" alt="jest Logo" className="h-8 mr-2" />
+                                <span>jest</span>
                             </div>
                             <button onClick={() => setIsMenuOpen(false)} className="p-2 text-accent hover:bg-orange-50 rounded-lg transition-colors">
                                 <X size={24} />
@@ -102,10 +102,10 @@ const MainLayout = ({ darkMode, toggleTheme }) => {
                 <div className="py-20 text-center bg-secondary/30">
                     <strong className="block mb-8 text-2xl font-semibold">Join Our Community</strong>
                     <div className="flex justify-center gap-8">
-                        <a href="https://www.instagram.com/fyc_neet_academy?igsh=NjZ6ZTU3OTQ3dzds" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
+                        <a href="https://www.instagram.com/jest_Jest_academy?igsh=NjZ6ZTU3OTQ3dzds" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
                             <Instagram size={32} className="text-[#E4405F] group-hover:scale-110 transition-transform" />
                         </a>
-                        <a href="https://youtube.com/@fycneetacademy?si=JXXTrNZ9q9W5Mv98" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
+                        <a href="https://youtube.com/@jestJestacademy?si=JXXTrNZ9q9W5Mv98" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
                             <Youtube size={32} className="text-[#25D366] group-hover:scale-110 transition-transform" />
                         </a>
                         <a href="https://www.linkedin.com/in/hari-harasudhan03?trk=universal-search-cluster" target="_blank" rel="noopener noreferrer" className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md hover:shadow-xl hover:scale-110 transition-all duration-300 group">
@@ -114,7 +114,7 @@ const MainLayout = ({ darkMode, toggleTheme }) => {
                     </div>
                 </div>
                 <div className="text-center py-8 bg-black text-gray-400 text-sm">
-                    &copy; 2025 NeetPrep. Empowering future doctors.
+                    &copy; 2025 JestPrep. Empowering future doctors.
                 </div>
             </footer>
         </div>

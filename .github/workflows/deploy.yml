@@ -21,7 +21,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::015911059751:role/Fyc-Deploy
+          role-to-assume: arn:aws:iam::015911059751:role/jest-Deploy
           aws-region: ap-south-1
 
       - name: Build frontend
@@ -32,7 +32,7 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 sync frontend/dist s3://fycneet-frontend-000710252696 --delete
+          aws s3 sync frontend/dist s3://jestJest-frontend-000710252696 --delete
 
       - name: Invalidate CloudFront
         run: |
@@ -59,7 +59,7 @@ jobs:
             echo "--- Starting Backend Deployment ---"
 
             # 1. Navigate to directory
-            cd ~/FYC/backend
+            cd ~/jest/backend
             echo "Current directory: $(pwd)"
 
             # 2. Update code

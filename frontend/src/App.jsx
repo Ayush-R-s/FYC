@@ -39,7 +39,7 @@ const BadgesPage = lazy(() => import("./pages/student/BadgesPage"))
 const LeaderboardPage = lazy(() => import("./pages/student/LeaderboardPage"))
 const ResourcesPage = lazy(() => import("./pages/student/ResourcesPage"))
 const SchoolReportPage = lazy(() => import("./pages/admin/SchoolReportPage"))
-const NeetQuestionsPage = lazy(() => import("./pages/admin/NeetQuestionsPage"))
+const JestQuestionsPage = lazy(() => import("./pages/admin/JestQuestionsPage"))
 const TimetablePage = lazy(() => import("./pages/student/TimetablePage"))
 const PracticeAuthPage = lazy(() => import("./pages/PracticeAuthPage"))
 const PracticePage = lazy(() => import("./pages/student/PracticePage"))
@@ -53,7 +53,7 @@ export default function App() {
         <div className="flex items-center justify-center min-h-screen bg-slate-950">
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
-            <p className="text-orange-500 font-black uppercase tracking-widest text-[10px]">Loading FYC...</p>
+            <p className="text-orange-500 font-black uppercase tracking-widest text-[10px]">Loading jest...</p>
           </div>
         </div>
       }>
@@ -95,9 +95,9 @@ export default function App() {
                 <EditStudent />
               </RoleGuard>
             } />
-            <Route path="/admin/neet" element={
+            <Route path="/admin/Jest" element={
               <RoleGuard allowedRoles={['SUPER_ADMIN']}>
-                <NeetQuestionsPage />
+                <JestQuestionsPage />
               </RoleGuard>
             } />
             <Route path="/admin/reffered" element={

@@ -120,8 +120,8 @@ export default function EditStudentModal({ student, studentsData = [], isOpen, o
             return studentsData.filter(s => s.role === 'AMBASSADOR');
         }
         if (form.role === 'AMBASSADOR') {
-            return studentsData.filter(s => 
-                (s.role === 'MARKETER' || s.role === 'AMBASSADOR') && 
+            return studentsData.filter(s =>
+                (s.role === 'MARKETER' || s.role === 'AMBASSADOR') &&
                 s.id !== student.id
             );
         }
@@ -215,11 +215,10 @@ export default function EditStudentModal({ student, studentsData = [], isOpen, o
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-1.5 py-3.5 px-1 mr-6 text-xs font-bold border-b-2 transition-all whitespace-nowrap ${
-                                    active
+                                className={`flex items-center gap-1.5 py-3.5 px-1 mr-6 text-xs font-bold border-b-2 transition-all whitespace-nowrap ${active
                                         ? 'text-orange-600 border-orange-500'
                                         : 'text-slate-400 border-transparent hover:text-slate-600 hover:border-slate-200'
-                                }`}
+                                    }`}
                             >
                                 <Icon size={13} />
                                 {tab.label}
@@ -290,11 +289,10 @@ export default function EditStudentModal({ student, studentsData = [], isOpen, o
                                                     key={opt.value}
                                                     type="button"
                                                     onClick={() => setForm(prev => ({ ...prev, status: opt.value }))}
-                                                    className={`px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all ${
-                                                        form.status === opt.value
+                                                    className={`px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all ${form.status === opt.value
                                                             ? opt.cls + ' shadow-sm'
                                                             : 'bg-slate-50 text-slate-400 border-slate-200 hover:border-orange-200 hover:text-orange-500'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {opt.label}
                                                 </button>
@@ -320,7 +318,7 @@ export default function EditStudentModal({ student, studentsData = [], isOpen, o
                                         <p className="mt-1.5 ml-1 text-[11px] font-semibold text-slate-400">
                                             {form.role === 'ADMIN' && '⚠️ Admin users have full system access'}
                                             {form.role === 'MARKETER' && 'Marketer can manage marketing & outreach content'}
-                                            {form.role === 'AMBASSADOR' && 'Ambassador represents FYC in their community'}
+                                            {form.role === 'AMBASSADOR' && 'Ambassador represents jest in their community'}
                                             {form.role === 'STUDENT' && 'Standard student account with learning access'}
                                         </p>
                                     </div>

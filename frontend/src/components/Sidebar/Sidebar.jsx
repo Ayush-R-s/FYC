@@ -11,15 +11,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
   // role: 'all' = any admin, 'super' = SUPER_ADMIN only
   const menuItems = [
-    { id: "dashboard",         label: "Dashboard",         icon: "📊", path: "/admin",                role: "all" },
-    { id: "students",          label: "Student Details",   icon: "👥", path: "/admin/students",        role: "super" },
-    { id: "content",           label: "Content Portal",    icon: "📁", path: "/admin/content",         role: "all" },
-    { id: "analytics",         label: "Analytics",         icon: "📈", path: "/admin/analytics",       role: "all" },
-    { id: "progress",          label: "Progress",          icon: "🎯", path: "/admin/progress",        role: "all" },
-    { id: "feedback",          label: "Feedback",          icon: "💬", path: "/admin/feedback",        role: "all" },
-    { id: "reports",           label: "School Reports",    icon: "📝", path: "/admin/reports",         role: "all" },
-    { id: "neet",              label: "Question Bank",     icon: "📚", path: "/admin/neet",            role: "super" },
-    { id: "reffered",          label: "Referred",          icon: "👥", path: "/admin/reffered",        role: "super" },
+    { id: "dashboard", label: "Dashboard", icon: "📊", path: "/admin", role: "all" },
+    { id: "students", label: "Student Details", icon: "👥", path: "/admin/students", role: "super" },
+    { id: "content", label: "Content Portal", icon: "📁", path: "/admin/content", role: "all" },
+    { id: "analytics", label: "Analytics", icon: "📈", path: "/admin/analytics", role: "all" },
+    { id: "progress", label: "Progress", icon: "🎯", path: "/admin/progress", role: "all" },
+    { id: "feedback", label: "Feedback", icon: "💬", path: "/admin/feedback", role: "all" },
+    { id: "reports", label: "School Reports", icon: "📝", path: "/admin/reports", role: "all" },
+    { id: "Jest", label: "Question Bank", icon: "📚", path: "/admin/Jest", role: "super" },
+    { id: "reffered", label: "Referred", icon: "👥", path: "/admin/reffered", role: "super" },
     { id: "practice-requests", label: "Practice Requests", icon: "✅", path: "/admin/practice-requests", role: "super" },
   ]
 
@@ -51,7 +51,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="w-10 h-10 bg-orange-500 text-white rounded-lg font-bold shrink-0"
             >
-              FYC
+              jest
             </button>
             {sidebarOpen && (
               <div className="min-w-0">

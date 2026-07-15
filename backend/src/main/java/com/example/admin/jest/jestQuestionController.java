@@ -1,4 +1,4 @@
-package com.example.admin.neet;
+package com.example.admin.jest;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,21 +10,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/iit-jee-questions")
-public class neetQuestionController {
+public class jestQuestionController {
 
-    private final neetQuestionService service;
+    private final jestQuestionService service;
 
-    public neetQuestionController(neetQuestionService service) {
+    public jestQuestionController(jestQuestionService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<neetQuestion> getAll() {
+    public List<jestQuestion> getAll() {
         return service.getAllQuestions();
     }
 
     @PostMapping("/parse")
-    public List<neetQuestion> parsePdf(@RequestParam("file") MultipartFile file) {
+    public List<jestQuestion> parsePdf(@RequestParam("file") MultipartFile file) {
         try {
             return service.parsePdf(file.getBytes());
         } catch (IOException e) {
@@ -33,8 +33,8 @@ public class neetQuestionController {
     }
 
     @PostMapping("/parse-default")
-    public List<neetQuestion> parseDefault() {
-        File file = new File("C:\\Users\\ayush\\FYC\\IIT_JEE_NEET_Questions_1_to_1000_With_Answers.pdf");
+    public List<jestQuestion> parseDefault() {
+        File file = new File("C:\\Users\\ayush\\JEST Prep\\IIT_JEE_JEST_Questions_1_to_1000_With_Answers.pdf");
         if (!file.exists()) {
             throw new RuntimeException("Default PDF file not found at " + file.getAbsolutePath());
         }
@@ -47,7 +47,7 @@ public class neetQuestionController {
     }
 
     @PostMapping("/bulk-save")
-    public List<neetQuestion> bulkSave(@RequestBody List<neetQuestion> questions) {
+    public List<jestQuestion> bulkSave(@RequestBody List<jestQuestion> questions) {
         return service.saveAll(questions);
     }
 }
